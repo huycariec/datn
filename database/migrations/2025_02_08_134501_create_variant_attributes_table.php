@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('variant_attributes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_variant_id')->constrained();
-            $table->foreignId('attribute_value_id')->constrained();
+            $table->bigInteger('product_variant_id');
+            $table->bigInteger('attribute_value_id');
             $table->timestamps();
         });
     }
