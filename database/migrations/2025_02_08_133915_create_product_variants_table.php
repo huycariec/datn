@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('product_id');
             $table->string('sku')->unique();
-            $table->decimal('price');
+            $table->decimal('price', 20, 2);
             $table->integer('stock');
             $table->timestamps();
         });
