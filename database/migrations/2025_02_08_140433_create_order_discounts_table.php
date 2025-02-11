@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('order_discounts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('discount_id')->constrained();
-            $table->foreignId('order_id')->constrained();
+            $table->bigInteger('discount_id');
+            $table->unsignedBigInteger('order_id');
             $table->string('discount_value');
             $table->timestamps();
         });
