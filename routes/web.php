@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Admin\DashboardController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,5 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
-
-require __DIR__.'/auth.php';
+// Khanh Linh 10/2/2024
+//dashboard
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
