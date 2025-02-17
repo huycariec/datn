@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\HomeController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,9 +15,10 @@ use App\Http\Controllers\Admin\DashboardController;
 |
 */
 
-Route::get('/', function () {
-    return ['Laravel' => app()->version()];
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 // Khanh Linh 10/2/2024
 //dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/',[HomeController::class,'index']);

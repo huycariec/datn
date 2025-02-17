@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->string('shipper_id');  //chua co de tam
+            $table->bigInteger('user_id');
+            $table->bigInteger('shipper_id');
             $table->decimal('total_amount');
             $table->string('status');
             $table->string('shipping_status');
             $table->string('payment_method');
             $table->decimal('shipping_fee');
-            $table->foreignId('province_id')->constrained();
-            $table->foreignId('district')->constrained();
-            $table->foreignId('ward')->constrained();
+            $table->bigInteger('province_id');
+            $table->bigInteger('district_id');
+            $table->bigInteger('ward_id');
             $table->timestamps();
         });
     }
