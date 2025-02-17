@@ -160,15 +160,15 @@
                                 <li class="sidebar-list">
                                     <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
                                         <i class="ri-price-tag-3-line"></i>
-                                        <span>Coupons</span>
+                                        <span>Mã giảm giá</span>
                                     </a>
                                     <ul class="sidebar-submenu">
                                         <li>
-                                            <a href="coupon-list.html">Coupon List</a>
+                                            <a href="{{ route("discounts.index") }}">Danh sách</a>
                                         </li>
 
                                         <li>
-                                            <a href="create-coupon.html">Create Coupon</a>
+                                            <a href="{{ route("discounts.create") }}">Phát hành mã</a>
                                         </li>
                                     </ul>
                                 </li>
