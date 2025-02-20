@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\DiscountController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\HomeController;
@@ -20,14 +19,6 @@ use App\Http\Controllers\HomeController;
 //     return view('welcome');
 // });
 // Khanh Linh 10/2/2024
-//dashboard
+//dashboard 
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/',[HomeController::class,'index']);
-
-
-
-Route::group(['prefix' => 'admin', "name" => "admin."], function () {
-    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-
-    Route::resource("discounts", DiscountController::class);
-});
