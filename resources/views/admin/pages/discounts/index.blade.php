@@ -20,36 +20,39 @@
                             <div>
                                 <div class="table-responsive">
                                     <div id="table_id_wrapper" class="dataTables_wrapper no-footer">
-                                        <div id="table_id_filter" class="dataTables_filter row">
+                                        <form id="table_id_filter" method="GET" class="dataTables_filter row">
                                             <div class="col-md-4 col-sm-12">
-                                                <label>Nhập tên :
-                                                    <input type="search" class="" placeholder=""  aria-controls="table_id">
+                                                <label>Nhập mã :
+                                                    <input type="search" name="name" value="{{ $_GET['name'] ?? "" }}" aria-controls="table_id">
                                                 </label>
                                             </div>
                                             <div class="d-flex col-sm-12 col-md-4 gap-2 mt-3 mt-md-0">
-                                                <label>Hiển thị</label>
+                                                <label class="mt-2">Xem</label>
                                                     <select name="size" class="form-select">
-                                                        <option value="20">20</option>
-                                                        <option value="50">50</option>
-                                                        <option value="100">100</option>
-                                                        <option value="200">200</option>
+                                                        <option {{ isset($_GET['size']) && $_GET['size'] == 20 ? "selected" : "" }} value="20">20</option>
+                                                        <option {{ isset($_GET['size']) && $_GET['size'] == 50 ? "selected" : "" }} value="50">50</option>
+                                                        <option {{ isset($_GET['size']) && $_GET['size'] == 100 ? "selected" : "" }} value="100">100</option>
+                                                        <option {{ isset($_GET['size']) && $_GET['size'] == 200 ? "selected" : "" }} value="200">200</option>
                                                     </select>
-                                                <label for="">mục</label>
+                                                <label class="mt-2">mục</label>
                                             </div>
-                                            <div class="col-md-2 col-sm-12"><button class="btn btn-primary">Lọc</button></div>
-                                        </div>
+                                            <div class="col-md-2 col-sm-12 d-flex gap-2 mt-md-0 mt-3">
+                                                <button type="submit" class="btn btn-primary">Lọc</button>
+                                                <a href="{{ route("discounts.index") }}" class="btn btn-warning">Bỏ lọc</a>
+                                            </div>
+                                        </form>
                                         <table
                                             class="table all-package coupon-list-table table-hover theme-table dataTable no-footer"
                                             id="table_id">
                                             <thead>
                                             <tr>
-                                                <th class="sorting_disabled" rowspan="1" colspan="1"
-                                                    style="width: 224.656px;">
-                                                            <span class="form-check user-checkbox m-0 p-0">
-                                                                <input class="checkbox_animated checkall"
-                                                                       type="checkbox" value="">
-                                                            </span>
-                                                </th>
+{{--                                                <th class="sorting_disabled" rowspan="1" colspan="1"--}}
+{{--                                                    style="width: 224.656px;">--}}
+{{--                                                            <span class="form-check user-checkbox m-0 p-0">--}}
+{{--                                                                <input class="checkbox_animated checkall"--}}
+{{--                                                                       type="checkbox" value="">--}}
+{{--                                                            </span>--}}
+{{--                                                </th>--}}
                                                 <th class="sorting_disabled" rowspan="1" colspan="1"
                                                     style="width: 224.656px;">Mã
                                                 </th>
@@ -71,12 +74,12 @@
                                             <tbody>
                                                 @foreach($discounts as $discount)
                                                     <tr class="odd">
-                                                        <td>
-                                                    <span class="form-check user-checkbox m-0 p-0">
-                                                        <input class="checkbox_animated check-it"
-                                                               type="checkbox" value="">
-                                                    </span>
-                                                        </td>
+{{--                                                        <td>--}}
+{{--                                                            <span class="form-check user-checkbox m-0 p-0">--}}
+{{--                                                                <input class="checkbox_animated check-it"--}}
+{{--                                                                       type="checkbox" value="">--}}
+{{--                                                            </span>--}}
+{{--                                                        </td>--}}
                                                         <td>{{ $discount->code }}</td>
                                                         <td>{{ $discount->value }} {{$discount->type == 'percent' ? '%' : "vnđ"}}</td>
                                                         <td class="menu-status">
@@ -86,14 +89,19 @@
                                                         <td>
                                                             <ul>
                                                                 <li>
-                                                                    <a href="javascript:void(0)">
+                                                                    <a href="{{ route("discounts.show", $discount) }}">
+                                                                        <i class="ri-eye-line"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="{{ route("discounts.edit", $discount) }}">
                                                                         <i class="ri-pencil-line"></i>
                                                                     </a>
                                                                 </li>
 
                                                                 <li>
-                                                                    <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                                       data-bs-target="#exampleModalToggle">
+                                                                    <a href="javascript:void(0)" data-id="{{ $discount->id }}" data-bs-toggle="modal"
+                                                                       data-bs-target="#deletePopup">
                                                                         <i class="ri-delete-bin-line"></i>
                                                                     </a>
                                                                 </li>
@@ -114,3 +122,50 @@
         </div>
     </div>
 @endsection
+@push("modal")
+    <div class="modal fade" id="deletePopup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="deletePopup" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h5 class="modal-title" id="staticBackdropLabel">Xóa dữ liệu này ?</h5>
+                    <p>Hành động này sẽ không thể khôi phục ?</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="button-box">
+                        <button type="button" class="btn btn--no" data-bs-dismiss="modal">Không</button>
+                        <button type="button" class="btn  btn--yes btn-primary">Đúng vậy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endpush
+@push("script")
+    <script>
+        $(document).ready(function () {
+            let selectedId = null;
+            $('a[data-bs-target="#deletePopup"]').on("click", function () {
+                selectedId = $(this).data("id");
+            });
+            $('.btn--yes').on("click", function () {
+                $.ajax({
+                    url: `/admin/discounts/${selectedId}`,
+                    type: "DELETE",
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+                    },
+                    success: function (response) {
+                        $('#deletePopup').modal('hide');
+
+                        $(`a[data-id="${selectedId}"]`).closest("tr").remove();
+
+                        alert("Xóa thành công!");
+                    },
+                    error: function () {
+                        alert("Xóa thất bại, vui lòng thử lại!");
+                    }
+                })
+            })
+        })
+    </script>
+@endpush
