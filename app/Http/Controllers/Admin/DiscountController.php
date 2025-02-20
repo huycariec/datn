@@ -16,7 +16,7 @@ class DiscountController extends Controller
     {
         $data = $request->all();
         $query = Discount::query();
-        if (isset($data['name']) && !empty($data['name'])) {
+        if (!empty($data['name'])) {
             $query->where('code', 'like', '%' . $data['name'] . '%');
         }
 
@@ -48,7 +48,9 @@ class DiscountController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $isEdit = false;
+        $discount = Discount::findOrFail($id);
+        return view('admin.pages.discounts.edit', compact('discount', 'isEdit'));
     }
 
     /**
@@ -56,22 +58,29 @@ class DiscountController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $isEdit = true;
+        $discount = Discount::findOrFail($id);
+        return view('admin.pages.discounts.edit', compact('discount', 'isEdit'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(DiscountRequest $request, string $id)
     {
-        //
+        $data = $request->all();
+        $discount = Discount::findOrFail($id);
+        $discount->update($data);
+        return redirect()->route('discounts.index')->with('success', "Cập nhật mã giảm giá thành công");
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $discount = Discount::findOrFail($id);
+        $discount->delete();
+        return response()->json(['success' => true]);
     }
 }
