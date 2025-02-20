@@ -102,6 +102,25 @@
                                                 </a>
                                             </div>
                                         </div>
+                <div class="col-12">
+                    <div class="card o-hidden card-hover">
+                        <div class="card-header border-0 pb-1">
+                            <div class="card-header-title p-0">
+                                <h4>Category</h4>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="category-slider no-arrow">
+                                <div>
+                                    <div class="dashboard-category">
+                                        <a href="javascript:void(0)" class="category-image">
+                                            <img src="/assets/svg/vegetable.svg" class="img-fluid" alt="">
+                                        </a>
+                                        <a href="javascript:void(0)" class="category-name">
+                                            <h6>Vegetables & Fruit</h6>
+                                        </a>
+                                    </div>
+                                </div>
 
                                         <div>
                                             <div class="dashboard-category">
