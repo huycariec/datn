@@ -10,7 +10,8 @@
                 <div class="card card-table">
                     <div class="card-body">
                         <div class="title-header option-title">
-                            <h5>All Category</h5>
+                            <h5>Danh sách danh mục</h5>
+
                             <form class="d-inline-flex">
                                 <a href="{{route('categories.create')}}"
                                     class="align-items-center btn btn-theme d-flex">
@@ -19,7 +20,25 @@
                             </form>
                         </div>
 
-                        <div class="table-responsive category-table">
+                        <form method="GET" action="{{ route('categories.index') }}" class="row g-3 align-items-center">
+                            <div class="col-md-7">
+                                <input type="text" name="search" placeholder="Tìm kiếm danh mục" value="{{ request('search') }}"
+                                    class="form-control">
+                            </div>
+                            <div class="col-md-2">
+                                <select name="sort_by" class="form-select">
+                                    <option value="asc" {{ request('sort_by') == 'asc' ? 'selected' : '' }}>A-Z</option>
+                                    <option value="desc" {{ request('sort_by') == 'desc' ? 'selected' : '' }}>Z-A</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
+                            </div>
+                        </form>
+
+
+
+                        <div class="table-responsive category-table mt-4">
                             <div>
                                 <table class="table all-package theme-table" id="table_id">
                                     <thead>
@@ -39,11 +58,11 @@
                                             <td>{{$cate->name}}</td>
                                             <td>
                                                 <ul>
-                                                    <li>
+                                                    <!-- <li>
                                                         <a href="order-detail.html">
                                                             <i class="ri-eye-line"></i>
                                                         </a>
-                                                    </li>
+                                                    </li> -->
 
                                                     <li>
                                                         <a href="{{route('categories.edit',$cate)}}">
