@@ -181,7 +181,7 @@
                                 </li>
 
                                 <li class="sidebar-list">
-                                    <a class="sidebar-link sidebar-title link-nav" href="product-review.html">
+                                    <a class="sidebar-link sidebar-title link-nav" href="{{route('reviews.index')}}">
                                         <i class="ri-star-line"></i>
                                         <span>Đánh giá</span>
                                     </a>
