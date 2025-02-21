@@ -24,7 +24,7 @@ class CategoryController extends Controller
 
         $categories = $query->paginate(10);
 
-        return view('admin.categories.index', compact('categories'));
+        return view('admin.pages.categories.index', compact('categories'));
     }
 
     /**
@@ -33,7 +33,7 @@ class CategoryController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('admin.categories.create', compact('categories'));
+        return view('admin.pages.categories.create', compact('categories'));
     }
 
     /**
@@ -49,7 +49,7 @@ class CategoryController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category created successfully.');
+        return redirect()->route('categories.index')->with('success', 'Tạo danh mục mới thành công!');
     }
 
     /**
@@ -70,7 +70,7 @@ class CategoryController extends Controller
             return redirect()->route('admin.categories.index')->with('error', 'Category not found');
         }
         $categories = Category::all();
-        return view('admin.categories.edit', compact('category', 'categories'));
+        return view('admin.pages.categories.edit', compact('category', 'categories'));
     }
 
     /**
@@ -85,7 +85,7 @@ class CategoryController extends Controller
         $category = Category::findOrFail($id);
         $category->update($request->all());
 
-        return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully.');
+        return redirect()->route('categories.index')->with('success', 'Cập nhập danh mục thành công');
     }
 
     /**
@@ -103,7 +103,7 @@ class CategoryController extends Controller
                 $x->delete();
             }
         }
-        return redirect()->route('admin.categories.index')->with('success', 'Xoá danh mục thành công !');
+        return redirect()->route('categories.index')->with('success', 'Xoá danh mục thành công !');
 
         // }else{
         //     return redirect()->route('admin.categories.index')->with('error', 'Vui lòng chuyển các sản phẩm sang danh mục khác để tiền hành xoá danh mục này.');

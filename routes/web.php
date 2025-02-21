@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DiscountController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
@@ -30,4 +31,5 @@ Route::group(['prefix' => 'admin', "name" => "admin."], function () {
 
 
     Route::resource("discounts", DiscountController::class);
+    Route::resource("categories",CategoryController::class);
 });
