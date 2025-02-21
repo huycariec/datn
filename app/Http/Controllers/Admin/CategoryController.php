@@ -1,7 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
-
+namespace App\Http\Controllers\Admin;
+use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -24,7 +24,8 @@ class CategoryController extends Controller
 
         $categories = $query->paginate(10);
 
-        return view('admin.categories.index', compact('categories'));    }
+        return view('admin.categories.index', compact('categories'));
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -62,7 +63,7 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit( string $id)
+    public function edit(string $id)
     {
         $category = Category::find($id);
         if (!$category) {
@@ -85,25 +86,24 @@ class CategoryController extends Controller
         $category->update($request->all());
 
         return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully.');
-    
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy( string $id)
+    public function destroy(string $id)
     {
         $category = Category::findOrFail($id);
         // $hash = Product::where('category_id', $id)->exists();
         // if (!$hash) {
-            $category->delete();
-            $catefories = Category::all();
-            foreach ($catefories as $x) {
-                if ($x->parent_id == $id) {
-                    $x->delete();
-                }
+        $category->delete();
+        $catefories = Category::all();
+        foreach ($catefories as $x) {
+            if ($x->parent_id == $id) {
+                $x->delete();
             }
-            return redirect()->route('admin.categories.index')->with('success', 'Xoá danh mục thành công !');
+        }
+        return redirect()->route('admin.categories.index')->with('success', 'Xoá danh mục thành công !');
 
         // }else{
         //     return redirect()->route('admin.categories.index')->with('error', 'Vui lòng chuyển các sản phẩm sang danh mục khác để tiền hành xoá danh mục này.');
