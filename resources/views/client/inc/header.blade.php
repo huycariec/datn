@@ -118,7 +118,8 @@
                                 </span>
                             </button>
                             <a href="index.html" class="web-logo nav-logo">
-                                <img src="../assets/images/logo/6.png" class="img-fluid blur-up lazyload" alt="">
+                                <img src="../assets/images/logo/6.png" class="img-fluid blur-up lazyload"
+                                    alt="">
                             </a>
 
                             <div class="header-nav-middle">
@@ -194,15 +195,18 @@
                                                                 Banner</a>
                                                         </li>
                                                         <li>
-                                                            <a class="dropdown-item" href="shop-left-sidebar.html">Shop
+                                                            <a class="dropdown-item"
+                                                                href="shop-left-sidebar.html">Shop
                                                                 Left
                                                                 Sidebar</a>
                                                         </li>
                                                         <li>
-                                                            <a class="dropdown-item" href="shop-list.html">Shop List</a>
+                                                            <a class="dropdown-item" href="shop-list.html">Shop
+                                                                List</a>
                                                         </li>
                                                         <li>
-                                                            <a class="dropdown-item" href="shop-right-sidebar.html">Shop
+                                                            <a class="dropdown-item"
+                                                                href="shop-right-sidebar.html">Shop
                                                                 Right Sidebar</a>
                                                         </li>
                                                         <li>
@@ -252,7 +256,8 @@
                                                                     </a>
                                                                     <a class="dropdown-item"
                                                                         href="product-sold-out.html">SOLD OUT</a>
-                                                                    <a class="dropdown-item" href="product-circle.html">
+                                                                    <a class="dropdown-item"
+                                                                        href="product-circle.html">
                                                                         Sale Countdown</a>
                                                                 </div>
                                                             </div>
@@ -264,8 +269,8 @@
                                                                         href="product-rectangle.html">Variant
                                                                         Rectangle</a>
                                                                     <a class="dropdown-item"
-                                                                        href="product-circle.html">Variant Circle <label
-                                                                            class="menu-label">New</label></a>
+                                                                        href="product-circle.html">Variant Circle
+                                                                        <label class="menu-label">New</label></a>
                                                                     <a class="dropdown-item"
                                                                         href="product-color-image.html">Variant Image
                                                                         Swatch</a>
@@ -284,13 +289,15 @@
                                                                         href="product-left-thumbnail.html">Sticky
                                                                         Checkout</a>
                                                                     <a class="dropdown-item"
-                                                                        href="product-dynamic.html">Dynamic Checkout</a>
+                                                                        href="product-dynamic.html">Dynamic
+                                                                        Checkout</a>
                                                                     <a class="dropdown-item"
                                                                         href="product-sticky.html">Secure Checkout</a>
                                                                     <a class="dropdown-item"
                                                                         href="product-bundle.html">Active Product
                                                                         view</a>
-                                                                    <a class="dropdown-item" href="product-bundle.html">
+                                                                    <a class="dropdown-item"
+                                                                        href="product-bundle.html">
                                                                         Active
                                                                         Last Orders
                                                                     </a>
@@ -308,8 +315,8 @@
                                                                             class="menu-label">New</label>
                                                                     </a>
                                                                     <a class="dropdown-item"
-                                                                        href="product-size-chart.html">Size Chart <label
-                                                                            class="menu-label">New</label></a>
+                                                                        href="product-size-chart.html">Size Chart
+                                                                        <label class="menu-label">New</label></a>
                                                                     <a class="dropdown-item"
                                                                         href="product-size-chart.html">Delivery &
                                                                         Return</a>
@@ -425,7 +432,8 @@
                                                                     Artichokes</a>
 
                                                                 <a class="dropdown-item"
-                                                                    href="shop-left-sidebar.html">Avocados & Peppers</a>
+                                                                    href="shop-left-sidebar.html">Avocados &
+                                                                    Peppers</a>
 
                                                                 <a class="dropdown-item"
                                                                     href="shop-left-sidebar.html">Broccoli &
@@ -454,10 +462,12 @@
                                                                 Detail</a>
                                                         </li>
                                                         <li>
-                                                            <a class="dropdown-item" href="blog-grid.html">Blog Grid</a>
+                                                            <a class="dropdown-item" href="blog-grid.html">Blog
+                                                                Grid</a>
                                                         </li>
                                                         <li>
-                                                            <a class="dropdown-item" href="blog-list.html">Blog List</a>
+                                                            <a class="dropdown-item" href="blog-list.html">Blog
+                                                                List</a>
                                                         </li>
                                                     </ul>
                                                 </li>
@@ -477,19 +487,23 @@
                                                                         href="https://themes.pixelstrap.com/fastkart/email-templete/abandonment-email.html">Abandonment</a>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="https://themes.pixelstrap.com/fastkart/email-templete/offer-template.html">Offer
+                                                                    <a
+                                                                        href="https://themes.pixelstrap.com/fastkart/email-templete/offer-template.html">Offer
                                                                         Template</a>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="https://themes.pixelstrap.com/fastkart/email-templete/order-success.html">Order
+                                                                    <a
+                                                                        href="https://themes.pixelstrap.com/fastkart/email-templete/order-success.html">Order
                                                                         Success</a>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="https://themes.pixelstrap.com/fastkart/email-templete/reset-password.html">Reset
+                                                                    <a
+                                                                        href="https://themes.pixelstrap.com/fastkart/email-templete/reset-password.html">Reset
                                                                         Password</a>
                                                                 </li>
                                                                 <li>
-                                                                    <a href="https://themes.pixelstrap.com/fastkart/email-templete/welcome.html">Welcome
+                                                                    <a
+                                                                        href="https://themes.pixelstrap.com/fastkart/email-templete/welcome.html">Welcome
                                                                         template</a>
                                                                 </li>
                                                             </ul>
@@ -500,15 +514,21 @@
                                                                         class="fa-solid fa-bolt-lightning"></i></span></a>
                                                             <ul class="sub-menu">
                                                                 <li>
-                                                                    <a href="https://themes.pixelstrap.com/fastkart/invoice/invoice-1.html">Invoice 1</a>
+                                                                    <a
+                                                                        href="https://themes.pixelstrap.com/fastkart/invoice/invoice-1.html">Invoice
+                                                                        1</a>
                                                                 </li>
 
                                                                 <li>
-                                                                    <a href="https://themes.pixelstrap.com/fastkart/invoice/invoice-2.html">Invoice 2</a>
+                                                                    <a
+                                                                        href="https://themes.pixelstrap.com/fastkart/invoice/invoice-2.html">Invoice
+                                                                        2</a>
                                                                 </li>
 
                                                                 <li>
-                                                                    <a href="https://themes.pixelstrap.com/fastkart/invoice/invoice-3.html">Invoice 3</a>
+                                                                    <a
+                                                                        href="https://themes.pixelstrap.com/fastkart/invoice/invoice-3.html">Invoice
+                                                                        3</a>
                                                                 </li>
                                                             </ul>
                                                         </li>
@@ -522,7 +542,8 @@
                                                             <a class="dropdown-item" href="cart.html">Cart</a>
                                                         </li>
                                                         <li>
-                                                            <a class="dropdown-item" href="contact-us.html">Contact</a>
+                                                            <a class="dropdown-item"
+                                                                href="contact-us.html">Contact</a>
                                                         </li>
                                                         <li>
                                                             <a class="dropdown-item" href="checkout.html">Checkout</a>
@@ -566,11 +587,13 @@
                                                         data-bs-toggle="dropdown">Seller</a>
                                                     <ul class="dropdown-menu">
                                                         <li>
-                                                            <a class="dropdown-item" href="seller-become.html">Become a
+                                                            <a class="dropdown-item" href="seller-become.html">Become
+                                                                a
                                                                 Seller</a>
                                                         </li>
                                                         <li>
-                                                            <a class="dropdown-item" href="seller-dashboard.html">Seller
+                                                            <a class="dropdown-item"
+                                                                href="seller-dashboard.html">Seller
                                                                 Dashboard</a>
                                                         </li>
                                                         <li>
@@ -578,7 +601,8 @@
                                                                 Detail</a>
                                                         </li>
                                                         <li>
-                                                            <a class="dropdown-item" href="seller-detail-2.html">Seller
+                                                            <a class="dropdown-item"
+                                                                href="seller-detail-2.html">Seller
                                                                 Detail 2</a>
                                                         </li>
                                                         <li>
@@ -603,7 +627,8 @@
                                         <span class="input-group-text">
                                             <i data-feather="search" class="font-light"></i>
                                         </span>
-                                        <input type="text" class="form-control search-type" placeholder="Search here..">
+                                        <input type="text" class="form-control search-type"
+                                            placeholder="Search here..">
                                         <span class="input-group-text close-search">
                                             <i data-feather="x" class="font-light"></i>
                                         </span>
@@ -628,7 +653,8 @@
                                         <div class="onhover-dropdown header-badge">
                                             <button type="button" class="btn p-0 position-relative header-wishlist">
                                                 <i data-feather="shopping-cart"></i>
-                                                <span class="position-absolute top-0 start-100 translate-middle badge">2
+                                                <span
+                                                    class="position-absolute top-0 start-100 translate-middle badge">2
                                                     <span class="visually-hidden">unread messages</span>
                                                 </span>
                                             </button>
@@ -682,7 +708,8 @@
 
                                                 <div class="button-group">
                                                     <a href="cart.html" class="btn btn-sm cart-button">View Cart</a>
-                                                    <a href="checkout.html" class="btn btn-sm cart-button theme-bg-color
+                                                    <a href="checkout.html"
+                                                        class="btn btn-sm cart-button theme-bg-color
                                                     text-white">Checkout</a>
                                                 </div>
                                             </div>
@@ -694,25 +721,41 @@
                                                 <i data-feather="user"></i>
                                             </div>
                                             <div class="delivery-detail">
-                                                <h6>Hello,</h6>
-                                                <h5>My Account</h5>
+                                                @if (Auth::check())
+                                                    <h6>Hello, {{ Auth::user()->name }}</h6>
+                                                    <h5>My Account</h5>
+                                                @else
+                                                    <h6>Hello,</h6>
+                                                    <h5>My Account</h5>
+                                                @endif
                                             </div>
                                         </div>
 
                                         <div class="onhover-div onhover-div-login">
                                             <ul class="user-box-name">
-                                                <li class="product-box-contain">
-                                                    <i></i>
-                                                    <a href="login.html">Log In</a>
-                                                </li>
-
-                                                <li class="product-box-contain">
-                                                    <a href="sign-up.html">Register</a>
-                                                </li>
-
-                                                <li class="product-box-contain">
-                                                    <a href="forgot.html">Forgot Password</a>
-                                                </li>
+                                                @if (Auth::check())
+                                                    <li class="product-box-contain">
+                                                        <i></i>
+                                                        <a href="{{ route('logout') }}"
+                                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Log
+                                                            Out</a>
+                                                    </li>
+                                                    <form id="logout-form" action="{{ route('logout') }}"
+                                                        method="POST" style="display: none;">
+                                                        @csrf
+                                                    </form>
+                                                @else
+                                                    <li class="product-box-contain">
+                                                        <i></i>
+                                                        <a href="{{ route('login') }}">Log In</a>
+                                                    </li>
+                                                    <li class="product-box-contain">
+                                                        <a href="{{ route('register') }}">Register</a>
+                                                    </li>
+                                                    <li class="product-box-contain">
+                                                        <a href="forgot.html">Forgot Password</a>
+                                                    </li>
+                                                @endif
                                             </ul>
                                         </div>
                                     </li>
@@ -725,3 +768,14 @@
         </div>
     </header>
     <!-- Header End -->
+    @if (session('message'))
+        <div class="alert alert-success" id="success-message">
+            {{ session('message') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger" id="error-message">
+            {{ session('error') }}
+        </div>
+    @endif

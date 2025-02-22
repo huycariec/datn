@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Admin\RoleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\HomeController;
 
@@ -25,8 +26,17 @@ use App\Http\Controllers\HomeController;
 // Khanh Linh 10/2/2024
 //dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-//dashboard
-Route::get('/',[HomeController::class,'index']);
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+
+
+// đky-đnhap
+Route::post('register', [AuthController::class, 'register'])->name('register');
+Route::get('register', [AuthController::class, 'showRegisterForm'])->name('register');
+Route::post('login', [AuthController::class, 'login'])->name('login');
+Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+
 
 
 
