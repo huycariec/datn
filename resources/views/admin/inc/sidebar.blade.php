@@ -57,15 +57,15 @@
                                 <li class="sidebar-list">
                                     <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
                                         <i class="ri-list-check-2"></i>
-                                        <span>Category</span>
+                                        <span>Danh mục</span>
                                     </a>
                                     <ul class="sidebar-submenu">
                                         <li>
-                                            <a href="category.html">Category List</a>
+                                            <a href="{{route('categories.index')}}">Danh sách</a>
                                         </li>
 
                                         <li>
-                                            <a href="add-new-category.html">Add New Category</a>
+                                            <a href="{{route('categories.create')}}">Thêm mới danh mục</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -181,9 +181,9 @@
                                 </li>
 
                                 <li class="sidebar-list">
-                                    <a class="sidebar-link sidebar-title link-nav" href="product-review.html">
+                                    <a class="sidebar-link sidebar-title link-nav" href="{{route('reviews.index')}}">
                                         <i class="ri-star-line"></i>
-                                        <span>Product Review</span>
+                                        <span>Đánh giá</span>
                                     </a>
                                 </li>
 

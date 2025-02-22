@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Admin\RoleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\HomeController;
 
 /*
@@ -31,6 +33,7 @@ Route::group(['prefix' => 'admin', "name" => "admin."], function () {
 
 
     Route::resource("discounts", DiscountController::class);
-
     Route::resource("roles", RoleController::class);
+    Route::resource("categories",CategoryController::class);
+    Route::resource("reviews", ReviewController::class);
 });
