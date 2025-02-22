@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_variants', function (Blueprint $table) {
-            $table->id();
-            $table->bigInteger('product_id');
-            $table->string('sku')->unique();
-            $table->decimal('price', 20, 2);
-            $table->integer('stock');
-            $table->timestamps();
+        Schema::table('discounts', function (Blueprint $table) {
+            $table->dateTime('start_date')->change();
+            $table->dateTime('end_date')->change();
         });
     }
 
@@ -26,6 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_variants');
+        Schema::table('discounts', function (Blueprint $table) {
+            $table->date('start_date')->change();
+            $table->date('end_date')->change();
+        });
     }
 };

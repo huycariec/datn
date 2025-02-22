@@ -1,7 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\DiscountController;
+use App\Http\Controllers\Admin\RoleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\HomeController;
 
 /*
@@ -21,4 +25,17 @@ use App\Http\Controllers\HomeController;
 // Khanh Linh 10/2/2024
 //dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+//dashboard
 Route::get('/',[HomeController::class,'index']);
+
+
+
+Route::group(['prefix' => 'admin', "name" => "admin."], function () {
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+
+    Route::resource("discounts", DiscountController::class);
+    Route::resource("roles", RoleController::class);
+    Route::resource("categories",CategoryController::class);
+    Route::resource("reviews", ReviewController::class);
+});
