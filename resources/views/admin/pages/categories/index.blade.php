@@ -1,0 +1,104 @@
+@extends("admin.app")
+
+@section("content")
+
+<div class="page-body">
+    <!-- All User Table Start -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card card-table">
+                    <div class="card-body">
+                        <div class="title-header option-title">
+                            <h5>Danh sách danh mục</h5>
+
+                            <form class="d-inline-flex">
+                                <a href="{{route('categories.create')}}"
+                                    class="align-items-center btn btn-theme d-flex">
+                                    <i data-feather="plus-square"></i>Thêm mới
+                                </a>
+                            </form>
+                        </div>
+
+                        <form method="GET" action="{{ route('categories.index') }}" class="row g-3 align-items-center">
+                            <div class="col-md-7">
+                                <input type="text" name="search" placeholder="Tìm kiếm danh mục" value="{{ request('search') }}"
+                                    class="form-control">
+                            </div>
+                            <div class="col-md-2">
+                                <select name="sort_by" class="form-select">
+                                    <option value="asc" {{ request('sort_by') == 'asc' ? 'selected' : '' }}>A-Z</option>
+                                    <option value="desc" {{ request('sort_by') == 'desc' ? 'selected' : '' }}>Z-A</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
+                            </div>
+                        </form>
+
+
+
+                        <div class="table-responsive category-table mt-4">
+                            <div>
+                                <table class="table all-package theme-table" id="table_id">
+                                    <thead>
+                                        <tr>
+                                            <th>Tên danh mục</th>
+                                            <!-- <th>Date</th>
+                                                        <th>Product Image</th>
+                                                        <th>Icon</th>
+                                                        <th>Slug</th> -->
+                                            <th>Hành động</th>
+                                        </tr>
+                                    </thead>
+
+                                    @foreach ($categories as $cate )
+                                    <tbody>
+                                        <tr>
+                                            <td>{{$cate->name}}</td>
+                                            <td>
+                                                <ul>
+                                                    <!-- <li>
+                                                        <a href="order-detail.html">
+                                                            <i class="ri-eye-line"></i>
+                                                        </a>
+                                                    </li> -->
+
+                                                    <li>
+                                                        <a href="{{route('categories.edit',$cate)}}">
+                                                            <i class="ri-pencil-line"></i>
+                                                        </a>
+                                                    </li>
+
+                                                    <li>
+                                                        <form action="{{ route('categories.destroy',$cate) }}" method="POST"
+                                                            style="display:inline;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button class="btn p-0 border-0">
+                                                                <i class="ri-delete-bin-line"></i>
+                                                            </button>
+
+                                                        </form>
+
+
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    @endforeach
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- All User Table Ends-->
+
+
+
+    @endsection

@@ -20,7 +20,10 @@ class DiscountRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'code' => 'required|string|max:255|unique:discounts,code',
+            'code' => [
+                "required","string","max:255",
+                request()->isMethod("POST") ? "unique:discounts,code" : "unique:discounts,code," . $this->discount
+            ],
             'value' => 'required|numeric|min:0',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
