@@ -97,7 +97,7 @@
 <!-- Category Section End -->
 
 
-<!-- Deal Section Start -->
+<!-- Products Section Start -->
 <section class="product-section product-section-3">
     <div class="container-fluid-lg">
         <div class="title">
@@ -106,293 +106,60 @@
         <div class="row g-sm-4 g-3">
             <div class="col-xxl-12 ratio_110">
                 <div class="slider-6 img-slider">
-                    <div>
-                        <div class="product-box-5 wow fadeInUp">
-                            <div class="product-image">
-                                <a href="product-left-thumbnail.html">
-                                    <img src="../assets/client/assets/images/fashion/product/1.jpg"
-                                        class="img-fluid blur-up lazyload bg-img" alt="">
-                                </a>
+                    @foreach($products as $product)
+                        <div>
+                            <div class="product-box-5 wow fadeInUp">
+                                <div class="product-image">
+                                    <a href="product-left-thumbnail.html">
+                                        <img src="{{ asset('uploads/products/' . $product->id . '.jpg') }}" 
+                                            class="img-fluid blur-up lazyload bg-img" alt="{{ $product->name }}">
+                                    </a>
 
-                                <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                    data-bs-placement="top" title="Wishlist">
-                                    <i data-feather="bookmark"></i>
-                                </a>
+                                    <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
+                                        data-bs-placement="top" title="Wishlist">
+                                        <i data-feather="bookmark"></i>
+                                    </a>
 
-                                <ul class="product-option">
-                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                        <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
-                                            <i data-feather="eye"></i>
-                                        </a>
-                                    </li>
+                                    <ul class="product-option">
+                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
+                                            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
+                                                <i data-feather="eye"></i>
+                                            </a>
+                                        </li>
 
-                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                        <a href="compare.html">
-                                            <i data-feather="refresh-cw"></i>
-                                        </a>
-                                    </li>
+                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                            <a href="compare.html">
+                                                <i data-feather="refresh-cw"></i>
+                                            </a>
+                                        </li>
 
-                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                        <a href="wishlist.html" class="notifi-wishlist">
-                                            <i data-feather="heart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
+                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
+                                            <a href="wishlist.html" class="notifi-wishlist">
+                                                <i data-feather="heart"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
 
-                            <div class="product-detail">
-                                <a href="product-left-thumbnail.html">
-                                    <h5 class="name">brown khadi jacket</h5>
-                                </a>
+                                <div class="product-detail">
+                                    <a href="product-left-thumbnail.html">
+                                        <h5 class="name">{{ $product->name }}</h5>
+                                    </a>
 
-                                <h5 class="sold text-content">
-                                    <span class="theme-color price">$26.69</span>
-                                    <del>28.56</del>
-                                </h5>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="product-box-5 wow fadeInUp">
-                            <div class="product-image">
-                                <a href="product-left-thumbnail.html">
-                                    <img src="../assets/client/assets/images/fashion/product/2.jpg"
-                                        class="img-fluid blur-up lazyload bg-img" alt="">
-                                </a>
-
-                                <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                    data-bs-placement="top" title="Wishlist">
-                                    <i data-feather="bookmark"></i>
-                                </a>
-
-                                <ul class="product-option">
-                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                        <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
-                                            <i data-feather="eye"></i>
-                                        </a>
-                                    </li>
-
-                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                        <a href="compare.html">
-                                            <i data-feather="refresh-cw"></i>
-                                        </a>
-                                    </li>
-
-                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                        <a href="wishlist.html" class="notifi-wishlist">
-                                            <i data-feather="heart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div class="product-detail">
-                                <a href="product-left-thumbnail.html">
-                                    <h5 class="name">white top</h5>
-                                </a>
-
-                                <h5 class="sold text-content">
-                                    <span class="theme-color price">$26.69</span>
-                                    <del>28.56</del>
-                                </h5>
+                                    <h5 class="sold text-content">
+                                        <span class="theme-color price">${{ number_format($product->price, 2) }}</span>
+                                    </h5>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div>
-                        <div class="product-box-5 wow fadeInUp">
-                            <div class="product-image">
-                                <a href="product-left-thumbnail.html">
-                                    <img src="../assets/client/assets/images/fashion/product/3.jpg"
-                                        class="img-fluid blur-up lazyload bg-img" alt="">
-                                </a>
-
-                                <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                    data-bs-placement="top" title="Wishlist">
-                                    <i data-feather="bookmark"></i>
-                                </a>
-
-                                <ul class="product-option">
-                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                        <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
-                                            <i data-feather="eye"></i>
-                                        </a>
-                                    </li>
-
-                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                        <a href="compare.html">
-                                            <i data-feather="refresh-cw"></i>
-                                        </a>
-                                    </li>
-
-                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                        <a href="wishlist.html" class="notifi-wishlist">
-                                            <i data-feather="heart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div class="product-detail">
-                                <a href="product-left-thumbnail.html">
-                                    <h5 class="name">blazer with cap</h5>
-                                </a>
-
-                                <h5 class="sold text-content">
-                                    <span class="theme-color price">$26.69</span>
-                                    <del>28.56</del>
-                                </h5>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="product-box-5 wow fadeInUp">
-                            <div class="product-image">
-                                <a href="product-left-thumbnail.html">
-                                    <img src="../assets/client/assets/images/fashion/product/4.jpg"
-                                        class="img-fluid blur-up lazyload bg-img" alt="">
-                                </a>
-
-                                <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                    data-bs-placement="top" title="Wishlist">
-                                    <i data-feather="bookmark"></i>
-                                </a>
-
-                                <ul class="product-option">
-                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                        <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
-                                            <i data-feather="eye"></i>
-                                        </a>
-                                    </li>
-
-                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                        <a href="compare.html">
-                                            <i data-feather="refresh-cw"></i>
-                                        </a>
-                                    </li>
-
-                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                        <a href="wishlist.html" class="notifi-wishlist">
-                                            <i data-feather="heart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div class="product-detail">
-                                <a href="product-left-thumbnail.html">
-                                    <h5 class="name">Black dotted shirt</h5>
-                                </a>
-
-                                <h5 class="sold text-content">
-                                    <span class="theme-color price">$26.69</span>
-                                    <del>28.56</del>
-                                </h5>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="product-box-5 wow fadeInUp">
-                            <div class="product-image">
-                                <a href="product-left-thumbnail.html">
-                                    <img src="../assets/client/assets/images/fashion/product/5.jpg"
-                                        class="img-fluid blur-up lazyload bg-img" alt="">
-                                </a>
-
-                                <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                    data-bs-placement="top" title="Wishlist">
-                                    <i data-feather="bookmark"></i>
-                                </a>
-
-                                <ul class="product-option">
-                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                        <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
-                                            <i data-feather="eye"></i>
-                                        </a>
-                                    </li>
-
-                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                        <a href="compare.html">
-                                            <i data-feather="refresh-cw"></i>
-                                        </a>
-                                    </li>
-
-                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                        <a href="wishlist.html" class="notifi-wishlist">
-                                            <i data-feather="heart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div class="product-detail">
-                                <a href="product-left-thumbnail.html">
-                                    <h5 class="name">long brown jacket</h5>
-                                </a>
-
-                                <h5 class="sold text-content">
-                                    <span class="theme-color price">$26.69</span>
-                                    <del>28.56</del>
-                                </h5>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="product-box-5 wow fadeInUp">
-                            <div class="product-image">
-                                <a href="product-left-thumbnail.html">
-                                    <img src="../assets/client/assets/images/fashion/product/6.jpg"
-                                        class="img-fluid blur-up lazyload bg-img" alt="">
-                                </a>
-
-                                <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                    data-bs-placement="top" title="Wishlist">
-                                    <i data-feather="bookmark"></i>
-                                </a>
-
-                                <ul class="product-option">
-                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                        <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
-                                            <i data-feather="eye"></i>
-                                        </a>
-                                    </li>
-
-                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                        <a href="compare.html">
-                                            <i data-feather="refresh-cw"></i>
-                                        </a>
-                                    </li>
-
-                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                        <a href="wishlist.html" class="notifi-wishlist">
-                                            <i data-feather="heart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div class="product-detail">
-                                <a href="product-left-thumbnail.html">
-                                    <h5 class="name">Black dotted jacket</h5>
-                                </a>
-
-                                <h5 class="sold text-content">
-                                    <span class="theme-color price">$26.69</span>
-                                    <del>28.56</del>
-                                </h5>
-                            </div>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>
     </div>
 </section>
-<!-- Deal Section End -->
+<!-- Products Section End -->
+
 
 
 <!-- banner section start -->
