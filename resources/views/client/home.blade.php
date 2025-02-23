@@ -79,22 +79,23 @@
         <div class="row">
             <div class="col-12">
                 <div class="slider-9">
-                    <div>
-                        <a href="shop-left-sidebar.html" class="category-box category-dark wow fadeInUp">
-                            <div>
-                                <img src="https://themes.pixelstrap.com/fastkart/assets/svg/fashion/t-shirt.svg" class="blur-up lazyload" alt="">
-                                <h5>tops</h5>
-                            </div>
-                        </a>
-                    </div>
-
-                    
+                    @foreach($categories as $category)
+                        <div>
+                            <a href="shop-left-sidebar.html" class="category-box category-dark wow fadeInUp">
+                                <div>
+                                    <img src="https://themes.pixelstrap.com/fastkart/assets/svg/fashion/t-shirt.svg" class="blur-up lazyload" alt="">
+                                    <h5>{{ $category->name }}</h5>
+                                </div>
+                            </a>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </div>
     </div>
 </section>
 <!-- Category Section End -->
+
 
 <!-- Deal Section Start -->
 <section class="product-section product-section-3">
