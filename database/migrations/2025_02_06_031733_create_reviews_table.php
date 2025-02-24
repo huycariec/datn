@@ -17,8 +17,8 @@ return new class extends Migration
             $table->bigInteger('product_id');
             $table->bigInteger('product_variant_id');
             $table->bigInteger('rating');
-            $table->bigInteger('image');
-            $table->bigInteger('content');
+            $table->string('image');
+            $table->string('content');
             $table->timestamps();
         });
     }
