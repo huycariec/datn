@@ -71,15 +71,39 @@
                                                     </li>
 
                                                     <li>
-                                                        <form action="{{ route('categories.destroy',$cate) }}" method="POST"
-                                                            style="display:inline;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button class="btn p-0 border-0">
-                                                                <i class="ri-delete-bin-line"></i>
-                                                            </button>
 
-                                                        </form>
+
+
+                                                        <!-- Nút mở modal, không chứa sự kiện submit -->
+                                                        <button type="button" class="btn p-0 border-0" onclick="openDeleteModal('{{ route('categories.destroy', $cate) }}')">
+                                                            <i class="ri-delete-bin-line"></i>
+                                                        </button>
+
+
+
+                                                        <!-- Bootstrap Modal -->
+                                                        <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="deleteConfirmLabel">Xác nhận xóa</h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        Bạn có chắc chắn muốn xóa danh mục này không?
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                                        <!-- Form xóa với action được cập nhật động -->
+                                                                        <form id="deleteForm" action="" method="POST" style="display:inline;">
+                                                                            @csrf
+                                                                            @method('DELETE')
+                                                                            <button type="submit" class="btn btn-danger">Xóa</button>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
 
                                                     </li>
@@ -102,3 +126,11 @@
 
 
     @endsection
+
+    <script>
+        function openDeleteModal(actionUrl) {
+            document.getElementById('deleteForm').action = actionUrl; // Cập nhật URL form
+            var modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal')); // Hiển thị modal
+            modal.show();
+        }
+    </script>
