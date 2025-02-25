@@ -114,7 +114,8 @@
                                     @endforeach
                                     
                                 </table>
-                                {{$cate->links}}
+                                {{$categories->links('pagination::bootstrap-4')}}
+
                             </div>
                         </div>
                     </div>

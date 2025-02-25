@@ -50,7 +50,7 @@
                                     @endforeach
 
                                 </table>
-                                {{$data->links}}
+                                {{$reviews->links('pagination::bootstrap-4')}}
 
                             </div>
                         </div>
