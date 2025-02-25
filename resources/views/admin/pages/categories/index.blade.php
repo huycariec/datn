@@ -112,8 +112,9 @@
                                         </tr>
                                     </tbody>
                                     @endforeach
-
+                                    
                                 </table>
+                                {{$cate->links}}
                             </div>
                         </div>
                     </div>
