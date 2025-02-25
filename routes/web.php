@@ -39,6 +39,9 @@ Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::get('profile',[AuthController::class, 'profile'])->name('client.profile');
+Route::put('updateProfile',[AuthController::class, 'updateProfile'])->name('client.updateProfile');
+
 
 
 
