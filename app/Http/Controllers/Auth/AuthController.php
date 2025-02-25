@@ -4,6 +4,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProfileRequest;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\View\View;
@@ -41,9 +42,9 @@ class AuthController extends Controller
         return view('client.profile',compact('user'));
     }
 
-    public function updateProfile(Request $request) {
+    public function updateProfile(ProfileRequest $request) {
         $request->validate([
-            'name' => 'required|string',
+            'name' => 'required|string|max:225',
         ]);
         $user = $request->user(); 
         $user->update($request->only(['name']));
