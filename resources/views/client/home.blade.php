@@ -110,7 +110,7 @@
                         <div>
                             <div class="product-box-5 wow fadeInUp">
                                 <div class="product-image">
-                                    <a href="product-left-thumbnail.html">
+                                    <a href="{{ route('product.detail', $product->id) }}">
                                         <img src="{{ asset('uploads/products/' . $product->id . '.jpg') }}" 
                                             class="img-fluid blur-up lazyload bg-img" alt="{{ $product->name }}">
                                     </a>
@@ -122,7 +122,7 @@
 
                                     <ul class="product-option">
                                         <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
+                                            <a href="{{ route('product.detail', $product->id) }}">
                                                 <i data-feather="eye"></i>
                                             </a>
                                         </li>
@@ -142,7 +142,7 @@
                                 </div>
 
                                 <div class="product-detail">
-                                    <a href="product-left-thumbnail.html">
+                                    <a href="{{ route('product.detail', $product->id) }}">
                                         <h5 class="name">{{ $product->name }}</h5>
                                     </a>
 
@@ -159,6 +159,7 @@
     </div>
 </section>
 <!-- Products Section End -->
+
 
 
 
