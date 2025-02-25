@@ -28,6 +28,8 @@ use App\Http\Controllers\HomeController;
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+//Detail
+Route::get('/product/{id}', [HomeController::class, 'showProductDetail'])->name('product.detail');
 
 
 // đky-đnhap

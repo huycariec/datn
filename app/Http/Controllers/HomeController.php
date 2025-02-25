@@ -13,4 +13,10 @@ class HomeController extends Controller
         $products = Product::where('is_active', 1)->get();
         return view('client.home', compact('categories', 'products')); 
     }
+    public function showProductDetail($id)
+    {
+    $product = Product::findOrFail($id); 
+
+        return view('client.page.detail', compact('product'));
+    }
 }
