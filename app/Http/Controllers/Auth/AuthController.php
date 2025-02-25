@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -34,6 +35,21 @@ class AuthController extends Controller
         //return response()->json(['message' => 'Đăng ký thành công'], 200);
     }
 
+    public function profile(Request $request)
+    {
+        $user = $request->user();
+        return view('client.profile',compact('user'));
+    }
+
+    public function updateProfile(Request $request) {
+        $request->validate([
+            'name' => 'required|string',
+        ]);
+        $user = $request->user(); 
+        $user->update($request->only(['name']));
+        return redirect()->route('home')->with('success', 'Hồ sơ đã được cập nhật thành công!');
+    }
+    
 
     public function showRegisterForm()
     {
