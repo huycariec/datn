@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Models\Admin\Profile;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,8 +41,10 @@ Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('profile',[AuthController::class, 'profile'])->name('client.profile');
-Route::put('updateProfile',[AuthController::class, 'updateProfile'])->name('client.updateProfile');
+Route::get('profile', [AuthController::class, 'profile'])->name('client.profile');
+Route::put('updateProfile', [AuthController::class, 'updateProfile'])->name('client.updateProfile');
+
+
 
 
 
@@ -51,6 +55,9 @@ Route::group(['prefix' => 'admin', "name" => "admin."], function () {
 
     Route::resource("discounts", DiscountController::class);
     Route::resource("roles", RoleController::class);
-    Route::resource("categories",CategoryController::class);
+    Route::resource("categories", CategoryController::class);
     Route::resource("reviews", ReviewController::class);
+
+    Route::get('profile', [ProfileController::class, 'profile'])->name('admin.profile');
+    Route::put('updateProfile', [ProfileController::class, 'updateProfile'])->name('admin.updateProfile');
 });
