@@ -13,9 +13,9 @@ class ProfileAdminRequest extends FormRequest{
     public function rules(){
         $rules = [
             'name' => 'required|string|max:225',
-            'avatar' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'avatar' => 'nullablle|image|mimes:jpeg,png,jpg,gif|max:2048',
             'phone' => 'required|string|max:10',
-            'dob' => 'date',
+            'dob' => 'required|date',
 
         ];
 
@@ -32,6 +32,7 @@ class ProfileAdminRequest extends FormRequest{
             'avatar.max' => 'Định dạng ảnh quá lớn',
             'phone.required' => 'Số điện thoại không được để trống',
             'phone.max' => 'Số điện thoại không đúng định dạng',
+            'dob.required' => 'Ngày sinh không được phép bỏ trống',
             'dob.date' => 'Ngày sinh không đúng định dạng',
             
         ];

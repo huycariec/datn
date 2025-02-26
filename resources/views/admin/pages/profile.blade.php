@@ -31,13 +31,13 @@
                                         <label class="form-label-title col-sm-3 mb-0">Email</label>
                                         <div class="col-sm-9">
                                             <input class="form-control" type="text" name="name" value="{{ Auth::user()->email}}" placeholder="Nhập tên" disabled>
-                                           
+
                                         </div>
                                     </div>
                                     <div class="mb-4 row align-items-center">
                                         <label class="form-label-title col-sm-3 mb-0">Ảnh</label>
                                         <div class="col-sm-9">
-                                            <input class="form-control" type="file" name="avatar" >
+                                            <input class="form-control" type="file" name="avatar">
                                             @if(Auth::user()->profile?->avatar)
                                             <img src="{{ asset('storage/image/' . Auth::user()->profile->avatar) }}" width="150" class="mt-2">
                                             @endif
@@ -49,12 +49,16 @@
                                     <div class="mb-4 row align-items-center">
                                         <label class="form-label-title col-sm-3 mb-0">Giới tính</label>
                                         <div class="col-sm-9">
-                                            <input class="form-control" type="text" name="gender" value="{{ Auth::user()->profile?->gender}}" placeholder="Nhập giới tính">
+                                            <select class="form-control" name="gender">
+                                                <option value="0" {{ Auth::user()->profile?->gender == 0 ? 'selected' : '' }}>Nam</option>
+                                                <option value="1" {{ Auth::user()->profile?->gender == 1 ? 'selected' : '' }}>Nữ</option>
+                                            </select>
                                             @error('gender')
                                             <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
                                     </div>
+
                                     <div class="mb-4 row align-items-center">
                                         <label class="form-label-title col-sm-3 mb-0">Ngày sinh</label>
                                         <div class="col-sm-9">
