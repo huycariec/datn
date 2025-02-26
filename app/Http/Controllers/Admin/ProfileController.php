@@ -22,10 +22,10 @@ class ProfileController extends Controller
     public function updateProfile(ProfileAdminRequest $request) {
         $request->validate([
             'name' => 'required|string|max:225',
-            'avatar'=>'image|mimes:jpeg,png,jpg,gif|max:2048',
-            // 'gender' => 'nullable',
+            'avatar'=>'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'gender' => 'required',
             'phone' => 'required|string|max:10',
-            'dob' => 'date',
+            'dob' => 'required|date',
         ]);
         $user = $request->user(); 
         $user->update($request->only(['name']));
