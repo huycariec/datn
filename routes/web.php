@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Models\Admin\Profile;
+use App\Http\Controllers\Admin\BlogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,10 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 //Detail
 Route::get('/product/{id}', [HomeController::class, 'showProductDetail'])->name('product.detail');
+
+Route::middleware(['auth'])->group(function () {
+Route::resource('/admin/blogs', BlogController::class);
+});
 
 
 // đky-đnhap
