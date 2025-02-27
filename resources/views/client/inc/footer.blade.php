@@ -7,9 +7,7 @@
                         <a href="index.html" class="foot-logo theme-logo">
                             <img src="../assets/images/logo/4.png" class="img-fluid blur-up lazyload" alt="">
                         </a>
-                        <p class="information-text information-text-2">it is a long established fact that a reader
-                            will
-                            be distracted by the readable content.</p>
+                        <p class="information-text information-text-2">Chúng tôi luôn luôn bên bạn!</p>
                         <ul class="social-icon">
                             <li class="light-bg">
                                 <a href="https://www.facebook.com/" class="footer-link-color">
@@ -42,83 +40,83 @@
 
                     <div class="col-xxl-2 col-xl-4 col-sm-6">
                         <div class="footer-title">
-                            <h4 class="text-white">About Fastkart</h4>
+                            <h4 class="text-white">Về LINGOAN</h4>
                         </div>
                         <ul class="footer-list footer-contact footer-list-light">
                             <li>
-                                <a href="about-us.html" class="light-text">About Us</a>
+                                <a href="about-us.html" class="light-text">Về chúng tôi</a>
                             </li>
                             <li>
-                                <a href="contact-us.html" class="light-text">Contact Us</a>
+                                <a href="contact-us.html" class="light-text">Liên Hệ</a>
                             </li>
                             <li>
-                                <a href="term_condition.html" class="light-text">Terms & Conditions</a>
+                                <a href="term_condition.html" class="light-text">MXH</a>
                             </li>
                             <li>
-                                <a href="careers.html" class="light-text">Careers</a>
+                                <a href="careers.html" class="light-text">Ứng cử</a>
                             </li>
                             <li>
-                                <a href="blog-list.html" class="light-text">Latest Blog</a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="col-xxl-2 col-xl-4 col-sm-6">
-                        <div class="footer-title">
-                            <h4 class="text-white">Useful Link</h4>
-                        </div>
-                        <ul class="footer-list footer-list-light footer-contact">
-                            <li>
-                                <a href="order-success.html" class="light-text">Your Order</a>
-                            </li>
-                            <li>
-                                <a href="user-dashboard.html" class="light-text">Your Account</a>
-                            </li>
-                            <li>
-                                <a href="order-tracking.html" class="light-text">Track Orders</a>
-                            </li>
-                            <li>
-                                <a href="wishlist.html" class="light-text">Your Wishlist</a>
-                            </li>
-                            <li>
-                                <a href="faq.html" class="light-text">FAQs</a>
+                                <a href="blog-list.html" class="light-text">Tin tức</a>
                             </li>
                         </ul>
                     </div>
 
                     <div class="col-xxl-2 col-xl-4 col-sm-6">
                         <div class="footer-title">
-                            <h4 class="text-white">Categories</h4>
+                            <h4 class="text-white">Dành cho bạn</h4>
                         </div>
                         <ul class="footer-list footer-list-light footer-contact">
                             <li>
-                                <a href="vegetables-demo.html" class="light-text">Fresh Vegetables</a>
+                                <a href="order-success.html" class="light-text">Giỏ hàng của bạn</a>
                             </li>
                             <li>
-                                <a href="spice-demo.html" class="light-text">Hot Spice</a>
+                                <a href="user-dashboard.html" class="light-text">Tài khoản của bạn</a>
                             </li>
                             <li>
-                                <a href="bags-demo.html" class="light-text">Brand New Bags</a>
+                                <a href="order-tracking.html" class="light-text">Đơn hàng</a>
                             </li>
                             <li>
-                                <a href="bakery-demo.html" class="light-text">New Bakery</a>
+                                <a href="wishlist.html" class="light-text">Mục yêu thích</a>
                             </li>
                             <li>
-                                <a href="grocery-demo.html" class="light-text">New Grocery</a>
+                                <a href="faq.html" class="light-text"></a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="col-xxl-2 col-xl-4 col-sm-6">
+                        <div class="footer-title">
+                            <h4 class="text-white">Khác</h4>
+                        </div>
+                        <ul class="footer-list footer-list-light footer-contact">
+                            <li>
+                                <a href="vegetables-demo.html" class="light-text">Cách đăng ký</a>
+                            </li>
+                            <li>
+                                <a href="spice-demo.html" class="light-text">Cách đăng nhập</a>
+                            </li>
+                            <li>
+                                <a href="bags-demo.html" class="light-text">Chính sách mua hàng</a>
+                            </li>
+                            <li>
+                                <a href="bakery-demo.html" class="light-text">Chính sách trả hàng</a>
+                            </li>
+                            <li>
+                                <a href="grocery-demo.html" class="light-text">Trở thành seller</a>
                             </li>
                         </ul>
                     </div>
 
                     <div class="col-xxl-3 col-xl-4 col-sm-6">
                         <div class="footer-title">
-                            <h4 class="text-white">Store information</h4>
+                            <h4 class="text-white">Thông tin cửa hàng</h4>
                         </div>
                         <ul class="footer-address footer-contact">
                             <li>
                                 <a href="javascript:void(0)" class="light-text">
                                     <div class="inform-box flex-start-box">
                                         <i data-feather="map-pin"></i>
-                                        <p>Fastkart Demo Store, Demo store india 345 - 659</p>
+                                        <p>39 Hồ Tùng Mậu, Mai Dịch, Cầu Giấy, Hà Nội</p>
                                     </div>
                                 </a>
                             </li>
@@ -127,7 +125,7 @@
                                 <a href="javascript:void(0)" class="light-text">
                                     <div class="inform-box">
                                         <i data-feather="phone"></i>
-                                        <p>Call us: 123-456-7890</p>
+                                        <p>SĐT: 0332964131</p>
                                     </div>
                                 </a>
                             </li>
@@ -136,7 +134,7 @@
                                 <a href="javascript:void(0)" class="light-text">
                                     <div class="inform-box">
                                         <i data-feather="mail"></i>
-                                        <p>Email Us: Support@Fastkart.com</p>
+                                        <p>Email: lingoan@shop.com</p>
                                     </div>
                                 </a>
                             </li>
@@ -145,7 +143,7 @@
                                 <a href="javascript:void(0)" class="light-text">
                                     <div class="inform-box">
                                         <i data-feather="printer"></i>
-                                        <p>Fax: 123456</p>
+                                        <p>MST: 0927362648</p>
                                     </div>
                                 </a>
                             </li>
