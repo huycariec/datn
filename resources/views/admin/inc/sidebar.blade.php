@@ -144,15 +144,15 @@
                                 <li class="sidebar-list">
                                     <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
                                         <i class="ri-focus-3-line"></i>
-                                        <span>Localization</span>
+                                        <span>Bài viết</span>
                                     </a>
                                     <ul class="sidebar-submenu">
                                         <li>
-                                            <a href="translation.html">Translation</a>
+                                            <a href="{{ route("blogs.index") }}">Danh sách bài viết</a>
                                         </li>
 
                                         <li>
-                                            <a href="currency-rates.html">Currency Rates</a>
+                                            <a href="{{ route("blogs.create") }}">Thêm bài viết</a>
                                         </li>
                                     </ul>
                                 </li>
