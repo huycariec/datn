@@ -1,102 +1,68 @@
 @extends('app')
+
 @section('content')
-    <!-- log in section start -->
-    <section class="log-in-section background-image-2 section-b-space">
-        <div class="container-fluid-lg w-100">
-            <div class="row">
-                <div class="col-xxl-6 col-xl-5 col-lg-6 d-lg-block d-none ms-auto">
-                    <div class="image-contain">
-                        <img src="../assets/images/inner-page/log-in.png" class="img-fluid" alt="">
+<!-- Breadcrumb Section Start -->
+<section class="breadcrumb-section pt-3 pb-3 bg-light text-center">
+    <div class="container">
+        <h2 class="fw-bold">Đăng nhập</h2>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Login Section Start -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <!-- Form đăng nhập -->
+            <div class="col-lg-5 col-md-7 col-sm-9">
+                <div class="card shadow-lg p-4">
+                    <div class="text-center mb-4">
+                        <h3 class="fw-bold">Chào mừng trở lại LINGOAN</h3>
+                        <p class="text-muted">Vui lòng đăng nhập để tiếp tục</p>
                     </div>
-                </div>
 
-                <div class="col-xxl-4 col-xl-5 col-lg-6 col-sm-8 mx-auto">
-                    <div class="log-in-box">
-                        <div class="log-in-title">
-                            <h3>Welcome To Fastkart</h3>
-                            <h4>Log In Your Account</h4>
+                    <form action="{{ route('login') }}" method="POST">
+                        @csrf
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-bold">Email</label>
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                                   id="email" name="email" placeholder="Nhập email" required>
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
-                        <div class="input-box">
-                            <form action="{{ route('login') }}" method="POST">
-                                @csrf
-                                <div class="col-12">
-                                    <div class="form-floating theme-form-floating log-in-form">
-                                        <input type="email" class="form-control" id="email" name="email"
-                                            placeholder="Email Address">
-                                        <label for="email">Email</label>
-                                        @if ($errors->has('email'))
-                                            <div class="alert alert-danger">
-                                                {{ $errors->first('email') }}
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
-
-                                <div class="col-12">
-                                    <div class="form-floating theme-form-floating log-in-form">
-                                        <input type="password" class="form-control" id="password" name="password"
-                                            placeholder="Password">
-                                        <label for="password">Password</label>
-                                        @if ($errors->has('password'))
-                                            <div class="alert alert-danger">
-                                                {{ $errors->first('password') }}
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
-
-                                <div class="col-12">
-                                    <div class="forgot-box">
-                                        <div class="form-check ps-0 m-0 remember-box">
-                                            <input class="checkbox_animated check-box" type="checkbox"
-                                                id="flexCheckDefault">
-                                            <label class="form-check-label" for="flexCheckDefault">Remember me</label>
-                                        </div>
-                                        <a href="forgot.html" class="forgot-password">Forgot Password?</a>
-                                    </div>
-                                </div>
-
-                                <div class="col-12">
-                                    <button class="btn btn-animation w-100 justify-content-center" type="submit">Log
-                                        In</button>
-                                </div>
-                            </form>
+                        <div class="mb-3">
+                            <label for="password" class="form-label fw-bold">Mật khẩu</label>
+                            <input type="password" class="form-control @error('password') is-invalid @enderror" 
+                                   id="password" name="password" placeholder="Nhập mật khẩu" required>
+                            @error('password')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
 
-                        <div class="other-log-in">
-                            <h6>or</h6>
+                        <div class="d-flex justify-content-between mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="remember">
+                                <label class="form-check-label" for="remember">Ghi nhớ đăng nhập</label>
+                            </div>
+                            <a href="" class="text-primary">Quên mật khẩu?</a>
                         </div>
 
-                        <div class="log-in-button">
-                            <ul>
-                                <li>
-                                    <a href="https://www.google.com/" class="btn google-button w-100">
-                                        <img src="../assets/images/inner-page/google.png" class="blur-up lazyload"
-                                            alt=""> Log In with Google
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://www.facebook.com/" class="btn google-button w-100">
-                                        <img src="../assets/images/inner-page/facebook.png" class="blur-up lazyload"
-                                            alt=""> Log In with Facebook
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+                        <button class="btn btn-primary w-100 fw-bold py-2">Đăng nhập</button>
+                    </form>
 
-                        <div class="other-log-in">
-                            <h6></h6>
-                        </div>
-
-                        <div class="sign-up-box">
-                            <h4>Don't have an account?</h4>
-                            <a href="{{ route('register') }}">Sign Up</a>
-                        </div>
+                    <div class="text-center mt-4">
+                        <p class="mb-0">Bạn chưa có tài khoản? 
+                            <a href="{{ route('register') }}" class="text-primary fw-bold">Đăng ký ngay</a>
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-    <!-- log in section end -->
+    </div>
+</section>
+<!-- Login Section End -->
+
 @endsection
