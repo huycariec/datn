@@ -13,7 +13,7 @@ class ProfileAdminRequest extends FormRequest{
     public function rules(){
         $rules = [
             'name' => 'required|string|max:225',
-            'avatar' => 'nullablle|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'phone' => 'required|string|max:10',
             'dob' => 'required|date',
 
