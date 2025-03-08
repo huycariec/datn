@@ -68,6 +68,8 @@
     <!-- Modal End -->
     @include("admin.inc.script")
     @stack("script")
+    @yield('js-custom')
+
 </body>
 
 </html>

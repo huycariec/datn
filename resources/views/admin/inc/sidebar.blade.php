@@ -41,15 +41,15 @@
                                 <li class="sidebar-list">
                                     <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
                                         <i class="ri-store-3-line"></i>
-                                        <span>Product</span>
+                                        <span>Sản phẩm</span>
                                     </a>
                                     <ul class="sidebar-submenu">
                                         <li>
-                                            <a href="products.html">Prodcts</a>
+                                            <a href="{{route('admin.product.index')}}">Danh sách sản phẩm</a>
                                         </li>
 
                                         <li>
-                                            <a href="add-new-product.html">Add New Products</a>
+                                            <a href="{{route('admin.product.create')}}">Thêm mới sản phẩm</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -73,15 +73,15 @@
                                 <li class="sidebar-list">
                                     <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
                                         <i class="ri-list-settings-line"></i>
-                                        <span>Attributes</span>
+                                        <span>Thuộc tính sản phẩm</span>
                                     </a>
                                     <ul class="sidebar-submenu">
                                         <li>
-                                            <a href="attributes.html">Attributes</a>
+                                            <a href="{{route('admin.attribute.index')}}">Thuộc tính sản phẩm</a>
                                         </li>
 
                                         <li>
-                                            <a href="add-new-attributes.html">Add Attributes</a>
+                                            <a href="{{route('admin.attribute.create')}}">Thêm thuộc tính sản phẩm</a>
                                         </li>
                                     </ul>
                                 </li>
