@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Images;
+
 
 class Product extends Model
 {
@@ -15,4 +17,13 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
+    public function images()
+    {
+        return $this->hasMany(Images::class, 'product_id')->whereNull('product_variant_id');
+    }
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class);
+    }
+    
 }
