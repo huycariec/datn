@@ -91,5 +91,5 @@ Route::group(['prefix' => 'admin', "name" => "admin."], function () {
     Route::get('profile', [ProfileController::class, 'profile'])->name('admin.profile');
     Route::put('updateProfile', [ProfileController::class, 'updateProfile'])->name('admin.updateProfile');
 });
-//kiều duy du
-Route::get('/',[HomeController::class,'index']);
+
+
