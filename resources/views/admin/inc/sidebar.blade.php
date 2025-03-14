@@ -142,21 +142,20 @@
                         </li>
 
                         <li class="sidebar-list">
-                            <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
-                                <i class="ri-article-line"></i>
-                                <span>Bài viết</span>
-                            </a>
-                        </li>
-                        <ul class="sidebar-submenu">
-                            <li>
-                                <a href="{{ route("blogs.index") }}">Danh sách bài viết</a>
-                            </li>
+    <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
+        <i class="ri-article-line"></i>
+        <span>Bài viết</span>
+    </a>
+    <ul class="sidebar-submenu">
+        <li>
+            <a href="{{ route("blogs.index") }}">Danh sách bài viết</a>
+        </li>
+        <li>
+            <a href="{{ route("blogs.create") }}">Thêm bài viết</a>
+        </li>
+    </ul>
+</li>
 
-                            <li>
-                                <a href="{{ route("blogs.create") }}">Thêm bài viết</a>
-                            </li>
-                        </ul>
-                        </li>
 
                         <li class="sidebar-list">
                             <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">

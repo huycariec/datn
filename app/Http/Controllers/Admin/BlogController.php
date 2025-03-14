@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Blog;
@@ -75,4 +76,3 @@ class BlogController extends Controller
         return redirect()->route('blogs.index')->with('success', 'Bài viết đã được xóa!');
     }
 }
-
