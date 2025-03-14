@@ -5,18 +5,76 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Wishlist;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
-    public function index(){
-        $categories = Category::all(); 
+    // Hiển thị trang chủ
+    public function index()
+    {
+        $categories = Category::all();
         $products = Product::where('is_active', 1)->get();
-        return view('client.home', compact('categories', 'products')); 
+        
+        // Lấy danh sách sản phẩm yêu thích của người dùng hiện tại
+        $wishlistItems = Wishlist::where('user_id', Auth::id())->pluck('product_id')->toArray();
+
+        return view('client.home', compact('categories', 'products', 'wishlistItems'));
     }
+
+    // Hiển thị chi tiết sản phẩm
     public function showProductDetail($id)
     {
-    $product = Product::findOrFail($id); 
+        $product = Product::findOrFail($id);
 
         return view('client.page.detail', compact('product'));
+    }
+
+    // Thêm sản phẩm vào danh sách yêu thích
+    public function addToWishlist($productId)
+    {
+        $userId = Auth::id();
+
+        if (!$userId) {
+            return redirect()->route('login')->with('error', 'Bạn cần đăng nhập để sử dụng Wishlist!');
+        }
+
+        // Kiểm tra xem sản phẩm đã tồn tại trong Wishlist chưa
+        if (Wishlist::where('user_id', $userId)->where('product_id', $productId)->exists()) {
+            return back()->with('warning', 'Sản phẩm đã có trong danh sách yêu thích!');
+        }
+
+        // Thêm vào Wishlist
+        Wishlist::create([
+            'user_id' => $userId,
+            'product_id' => $productId
+        ]);
+
+        return back()->with('success', 'Đã thêm vào danh sách yêu thích!');
+    }
+
+    // Xóa sản phẩm khỏi danh sách yêu thích
+    // Xóa sản phẩm khỏi danh sách yêu thích
+    public function removeFromWishlist($productId)
+    {
+        $userId = Auth::id();
+        $wishlistItem = Wishlist::where('user_id', $userId)->where('product_id', $productId)->first();
+    
+        if ($wishlistItem) {
+            $wishlistItem->delete();
+            return back()->with('success', 'Sản phẩm đã được xóa khỏi danh sách yêu thích!');
+        }
+    
+        return back()->with('error', 'Sản phẩm không tồn tại trong danh sách yêu thích!');
+    }
+    
+    
+
+
+    // Hiển thị danh sách yêu thích của người dùng
+    public function wishlist()
+    {
+        $wishlist = Wishlist::where('user_id', Auth::id())->with('product')->get();
+        return view('client.page.wishlist', compact('wishlist'));
     }
 }

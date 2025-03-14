@@ -40,7 +40,12 @@ Route::get('/product/{id}', [HomeController::class, 'showProductDetail'])->name(
 Route::middleware(['auth'])->group(function () {
     Route::resource('blogs', BlogController::class)->except(['show']);
 });
-
+// wishlist
+Route::middleware(['auth'])->group(function () {
+    Route::get('/wishlist', [HomeController::class, 'wishlist'])->name('wishlist.index');
+    Route::post('/wishlist/add/{productId}', [HomeController::class, 'addToWishlist'])->name('wishlist.add');
+    Route::delete('/wishlist/remove/{productId}', [HomeController::class, 'removeFromWishlist'])->name('wishlist.remove');
+});
 
 // đky-đnhap
 Route::post('register', [AuthController::class, 'register'])->name('register');
