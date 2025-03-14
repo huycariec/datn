@@ -14,6 +14,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Models\Admin\Profile;
 use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Auth\AddressController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,9 +50,11 @@ Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('profile', [AuthController::class, 'profile'])->name('client.profile');
-Route::put('updateProfile', [AuthController::class, 'updateProfile'])->name('client.updateProfile');
-
+Route::get('/profile', [AddressController::class, 'showProfile'])->name('client.profile');
+Route::put('/profile', [AddressController::class, 'updateProfile'])->name('client.updateProfile');
+Route::post('/add-address', [AddressController::class, 'addAddress'])->name('client.addAddress');
+Route::put('/update-address/{id}', [AddressController::class, 'updateAddress'])->name('client.updateAddress');
+Route::delete('/delete/{id}', [AddressController::class, 'deleteAddress'])->name('client.deleteAddress');
 //kiều duy du 13/2/2025 product
 Route::get('/admin-product-index',[ProductController::class,'index'])->name('admin.product.index');
 Route::get('/admin-product-create',[ProductController::class,'create'])->name('admin.product.create');
@@ -90,6 +93,5 @@ Route::group(['prefix' => 'admin', "name" => "admin."], function () {
 
     Route::get('profile', [ProfileController::class, 'profile'])->name('admin.profile');
     Route::put('updateProfile', [ProfileController::class, 'updateProfile'])->name('admin.updateProfile');
+
 });
-
-

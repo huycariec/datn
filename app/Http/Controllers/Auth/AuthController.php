@@ -36,21 +36,8 @@ class AuthController extends Controller
         //return response()->json(['message' => 'Đăng ký thành công'], 200);
     }
 
-    public function profile(Request $request)
-    {
-        $user = $request->user();
-        return view('client.profile',compact('user'));
-    }
 
-    public function updateProfile(ProfileRequest $request) {
-        $request->validate([
-            'name' => 'required|string|max:225',
-        ]);
-        $user = $request->user(); 
-        $user->update($request->only(['name']));
-        return redirect()->route('home')->with('success', 'Hồ sơ đã được cập nhật thành công!');
-    }
-    
+
 
     public function showRegisterForm()
     {
