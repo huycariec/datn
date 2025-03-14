@@ -38,7 +38,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/product/{id}', [HomeController::class, 'showProductDetail'])->name('product.detail');
 
 Route::middleware(['auth'])->group(function () {
-Route::resource('/admin/blogs', BlogController::class);
+    Route::resource('blogs', BlogController::class)->except(['show']);
 });
 
 
