@@ -243,7 +243,7 @@
 
                             <div class="product-info">
                                 <ul class="product-info-list product-info-list-2">
-                                    <li>Loại : <a href="javascript:void(0)">{{ $product->category_id}}</a></li>
+                                    <li>Loại : <a href="javascript:void(0)">{{ $product->category->name}}</a></li>
                                     <li>Mã sản phẩm : <a href="javascript:void(0)">{{ $product->id}}</a></li>
                                     <li>Ngày đăng : <a href="javascript:void(0)">{{ $product->created_at->format('d/m/Y') }}</a></li>
                                     <li>Còn : <a href="javascript:void(0)">2 sản phẩm trong kho</a></li>

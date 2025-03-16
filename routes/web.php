@@ -47,7 +47,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/wishlist/add/{productId}', [HomeController::class, 'addToWishlist'])->name('wishlist.add');
     Route::delete('/wishlist/remove/{productId}', [HomeController::class, 'removeFromWishlist'])->name('wishlist.remove');
 });
-
+// sản phẩm theo danh mục
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/category/{id}', [HomeController::class, 'productsByCategory'])->name('products.byCategory');
 // đky-đnhap
 Route::post('register', [AuthController::class, 'register'])->name('register');
 Route::get('register', [AuthController::class, 'showRegisterForm'])->name('register');

@@ -81,9 +81,9 @@
                 <div class="slider-9">
                     @foreach($categories as $category)
                         <div>
-                            <a href="shop-left-sidebar.html" class="category-box category-dark wow fadeInUp">
+                            <a href="{{ route('products.byCategory', $category->id) }}" class="category-box category-dark wow fadeInUp">
                                 <div>
-                                    <img src="https://themes.pixelstrap.com/fastkart/assets/svg/fashion/t-shirt.svg" class="blur-up lazyload" alt="">
+                                    <img src="https://themes.pixelstrap.com/fastkart/assets/svg/fashion/t-shirt.svg" class="blur-up lazyload" alt="{{ $category->name }}">
                                     <h5>{{ $category->name }}</h5>
                                 </div>
                             </a>
