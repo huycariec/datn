@@ -10,19 +10,24 @@ use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
-    // Hiển thị trang chủ
     public function index()
     {
         $categories = Category::all();
         $products = Product::where('is_active', 1)->get();
         
-        // Lấy danh sách sản phẩm yêu thích của người dùng hiện tại
         $wishlistItems = Wishlist::where('user_id', Auth::id())->pluck('product_id')->toArray();
 
         return view('client.home', compact('categories', 'products', 'wishlistItems'));
     }
 
-    // Hiển thị chi tiết sản phẩm
+    public function productsByCategory($categoryId)
+    {
+        $category = Category::findOrFail($categoryId);
+        $products = Product::where('category_id', $categoryId)->where('is_active', 1)->get();
+
+        return view('client.page.products_by_category', compact('category', 'products'));
+    }
+
     public function showProductDetail($id)
     {
         $product = Product::findOrFail($id);
@@ -30,7 +35,6 @@ class HomeController extends Controller
         return view('client.page.detail', compact('product'));
     }
 
-    // Thêm sản phẩm vào danh sách yêu thích
     public function addToWishlist($productId)
     {
         $userId = Auth::id();
@@ -39,12 +43,10 @@ class HomeController extends Controller
             return redirect()->route('login')->with('error', 'Bạn cần đăng nhập để sử dụng Wishlist!');
         }
 
-        // Kiểm tra xem sản phẩm đã tồn tại trong Wishlist chưa
         if (Wishlist::where('user_id', $userId)->where('product_id', $productId)->exists()) {
             return back()->with('warning', 'Sản phẩm đã có trong danh sách yêu thích!');
         }
 
-        // Thêm vào Wishlist
         Wishlist::create([
             'user_id' => $userId,
             'product_id' => $productId
@@ -53,8 +55,6 @@ class HomeController extends Controller
         return back()->with('success', 'Đã thêm vào danh sách yêu thích!');
     }
 
-    // Xóa sản phẩm khỏi danh sách yêu thích
-    // Xóa sản phẩm khỏi danh sách yêu thích
     public function removeFromWishlist($productId)
     {
         $userId = Auth::id();
@@ -67,11 +67,7 @@ class HomeController extends Controller
     
         return back()->with('error', 'Sản phẩm không tồn tại trong danh sách yêu thích!');
     }
-    
-    
 
-
-    // Hiển thị danh sách yêu thích của người dùng
     public function wishlist()
     {
         $wishlist = Wishlist::where('user_id', Auth::id())->with('product')->get();
