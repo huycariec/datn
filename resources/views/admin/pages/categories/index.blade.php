@@ -43,11 +43,10 @@
                                 <table class="table all-package theme-table" id="table_id">
                                     <thead>
                                         <tr>
+                                            <th>ID</th>
+                                            <th>Hình ảnh</th>
                                             <th>Tên danh mục</th>
-                                            <!-- <th>Date</th>
-                                                        <th>Product Image</th>
-                                                        <th>Icon</th>
-                                                        <th>Slug</th> -->
+                                            <th>Mô tả</th>
                                             <th>Hành động</th>
                                         </tr>
                                     </thead>
@@ -55,7 +54,12 @@
                                     @foreach ($categories as $cate )
                                     <tbody>
                                         <tr>
+                                            <td>{{$cate->id}}</td>
+                                        <td>
+                <img src="{{ asset('storage/' . $cate->image) }}" alt="Hình ảnh danh mục" width="50">
+            </td>
                                             <td>{{$cate->name}}</td>
+                                            <td>{{$cate->description}}</td>
                                             <td>
                                                 <ul>
                                                     <!-- <li>
