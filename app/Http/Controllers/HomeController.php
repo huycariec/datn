@@ -79,6 +79,7 @@ class HomeController extends Controller
         return view('client.page.wishlist', compact('wishlist'));
     }
 
+<<<<<<< HEAD
     public function PolicyBuy()
     {
         $data = Page::where('type', 'policy_buy')->first();
@@ -99,4 +100,12 @@ class HomeController extends Controller
         $data = Page::where('type', 'introduction')->first();
         return view('client.page.introduction', compact('data'));
     }
+=======
+
+    public function error()
+    {
+        return view('client.error');
+    }
+
+>>>>>>> b89bb47 (user)
 }
