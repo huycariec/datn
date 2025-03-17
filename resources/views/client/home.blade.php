@@ -80,14 +80,15 @@
             <div class="col-12">
                 <div class="slider-9">
                     @foreach($categories as $category)
-                        <div>
-                            <a href="{{ route('products.byCategory', $category->id) }}" class="category-box category-dark wow fadeInUp">
-                                <div>
-                                    <img src="https://themes.pixelstrap.com/fastkart/assets/svg/fashion/t-shirt.svg" class="blur-up lazyload" alt="{{ $category->name }}">
-                                    <h5>{{ $category->name }}</h5>
-                                </div>
-                            </a>
-                        </div>
+                    <div>
+                        <a href="{{ route('products.byCategory', $category->id) }}" class="category-box category-dark wow fadeInUp">
+                            <div>
+                                @if($category->image)
+                                <img src="{{ asset('storage/' . $category->image) }}" class="blur-up lazyload" alt="{{ $category->name }}">
+                                @endif <h5>{{ $category->name }}</h5>
+                            </div>
+                        </a>
+                    </div>
                     @endforeach
                 </div>
             </div>
@@ -107,51 +108,51 @@
             <div class="col-xxl-12 ratio_110">
                 <div class="slider-6 img-slider">
                     @foreach($products as $product)
-                        <div>
-                            <div class="product-box-5 wow fadeInUp">
-                                <div class="product-image">
-                                    <a href="{{ route('product.detail', $product->id) }}">
-                                        <img src="{{ asset('uploads/products/' . $product->id . '.jpg') }}" 
-                                            class="img-fluid blur-up lazyload bg-img" alt="{{ $product->name }}">
-                                    </a>
+                    <div>
+                        <div class="product-box-5 wow fadeInUp">
+                            <div class="product-image">
+                                <a href="{{ route('product.detail', $product->id) }}">
+                                    <img src="{{ asset('uploads/products/' . $product->id . '.jpg') }}"
+                                        class="img-fluid blur-up lazyload bg-img" alt="{{ $product->name }}">
+                                </a>
 
-                                    <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                        data-bs-placement="top" title="Wishlist">
-                                        <i data-feather="bookmark"></i>
-                                    </a>
+                                <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
+                                    data-bs-placement="top" title="Wishlist">
+                                    <i data-feather="bookmark"></i>
+                                </a>
 
-                                    <ul class="product-option">
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                            <a href="{{ route('product.detail', $product->id) }}">
-                                                <i data-feather="eye"></i>
-                                            </a>
-                                        </li>
+                                <ul class="product-option">
+                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
+                                        <a href="{{ route('product.detail', $product->id) }}">
+                                            <i data-feather="eye"></i>
+                                        </a>
+                                    </li>
 
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                            <a href="compare.html">
-                                                <i data-feather="refresh-cw"></i>
-                                            </a>
-                                        </li>
+                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                        <a href="compare.html">
+                                            <i data-feather="refresh-cw"></i>
+                                        </a>
+                                    </li>
 
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                            <a href="wishlist.html" class="notifi-wishlist">
-                                                <i data-feather="heart"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
+                                    <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
+                                        <a href="wishlist.html" class="notifi-wishlist">
+                                            <i data-feather="heart"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
 
-                                <div class="product-detail">
-                                    <a href="{{ route('product.detail', $product->id) }}">
-                                        <h5 class="name">{{ $product->name }}</h5>
-                                    </a>
+                            <div class="product-detail">
+                                <a href="{{ route('product.detail', $product->id) }}">
+                                    <h5 class="name">{{ $product->name }}</h5>
+                                </a>
 
-                                    <h5 class="sold text-content">
-                                        <span class="theme-color price">${{ number_format($product->price, 2) }}</span>
-                                    </h5>
-                                </div>
+                                <h5 class="sold text-content">
+                                    <span class="theme-color price">${{ number_format($product->price, 2) }}</span>
+                                </h5>
                             </div>
                         </div>
+                    </div>
                     @endforeach
                 </div>
             </div>
