@@ -73,4 +73,11 @@ class HomeController extends Controller
         $wishlist = Wishlist::where('user_id', Auth::id())->with('product')->get();
         return view('client.page.wishlist', compact('wishlist'));
     }
+
+
+    public function error()
+    {
+        return view('client.error');
+    }
+
 }

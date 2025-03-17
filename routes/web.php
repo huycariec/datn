@@ -14,6 +14,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Models\Admin\Profile;
 use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AddressController;
 
 /*
@@ -34,6 +35,7 @@ use App\Http\Controllers\Auth\AddressController;
 //dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/error', [HomeController::class, 'error'])->name('error');
 
 //Detail
 Route::get('/product/{id}', [HomeController::class, 'showProductDetail'])->name('product.detail');
@@ -89,9 +91,8 @@ Route::post('/admin-variant-store',[ProductVariantController::class,'store'])->n
 
 
 
-Route::group(['prefix' => 'admin', "name" => "admin."], function () {
+Route::group(['prefix' => 'admin', 'name' => 'admin.', 'middleware' => 'checkAdmin'], function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
 
     Route::resource("discounts", DiscountController::class);
     Route::resource("roles", RoleController::class);
@@ -101,4 +102,7 @@ Route::group(['prefix' => 'admin', "name" => "admin."], function () {
     Route::get('profile', [ProfileController::class, 'profile'])->name('admin.profile');
     Route::put('updateProfile', [ProfileController::class, 'updateProfile'])->name('admin.updateProfile');
 
+    Route::get('/user', [UserController::class, 'index'])->name('admin.user.index');
+    Route::delete('user/destroy/{id}', [UserController::class, 'destroy'])->name('admin.user.destroy');
 });
+
