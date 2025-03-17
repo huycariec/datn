@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DiscountController;
+use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\RoleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
@@ -57,6 +59,11 @@ Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::get('chinh-sach-mua-hang', [HomeController::class, 'PolicyBuy'])->name('policy_buy');
+Route::get('chinh-sach-doi-tra', [HomeController::class, 'PolicyReturn'])->name('policy_return.blade.php');
+Route::get('huong-dan-mua-hang', [HomeController::class, 'Instruct'])->name('instruct');
+Route::get('gioi-thieu', [HomeController::class, 'Introduction'])->name('introduction');
+
 Route::get('/profile', [AddressController::class, 'showProfile'])->name('client.profile');
 Route::put('/profile', [AddressController::class, 'updateProfile'])->name('client.updateProfile');
 Route::post('/add-address', [AddressController::class, 'addAddress'])->name('client.addAddress');
@@ -97,6 +104,8 @@ Route::group(['prefix' => 'admin', "name" => "admin."], function () {
     Route::resource("roles", RoleController::class);
     Route::resource("categories", CategoryController::class);
     Route::resource("reviews", ReviewController::class);
+    Route::resource("banners", BannerController::class);
+    Route::resource("pages", PageController::class);
 
     Route::get('profile', [ProfileController::class, 'profile'])->name('admin.profile');
     Route::put('updateProfile', [ProfileController::class, 'updateProfile'])->name('admin.updateProfile');

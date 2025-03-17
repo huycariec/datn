@@ -142,7 +142,7 @@
                                                         </li>
                                                     </ul>
                                                 </li>
-                                             
+
                                                 <li class="nav-item dropdown">
                                                     <a class="nav-link dropdown-toggle" href="javascript:void(0)"
                                                         data-bs-toggle="dropdown">Tin tức</a>
@@ -160,12 +160,12 @@
                                                         data-bs-toggle="dropdown">Chính sách</a>
                                                     <ul class="dropdown-menu">
                                                         <li>
-                                                            <a class="dropdown-item" href="">Chính sách mua hàng</a>
+                                                            <a class="dropdown-item" href="{{route('policy_buy')}}">Chính sách mua hàng</a>
                                                         </li>
                                                         <li>
-                                                            <a class="dropdown-item" href="">Chính sách đổi trả</a>
+                                                            <a class="dropdown-item" href="{{route('policy_return.blade.php')}}">Chính sách đổi trả</a>
                                                         </li>
-                                                        
+
                                                     </ul>
                                                 </li>
 
@@ -174,13 +174,10 @@
                                                         data-bs-toggle="dropdown">Khác</a>
                                                     <ul class="dropdown-menu">
                                                         <li>
-                                                            <a class="dropdown-item" href="">Liên hệ</a>
+                                                            <a class="dropdown-item" href="{{ route('introduction') }}">Giới thiệu</a>
                                                         </li>
                                                         <li>
-                                                            <a class="dropdown-item" href="">Hướng dẫn mua hàng</a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="">Trở thành seller của chúng tôi</a>
+                                                            <a class="dropdown-item" href="{{ route('instruct') }}">Hướng dẫn mua hàng</a>
                                                         </li>
                                                     </ul>
                                                 </li>
