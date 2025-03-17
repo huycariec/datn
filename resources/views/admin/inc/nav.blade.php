@@ -123,7 +123,7 @@
                              <li>
                                  <a href="profile-setting.html">
                                      <i data-feather="settings"></i>
-                                     <span>Settings</span>
+                                     <span>Cài đặt</span>
                                  </a>
                              </li>
                              <li>

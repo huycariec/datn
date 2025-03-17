@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Banner;
+use App\Models\Page;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product;
@@ -14,10 +16,13 @@ class HomeController extends Controller
     {
         $categories = Category::all();
         $products = Product::where('is_active', 1)->get();
-        
+        $banners = Banner::orderBy('position')
+            ->get()
+            ->keyBy('position');
+
         $wishlistItems = Wishlist::where('user_id', Auth::id())->pluck('product_id')->toArray();
 
-        return view('client.home', compact('categories', 'products', 'wishlistItems'));
+        return view('client.home', compact('categories', 'products', 'wishlistItems', 'banners'));
     }
 
     public function productsByCategory($categoryId)
@@ -59,12 +64,12 @@ class HomeController extends Controller
     {
         $userId = Auth::id();
         $wishlistItem = Wishlist::where('user_id', $userId)->where('product_id', $productId)->first();
-    
+
         if ($wishlistItem) {
             $wishlistItem->delete();
             return back()->with('success', 'Sản phẩm đã được xóa khỏi danh sách yêu thích!');
         }
-    
+
         return back()->with('error', 'Sản phẩm không tồn tại trong danh sách yêu thích!');
     }
 
@@ -72,5 +77,26 @@ class HomeController extends Controller
     {
         $wishlist = Wishlist::where('user_id', Auth::id())->with('product')->get();
         return view('client.page.wishlist', compact('wishlist'));
+    }
+
+    public function PolicyBuy()
+    {
+        $data = Page::where('type', 'policy_buy')->first();
+        return view('client.page.policy_buy', compact('data'));
+    }
+    public function PolicyReturn()
+    {
+        $data = Page::where('type', 'policy_return')->first();
+        return view('client.page.policy_return', compact('data'));
+    }
+    public function Instruct()
+    {
+        $data = Page::where('type', 'instruct')->first();
+        return view('client.page.instruct', compact('data'));
+    }
+    public function Introduction()
+    {
+        $data = Page::where('type', 'introduction')->first();
+        return view('client.page.introduction', compact('data'));
     }
 }

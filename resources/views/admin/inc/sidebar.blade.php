@@ -195,11 +195,14 @@
                         <li class="sidebar-list">
                             <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
                                 <i class="ri-settings-line"></i>
-                                <span>Settings</span>
+                                <span>Cài đặt</span>
                             </a>
                             <ul class="sidebar-submenu">
                                 <li>
-                                    <a href="profile-setting.html">Profile Setting</a>
+                                    <a href="{{ route('banners.index') }}">Cài đặt banner</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('pages.index') }}">Quản lý trang</a>
                                 </li>
                             </ul>
                         </li>

@@ -48,7 +48,7 @@
                 <div class="slider-animate">
                     <div>
                         <div class="home-contain rounded-0 p-0">
-                            <img src="../assets/client/assets/images/fashion/home-banner/1.jpg"
+                            <img src="{{ isset($banners[1]->image) ? \Illuminate\Support\Facades\Storage::url($banners[1]->image) : "../assets/client/assets/images/fashion/home-banner/1.jpg" }}"
                                 class="img-fluid bg-img blur-up lazyload" alt="">
                             <div class="home-detail home-big-space p-center-left home-overlay position-relative">
                                 <div class="container-fluid-lg">
@@ -58,9 +58,11 @@
                                         <h1 class="heding-2">Premium Quality</h1>
                                         <h5 class="text-content">Fresh & Top Quality Dry Fruits are available here!
                                         </h5>
-                                        <button onclick="location.href = 'shop-left-sidebar.html';"
-                                            class="btn theme-bg-color btn-md text-white fw-bold mt-md-4 mt-2 mend-auto">Shop
-                                            Now <i class="fa-solid fa-arrow-right icon"></i></button>
+                                        @isset($banners[1]->link)
+                                            <a href="{{$banners[1]->link}}" target="_blank"
+                                               class="btn theme-bg-color btn-md text-white fw-bold mt-md-4 mt-2 mend-auto">Shop Now <i
+                                                    class="fa-solid fa-arrow-right icon"></i></a>
+                                        @endisset
                                     </div>
                                 </div>
                             </div>
@@ -170,16 +172,18 @@
         <div class="row g-md-4 g-3">
             <div class="col-xxl-8 col-xl-12 col-md-7">
                 <div class="banner-contain hover-effect">
-                    <img src="../assets/client/assets/images/fashion/banner/1.jpg" class="bg-img blur-up lazyload" alt="">
+                    <img src="{{ isset($banners[2]->image) ? \Illuminate\Support\Facades\Storage::url($banners[2]->image) : "../assets/client/assets/images/fashion/banner/1.jpg"}}" class="bg-img blur-up lazyload" alt="">
                     <div class="banner-details p-center-left p-4">
                         <div>
                             <h2 class="text-kaushan fw-normal theme-color">Get Ready To</h2>
                             <h3 class="mt-2 mb-3">TAKE ON THE DAY!</h3>
                             <p class="text-content banner-text">In publishing and graphic design, Lorem
                                 ipsum is a placeholder text commonly used to demonstrate.</p>
-                            <button onclick="location.href = 'shop-left-sidebar.html';"
-                                class="btn btn-animation btn-sm mend-auto">Shop Now <i
-                                    class="fa-solid fa-arrow-right icon"></i></button>
+                            @isset($banners[2]->link)
+                                <a href="{{$banners[2]->link}}" target="_blank"
+                                    class="btn btn-animation btn-sm mend-auto">Shop Now <i
+                                        class="fa-solid fa-arrow-right icon"></i></a>
+                            @endisset
                         </div>
                     </div>
                 </div>
@@ -187,7 +191,7 @@
 
             <div class="col-xxl-4 col-xl-12 col-md-5">
                 <a href="shop-left-sidebar.html" class="banner-contain hover-effect h-100">
-                    <img src="../assets/client/assets/images/fashion/banner/2.jpg" class="bg-img blur-up lazyload" alt="">
+                    <img src="{{ isset($banners['3']->image) ? \Illuminate\Support\Facades\Storage::url($banners['3']->image) : "../assets/client/assets/images/fashion/banner/2.jpg"}}" class="bg-img blur-up lazyload" alt="">
                     <div class="banner-details p-center-left p-4 h-100">
                         <div>
                             <h2 class="text-kaushan fw-normal text-danger">20% Off</h2>

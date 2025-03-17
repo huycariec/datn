@@ -46,5 +46,8 @@
 
     <!-- Theme js -->
     <script src="{{asset('assets/js/script.js')}}"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/44.2.0/ckeditor5.umd.js"></script>
-    
+    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace('editor');
+    </script>
+
