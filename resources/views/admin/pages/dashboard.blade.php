@@ -75,9 +75,174 @@
                                             </h4>
                                         </div>
 
-                                        <div class="align-self-center text-center">
-                                            <i class="ri-user-add-line"></i>
-                                        </div>
+                                <div class="align-self-center text-center">
+                                    <i class="ri-user-add-line"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="card o-hidden card-hover">
+                        <div class="card-header border-0 pb-1">
+                            <div class="card-header-title p-0">
+                                <h4>Category</h4>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="category-slider no-arrow">
+                                <div>
+                                    <div class="dashboard-category">
+                                        <a href="javascript:void(0)" class="category-image">
+                                            <img src="/assets/svg/vegetable.svg" class="img-fluid" alt="">
+                                        </a>
+                                        <a href="javascript:void(0)" class="category-name">
+                                            <h6>Vegetables & Fruit</h6>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="dashboard-category">
+                                        <a href="javascript:void(0)" class="category-image">
+                                            <img src="/assets/svg/cup.svg" class="img-fluid" alt="">
+                                        </a>
+                                        <a href="javascript:void(0)" class="category-name">
+                                            <h6>Beverages</h6>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="dashboard-category">
+                                        <a href="javascript:void(0)" class="category-image">
+                                            <img src="/assets/svg/meats.svg" class="img-fluid" alt="">
+                                        </a>
+                                        <a href="javascript:void(0)" class="category-name">
+                                            <h6>Meats & Seafood</h6>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="dashboard-category">
+                                        <a href="javascript:void(0)" class="category-image">
+                                            <img src="/assets/svg/breakfast.svg" class="img-fluid" alt="">
+                                        </a>
+                                        <a href="javascript:void(0)" class="category-name">
+                                            <h6>Breakfast</h6>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="dashboard-category">
+                                        <a href="javascript:void(0)" class="category-image">
+                                            <img src="/assets/svg/frozen.svg" class="img-fluid" alt="">
+                                        </a>
+                                        <a href="javascript:void(0)" class="category-name">
+                                            <h6>Frozen Foods</h6>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="dashboard-category">
+                                        <a href="javascript:void(0)" class="category-image">
+                                            <img src="/assets/svg/milk.svg" class="img-fluid" alt="">
+                                        </a>
+                                        <a href="javascript:void(0)" class="category-name">
+                                            <h6>Milk & Dairies</h6>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="dashboard-category">
+                                        <a href="javascript:void(0)" class="category-image">
+                                            <img src="/assets/svg/pet.svg" class="img-fluid" alt="">
+                                        </a>
+                                        <a href="javascript:void(0)" class="category-name">
+                                            <h6>Pet Food</h6>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="dashboard-category">
+                                        <a href="javascript:void(0)" class="category-image">
+                                            <img src="/assets/svg/vegetable.svg" class="img-fluid" alt="">
+                                        </a>
+                                        <a href="javascript:void(0)" class="category-name">
+                                            <h6>Vegetables & Fruit</h6>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="dashboard-category">
+                                        <a href="javascript:void(0)" class="category-image">
+                                            <img src="/assets/svg/cup.svg" class="img-fluid" alt="">
+                                        </a>
+                                        <a href="javascript:void(0)" class="category-name">
+                                            <h6>Beverages</h6>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="dashboard-category">
+                                        <a href="javascript:void(0)" class="category-image">
+                                            <img src="/assets/svg/meats.svg" class="img-fluid" alt="">
+                                        </a>
+                                        <a href="javascript:void(0)" class="category-name">
+                                            <h6>Meats & Seafood</h6>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="dashboard-category">
+                                        <a href="javascript:void(0)" class="category-image">
+                                            <img src="/assets/svg/breakfast.svg" class="img-fluid" alt="">
+                                        </a>
+                                        <a href="javascript:void(0)" class="category-name">
+                                            <h6>Breakfast</h6>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="dashboard-category">
+                                        <a href="javascript:void(0)" class="category-image">
+                                            <img src="/assets/svg/frozen.svg" class="img-fluid" alt="">
+                                        </a>
+                                        <a href="javascript:void(0)" class="category-name">
+                                            <h6>Frozen Foods</h6>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="dashboard-category">
+                                        <a href="javascript:void(0)" class="category-image">
+                                            <img src="/assets/svg/milk.svg" class="img-fluid" alt="">
+                                        </a>
+                                        <a href="javascript:void(0)" class="category-name">
+                                            <h6>Milk & Dairies</h6>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="dashboard-category">
+                                        <a href="javascript:void(0)" class="category-image">
+                                            <img src="/assets/svg/pet.svg" class="img-fluid" alt="">
+                                        </a>
+                                        <a href="javascript:void(0)" class="category-name">
+                                            <h6>Pet Food</h6>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -297,20 +462,20 @@
                                             <table class="best-selling-table w-image
                                             w-image
                                             w-image table border-0">
-                                                <tbody>
-                                                    <tr>
-                                                        <td>
-                                                            <div class="best-product-box">
-                                                                <div class="product-image">
-                                                                    <img src="/assets/images/product/1.png"
-                                                                        class="img-fluid" alt="Product">
-                                                                </div>
-                                                                <div class="product-name">
-                                                                    <h5>Aata Buscuit</h5>
-                                                                    <h6>26-08-2022</h6>
-                                                                </div>
-                                                            </div>
-                                                        </td>
+                                        <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="best-product-box">
+                                                    <div class="product-image">
+                                                        <img src="/assets/images/product/1.png"
+                                                             class="img-fluid" alt="Product">
+                                                    </div>
+                                                    <div class="product-name">
+                                                        <h5>Aata Buscuit</h5>
+                                                        <h6>26-08-2022</h6>
+                                                    </div>
+                                                </div>
+                                            </td>
 
                                                         <td>
                                                             <div class="product-detail-box">
@@ -341,19 +506,19 @@
                                                         </td>
                                                     </tr>
 
-                                                    <tr>
-                                                        <td>
-                                                            <div class="best-product-box">
-                                                                <div class="product-image">
-                                                                    <img src="/assets/images/product/2.png"
-                                                                        class="img-fluid" alt="Product">
-                                                                </div>
-                                                                <div class="product-name">
-                                                                    <h5>Aata Buscuit</h5>
-                                                                    <h6>26-08-2022</h6>
-                                                                </div>
-                                                            </div>
-                                                        </td>
+                                        <tr>
+                                            <td>
+                                                <div class="best-product-box">
+                                                    <div class="product-image">
+                                                        <img src="/assets/images/product/2.png"
+                                                             class="img-fluid" alt="Product">
+                                                    </div>
+                                                    <div class="product-name">
+                                                        <h5>Aata Buscuit</h5>
+                                                        <h6>26-08-2022</h6>
+                                                    </div>
+                                                </div>
+                                            </td>
 
                                                         <td>
                                                             <div class="product-detail-box">
@@ -384,19 +549,19 @@
                                                         </td>
                                                     </tr>
 
-                                                    <tr>
-                                                        <td>
-                                                            <div class="best-product-box">
-                                                                <div class="product-image">
-                                                                    <img src="/assets/images/product/3.png"
-                                                                        class="img-fluid" alt="Product">
-                                                                </div>
-                                                                <div class="product-name">
-                                                                    <h5>Aata Buscuit</h5>
-                                                                    <h6>26-08-2022</h6>
-                                                                </div>
-                                                            </div>
-                                                        </td>
+                                        <tr>
+                                            <td>
+                                                <div class="best-product-box">
+                                                    <div class="product-image">
+                                                        <img src="/assets/images/product/3.png"
+                                                             class="img-fluid" alt="Product">
+                                                    </div>
+                                                    <div class="product-name">
+                                                        <h5>Aata Buscuit</h5>
+                                                        <h6>26-08-2022</h6>
+                                                    </div>
+                                                </div>
+                                            </td>
 
                                                         <td>
                                                             <div class="product-detail-box">
