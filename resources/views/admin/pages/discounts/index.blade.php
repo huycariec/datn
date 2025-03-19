@@ -111,6 +111,14 @@
                                                 @endforeach
                                             </tbody>
                                         </table>
+                                        <div class="d-flex justify-content-between mt-2">
+                                            <div>
+                                                Xem {{ $discounts->count() }} của {{ $discounts->total() }} danh mục
+                                            </div>
+                                            <div>
+                                                {{ $discounts->appends(request()->all())->links() }}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

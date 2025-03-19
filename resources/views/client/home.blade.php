@@ -74,6 +74,7 @@
                 </div>
             </div>
         </div>
+        </div>
     </section>
     <!-- Home Section End -->
 
@@ -83,27 +84,27 @@
             <div class="row">
                 <div class="col-12">
                     <div class="slider-9">
-                        @foreach($categories as $category)
-                            <div>
-                                <a href="{{ route('products.byCategory', $category->id) }}"
-                                   class="category-box category-dark wow fadeInUp">
-                                    <div>
-                                        @if($category->image)
-                                            <img src="{{ asset('storage/' . $category->image) }}"
-                                                 class="blur-up lazyload" alt="{{ $category->name }}">
-                                        @endif <h5>{{ $category->name }}</h5>
-                                    </div>
-                                </a>
-                            </div>
+                        @foreach($categories as $index => $category)
+                            <a href="{{ route('products.byCategory', $category->id) }}"
+                               class="category-box category-dark wow fadeInUp"
+                               data-wow-delay="{{ ($index * 0.05) }}s"
+                               tabindex="0">
+                                <div>
+                                    <img src="{{ isset($category->image) && file_exists(storage_path('app/public/' . $category->image)) ? asset('storage/' . $category->image) : '/assets/images/placeholder_image.webp' }}"
+                                         class="blur-up lazyload img-fluid rounded shadow-sm"
+                                         alt="{{ $category->name }}"
+                                         style="width: 100px; height: 100px; object-fit: cover;">
+                                    <h5>{{ $category->name }}</h5>
+                                </div>
+                            </a>
                         @endforeach
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
     <!-- Category Section End -->
-
-
     <!-- Products Section Start -->
     <section class="product-section product-section-3">
         <div class="container-fluid-lg">
@@ -166,11 +167,6 @@
             </div>
         </div>
     </section>
-    <!-- Products Section End -->
-
-
-
-
     <!-- banner section start -->
     <section>
         <div class="container-fluid-lg">
@@ -394,7 +390,7 @@
                     <div>
                         <h3 class="lh-base fw-bold offer-text">Nhanh tay nhập là nhận ngay mã giảm giá chất !</h3>\
                         <h6 class="coupon-code coupon-code-white">Mã: </h6>
-{{--                        foreach mã giảm giá ra đây, cho chạy carousel--}}
+                        {{--                        foreach mã giảm giá ra đây, cho chạy carousel--}}
                     </div>
                 </div>
             </div>
@@ -998,32 +994,32 @@
     <!-- Deal Section End -->
 
     <!-- Newsletter Section Start -->
-{{--    <section class="newsletter-section section-b-space">--}}
-{{--        <div class="container-fluid-lg">--}}
-{{--            <div class="newsletter-box newsletter-box-2">--}}
-{{--                <div class="newsletter-contain py-5">--}}
-{{--                    <div class="container-fluid">--}}
-{{--                        <div class="row">--}}
-{{--                            <div class="col-xxl-4 col-lg-5 col-md-7 col-sm-9 offset-xxl-2 offset-md-1">--}}
-{{--                                <div class="newsletter-detail">--}}
-{{--                                    <h2>Join our newsletter and get...</h2>--}}
-{{--                                    <h5>$20 discount for your first order</h5>--}}
-{{--                                    <div class="input-box">--}}
-{{--                                        <input type="email" class="form-control" id="exampleFormControlInput1"--}}
-{{--                                               placeholder="Enter Your Email">--}}
-{{--                                        <i class="fa-solid fa-envelope arrow"></i>--}}
-{{--                                        <button class="sub-btn  btn-animation">--}}
-{{--                                            <span class="d-sm-block d-none">Subscribe</span>--}}
-{{--                                            <i class="fa-solid fa-arrow-right icon"></i>--}}
-{{--                                        </button>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--    </section>--}}
+    {{--    <section class="newsletter-section section-b-space">--}}
+    {{--        <div class="container-fluid-lg">--}}
+    {{--            <div class="newsletter-box newsletter-box-2">--}}
+    {{--                <div class="newsletter-contain py-5">--}}
+    {{--                    <div class="container-fluid">--}}
+    {{--                        <div class="row">--}}
+    {{--                            <div class="col-xxl-4 col-lg-5 col-md-7 col-sm-9 offset-xxl-2 offset-md-1">--}}
+    {{--                                <div class="newsletter-detail">--}}
+    {{--                                    <h2>Join our newsletter and get...</h2>--}}
+    {{--                                    <h5>$20 discount for your first order</h5>--}}
+    {{--                                    <div class="input-box">--}}
+    {{--                                        <input type="email" class="form-control" id="exampleFormControlInput1"--}}
+    {{--                                               placeholder="Enter Your Email">--}}
+    {{--                                        <i class="fa-solid fa-envelope arrow"></i>--}}
+    {{--                                        <button class="sub-btn  btn-animation">--}}
+    {{--                                            <span class="d-sm-block d-none">Subscribe</span>--}}
+    {{--                                            <i class="fa-solid fa-arrow-right icon"></i>--}}
+    {{--                                        </button>--}}
+    {{--                                    </div>--}}
+    {{--                                </div>--}}
+    {{--                            </div>--}}
+    {{--                        </div>--}}
+    {{--                    </div>--}}
+    {{--                </div>--}}
+    {{--            </div>--}}
+    {{--        </div>--}}
+    {{--    </section>--}}
     <!-- Newsletter Section End -->
 @endsection

@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
@@ -42,13 +43,19 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request)
     {
+
         $request->validate([
             'name' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'description' => 'nullable|string|max:1000',
         ]);
+        $data = $request->all();
 
-        Category::create([
-            'name' => $request->name,
-        ]);
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('categories', 'public');
+        }
+
+        Category::create($data);
 
         return redirect()->route('categories.index')->with('success', 'Tạo danh mục mới thành công!');
     }
@@ -81,10 +88,19 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'description' => 'nullable|string|max:1000',
         ]);
+        $data = $request->all();
 
         $category = Category::findOrFail($id);
-        $category->update($request->all());
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('categories', 'public');
+            if ($category->image && file_exists(storage_path('app/public/' . $category->image))) {
+                Storage::delete('public/' . $category->image);            }
+        }
+        $category->update($data);
 
         return redirect()->route('categories.index')->with('success', 'Cập nhập danh mục thành công');
     }
