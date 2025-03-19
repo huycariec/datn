@@ -94,43 +94,31 @@
                      <li class="profile-nav onhover-dropdown pe-0 me-0">
                          <div class="media profile-media">
                              <img class="user-profile rounded-circle"
-                                 src="{{ Auth::user()->profile?->avatar ? asset('storage/image/' . Auth::user()->profile->avatar) : asset('storage/default-avatar.png') }}"
+                                 src="{{ Auth::user()->profile?->avatar ? asset('storage/image/' . Auth::user()->profile->avatar) : '/assets/images/user_placeholder_image.jpg' }}"
                                  alt="Avatar">
                              <div class="user-name-hide media-body">
                                  <span>{{Auth::user()->name}}</span>
-                                 <p class="mb-0 font-roboto">Admin<i class="middle ri-arrow-down-s-line"></i></p>
+                                 <p class="mb-0 font-roboto">Quản trị viên<i class="middle ri-arrow-down-s-line"></i></p>
                              </div>
                          </div>
                          <ul class="profile-dropdown onhover-show-div">
                              <li>
                                  <a href="{{route('admin.profile')}}">
                                      <i data-feather="users"></i>
-                                     <span>Profile</span>
+                                     <span>Thông tin cá nhân</span>
                                  </a>
                              </li>
                              <li>
                                  <a href="order-list.html">
                                      <i data-feather="archive"></i>
-                                     <span>Orders</span>
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="support-ticket.html">
-                                     <i data-feather="phone"></i>
-                                     <span>Spports Tickets</span>
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="profile-setting.html">
-                                     <i data-feather="settings"></i>
-                                     <span>Cài đặt</span>
+                                     <span>Đơn hàng mới</span>
                                  </a>
                              </li>
                              <li>
                                  <a data-bs-toggle="modal" data-bs-target="#staticBackdrop"
                                      href="javascript:void(0)">
                                      <i data-feather="log-out"></i>
-                                     <span>Log out</span>
+                                     <span>Đăng xuất</span>
                                  </a>
                              </li>
                          </ul>
