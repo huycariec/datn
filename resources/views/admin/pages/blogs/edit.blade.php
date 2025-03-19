@@ -11,7 +11,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <h2 class="text-center">Sửa bài viết</h2>
-            <form action="{{ route('blogs.update', $blog) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.blogs.update', $blog) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
