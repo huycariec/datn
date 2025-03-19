@@ -74,34 +74,54 @@
                 </div>
             </div>
         </div>
-    </section>
-    <!-- Home Section End -->
+    </div>
+</section>
+<!-- Home Section End -->
 
-    <!-- Category Section Start -->
-    <section>
-        <div class="container-fluid-lg">
-            <div class="row">
-                <div class="col-12">
-                    <div class="slider-9">
-                        @foreach($categories as $category)
-                            <div>
-                                <a href="{{ route('products.byCategory', $category->id) }}"
-                                   class="category-box category-dark wow fadeInUp">
-                                    <div>
-                                        @if($category->image)
-                                            <img src="{{ asset('storage/' . $category->image) }}"
-                                                 class="blur-up lazyload" alt="{{ $category->name }}">
-                                        @endif <h5>{{ $category->name }}</h5>
-                                    </div>
-                                </a>
+<!-- Category Section Start -->
+<section>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="d-flex flex-wrap justify-content-center gap-4">
+                    @foreach($categories as $category)
+                    <div class="category-box text-center p-3 shadow-lg rounded-3 bg-white" style="width: 250px;">
+                        <a href="{{ route('products.byCategory', $category->id) }}" class="d-block text-decoration-none">
+                            <div class="position-relative overflow-hidden">
+                                @if($category->image)
+                                <img src="{{ asset('storage/' . $category->image) }}" 
+                                    class="img-fluid rounded-3 shadow-lg category-img" 
+                                    alt="{{ $category->name }}" 
+                                    style="width: 220px; height: 220px; object-fit: cover; transition: transform 0.3s ease-in-out;">
+                                @endif 
                             </div>
-                        @endforeach
+                            <h5 class="mt-3 text-dark fw-bold">{{ $category->name }}</h5>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-    <!-- Category Section End -->
+    </div>
+</section>
+<!-- Category Section End -->
+
+<!-- Products Section Start -->
+<section class="product-section product-section-3">
+    <div class="container-fluid-lg">
+        <div class="title">
+            <h2>Sản phẩm bán chạy (best seller)</h2>
+        </div>
+        <div class="row g-sm-4 g-3">
+            <div class="col-xxl-12 ratio_110">
+                <div class="slider-6 img-slider">
+                    @foreach($products as $product)
+                    <div>
+                        <div class="product-box-5 wow fadeInUp">
+                            <div class="product-image">
+                                <a href="{{ route('product.detail', $product->id) }}">
+                                    <img src="{{ asset('uploads/products/' . $product->id . '.jpg') }}"
+                                        class="img-fluid blur-up lazyload bg-img" alt="{{ $product->name }}">
+                                </a>
 
 
     <!-- Products Section Start -->

@@ -40,7 +40,7 @@ class BlogController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-        return redirect()->route('blogs.index')->with('success', 'Bài viết đã được tạo!');
+        return redirect()->route('admin.blogs.index')->with('success', 'Bài viết đã được tạo!');
     }
 
     public function edit(Blog $blog)
@@ -67,12 +67,12 @@ class BlogController extends Controller
             'status' => $request->status ?? 'draft',
         ]);
 
-        return redirect()->route('blogs.index')->with('success', 'Bài viết đã được cập nhật!');
+        return redirect()->route('admin.blogs.index')->with('success', 'Bài viết đã được cập nhật!');
     }
 
     public function destroy(Blog $blog)
     {
         $blog->delete();
-        return redirect()->route('blogs.index')->with('success', 'Bài viết đã được xóa!');
+        return redirect()->route('admin.blogs.index')->with('success', 'Bài viết đã được xóa!');
     }
 }

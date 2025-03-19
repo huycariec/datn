@@ -99,10 +99,8 @@ class HomeController extends Controller
         $data = Page::where('type', 'introduction')->first();
         return view('client.page.introduction', compact('data'));
     }
-
     public function error()
-    {
-        return view('client.error');
-    }
-
+     {
+         return view('client.error');
+     }
 }

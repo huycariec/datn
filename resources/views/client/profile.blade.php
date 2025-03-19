@@ -52,8 +52,6 @@
                                             style="display: {{ $profile && $profile->avatar ? 'block' : 'none' }}; max-width: 150px; border-radius: 10px;">
                                     </div>
 
-
-
                                     <div class="mb-3">
                                         <label>Giới tính</label><br>
                                         <input type="radio" name="gender" value="1" id="male"

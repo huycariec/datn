@@ -41,19 +41,31 @@ class CategoryController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(CategoryRequest $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'description' => 'nullable|string|max:1000',
+    ]);
 
-        Category::create([
-            'name' => $request->name,
-        ]);
+    $data = [
+        'name' => $request->name,
+        'description' => $request->description, // Lưu mô tả
+    ];
 
-        return redirect()->route('categories.index')->with('success', 'Tạo danh mục mới thành công!');
+    // Kiểm tra nếu có file ảnh
+    if ($request->hasFile('image')) {
+        // Lưu ảnh vào storage/public/categories/
+        $imagePath = $request->file('image')->store('categories', 'public');
+        $data['image'] = $imagePath; // Lưu đường dẫn vào database
     }
 
-    /**
+    Category::create($data);
+
+    return redirect()->route('categories.index')->with('success', 'Tạo danh mục mới thành công!');
+}
+
+    /** 
      * Display the specified resource.
      */
     public function show(Category $category)
@@ -78,16 +90,38 @@ class CategoryController extends Controller
      * Update the specified resource in storage.
      */
     public function update(CategoryRequest $request, string $id)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'description' => 'nullable|string|max:1000',
+    ]);
 
-        $category = Category::findOrFail($id);
-        $category->update($request->all());
+    $category = Category::findOrFail($id);
 
-        return redirect()->route('categories.index')->with('success', 'Cập nhập danh mục thành công');
+    $data = [
+        'name' => $request->name,
+        'description' => $request->description,
+    ];
+
+    // Nếu có file ảnh mới, xóa ảnh cũ và lưu ảnh mới
+    if ($request->hasFile('image')) {
+        // Xóa ảnh cũ nếu có
+        if ($category->image) {
+            \Storage::disk('public')->delete($category->image);
+        }
+
+        // Lưu ảnh mới vào thư mục storage/public/categories/
+        $imagePath = $request->file('image')->store('categories', 'public');
+        $data['image'] = $imagePath;
     }
+
+    // Cập nhật danh mục
+    $category->update($data);
+
+    return redirect()->route('categories.index')->with('success', 'Cập nhật danh mục thành công!');
+}
+
 
     /**
      * Remove the specified resource from storage.

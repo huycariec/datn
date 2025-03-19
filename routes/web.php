@@ -43,8 +43,12 @@ Route::get('/error', [HomeController::class, 'error'])->name('error');
 Route::get('/product/{id}', [HomeController::class, 'showProductDetail'])->name('product.detail');
 
 Route::middleware(['auth'])->group(function () {
-    Route::resource('blogs', BlogController::class)->except(['show']);
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::resource('blogs', BlogController::class)->except(['show']);
+    });
 });
+
+
 // wishlist
 Route::middleware(['auth'])->group(function () {
     Route::get('/wishlist', [HomeController::class, 'wishlist'])->name('wishlist.index');

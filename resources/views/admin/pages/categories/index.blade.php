@@ -79,9 +79,10 @@
 
 
                                                         <!-- Nút mở modal, không chứa sự kiện submit -->
-                                                        <button type="button" class="btn p-0 border-0" onclick="openDeleteModal('{{ route('categories.destroy', $cate) }}')">
-                                                            <i class="ri-delete-bin-line"></i>
-                                                        </button>
+                                                        <button type="button" class="btn p-0 border-0 delete-btn" data-url="{{ route('categories.destroy', $cate) }}">
+    <i class="ri-delete-bin-line"></i>
+</button>
+
 
 
 
@@ -134,9 +135,15 @@
     @endsection
 
     <script>
-        function openDeleteModal(actionUrl) {
-            document.getElementById('deleteForm').action = actionUrl; // Cập nhật URL form
-            var modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal')); // Hiển thị modal
+        document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".delete-btn").forEach(button => {
+        button.addEventListener("click", function() {
+            let actionUrl = this.getAttribute("data-url");
+            document.getElementById("deleteForm").action = actionUrl; 
+            let modal = new bootstrap.Modal(document.getElementById("deleteConfirmModal"));
             modal.show();
-        }
+        });
+    });
+});
+
     </script>

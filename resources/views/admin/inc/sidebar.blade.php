@@ -146,10 +146,10 @@
     </a>
     <ul class="sidebar-submenu">
         <li>
-            <a href="{{ route("blogs.index") }}">Danh sách bài viết</a>
+            <a href="{{ route("admin.blogs.index") }}">Danh sách bài viết</a>
         </li>
         <li>
-            <a href="{{ route("blogs.create") }}">Thêm bài viết</a>
+            <a href="{{ route("admin.blogs.create") }}">Thêm bài viết</a>
         </li>
     </ul>
 </li>
