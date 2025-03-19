@@ -34,8 +34,26 @@
                         <li class="sidebar-list">
                             <a class="sidebar-link sidebar-title link-nav" href="index.html">
                                 <i class="ri-home-line"></i>
-                                <span>Dashboard</span>
+                                <span>Bảng điều khiển</span>
                             </a>
+                        </li>
+
+                        <li class="sidebar-list">
+                            <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                                <i class="ri-archive-line"></i>
+                                <span>Đơn hàng</span>
+                            </a>
+                            <ul class="sidebar-submenu">
+                                <li>
+                                    <a href="order-list.html">Danh sách đơn hàng</a>
+                                </li>
+                                <li>
+                                    <a href="order-detail.html">Order Detail</a>
+                                </li>
+                                <li>
+                                    <a href="order-tracking.html">Order Tracking</a>
+                                </li>
+                            </ul>
                         </li>
 
                         <li class="sidebar-list">
@@ -87,7 +105,7 @@
                         <li class="sidebar-list">
                             <a class="sidebar-link sidebar-title" href="javascript:void(0)">
                                 <i class="ri-user-3-line"></i>
-                                <span>Users</span>
+                                <span>Người dùng</span>
                             </a>
                             <ul class="sidebar-submenu">
                                 <li>
@@ -110,31 +128,6 @@
                                 </li>
                                 <li>
                                     <a href="{{ route('roles.create') }}">Tạo mới</a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li class="sidebar-list">
-                            <a class="sidebar-link sidebar-title link-nav" href="media.html">
-                                <i class="ri-price-tag-3-line"></i>
-                                <span>Media</span>
-                            </a>
-                        </li>
-
-                        <li class="sidebar-list">
-                            <a class="sidebar-link sidebar-title" href="javascript:void(0)">
-                                <i class="ri-archive-line"></i>
-                                <span>Orders</span>
-                            </a>
-                            <ul class="sidebar-submenu">
-                                <li>
-                                    <a href="order-list.html">Order List</a>
-                                </li>
-                                <li>
-                                    <a href="order-detail.html">Order Detail</a>
-                                </li>
-                                <li>
-                                    <a href="order-tracking.html">Order Tracking</a>
                                 </li>
                             </ul>
                         </li>
@@ -172,23 +165,9 @@
                         </li>
 
                         <li class="sidebar-list">
-                            <a class="sidebar-link sidebar-title link-nav" href="taxes.html">
-                                <i class="ri-price-tag-3-line"></i>
-                                <span>Tax</span>
-                            </a>
-                        </li>
-
-                        <li class="sidebar-list">
                             <a class="sidebar-link sidebar-title link-nav" href="{{route('reviews.index')}}">
                                 <i class="ri-star-line"></i>
                                 <span>Đánh giá</span>
-                            </a>
-                        </li>
-
-                        <li class="sidebar-list">
-                            <a class="sidebar-link sidebar-title link-nav" href="support-ticket.html">
-                                <i class="ri-phone-line"></i>
-                                <span>Support Ticket</span>
                             </a>
                         </li>
 
@@ -205,20 +184,6 @@
                                     <a href="{{ route('pages.index') }}">Quản lý trang</a>
                                 </li>
                             </ul>
-                        </li>
-
-                        <li class="sidebar-list">
-                            <a class="sidebar-link sidebar-title link-nav" href="reports.html">
-                                <i class="ri-file-chart-line"></i>
-                                <span>Reports</span>
-                            </a>
-                        </li>
-
-                        <li class="sidebar-list">
-                            <a class="sidebar-link sidebar-title link-nav" href="list-page.html">
-                                <i class="ri-list-check"></i>
-                                <span>List Page</span>
-                            </a>
                         </li>
                     </ul>
                 </div>

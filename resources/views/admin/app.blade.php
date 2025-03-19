@@ -16,7 +16,7 @@
     <link rel="icon" href="/assets/images/favicon.png" type="image/x-icon">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/x-icon">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Fastkart - Dashboard</title>
+    <title>Trang quản trị viên</title>
 
     @include("admin.inc.style")
 </head>
@@ -67,6 +67,7 @@
     @stack("modal")
     <!-- Modal End -->
     @include("admin.inc.script")
+    @include('admin.inc.notification')
     @stack("script")
     @yield('js-custom')
 
