@@ -102,7 +102,8 @@ Route::post('/admin-variant-store',[ProductVariantController::class,'store'])->n
 
 
 
-Route::group(['prefix' => 'admin', 'name' => 'admin.', 'middleware' => 'checkAdmin'], function () {
+//Route::group(['prefix' => 'admin', 'name' => 'admin.', 'middleware' => 'checkAdmin'], function () {
+    Route::group(['prefix' => 'admin', 'name' => 'admin.'], function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource("discounts", DiscountController::class);
