@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
@@ -41,31 +42,25 @@ class CategoryController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(CategoryRequest $request)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'description' => 'nullable|string|max:1000',
-    ]);
+    {
 
-    $data = [
-        'name' => $request->name,
-        'description' => $request->description, // Lưu mô tả
-    ];
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'description' => 'nullable|string|max:1000',
+        ]);
+        $data = $request->all();
 
-    // Kiểm tra nếu có file ảnh
-    if ($request->hasFile('image')) {
-        // Lưu ảnh vào storage/public/categories/
-        $imagePath = $request->file('image')->store('categories', 'public');
-        $data['image'] = $imagePath; // Lưu đường dẫn vào database
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('categories', 'public');
+        }
+
+        Category::create($data);
+
+        return redirect()->route('categories.index')->with('success', 'Tạo danh mục mới thành công!');
     }
 
-    Category::create($data);
-
-    return redirect()->route('categories.index')->with('success', 'Tạo danh mục mới thành công!');
-}
-
-    /** 
+    /**
      * Display the specified resource.
      */
     public function show(Category $category)
@@ -90,38 +85,25 @@ class CategoryController extends Controller
      * Update the specified resource in storage.
      */
     public function update(CategoryRequest $request, string $id)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        'description' => 'nullable|string|max:1000',
-    ]);
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'description' => 'nullable|string|max:1000',
+        ]);
+        $data = $request->all();
 
-    $category = Category::findOrFail($id);
+        $category = Category::findOrFail($id);
 
-    $data = [
-        'name' => $request->name,
-        'description' => $request->description,
-    ];
-
-    // Nếu có file ảnh mới, xóa ảnh cũ và lưu ảnh mới
-    if ($request->hasFile('image')) {
-        // Xóa ảnh cũ nếu có
-        if ($category->image) {
-            \Storage::disk('public')->delete($category->image);
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('categories', 'public');
+            if ($category->image && file_exists(storage_path('app/public/' . $category->image))) {
+                Storage::delete('public/' . $category->image);            }
         }
+        $category->update($data);
 
-        // Lưu ảnh mới vào thư mục storage/public/categories/
-        $imagePath = $request->file('image')->store('categories', 'public');
-        $data['image'] = $imagePath;
+        return redirect()->route('categories.index')->with('success', 'Cập nhập danh mục thành công');
     }
-
-    // Cập nhật danh mục
-    $category->update($data);
-
-    return redirect()->route('categories.index')->with('success', 'Cập nhật danh mục thành công!');
-}
-
 
     /**
      * Remove the specified resource from storage.
