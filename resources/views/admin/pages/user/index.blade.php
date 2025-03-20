@@ -11,8 +11,20 @@
                     @else
                         <div class="tab-pane fade show active" id="admin-list" role="tabpanel">
                             <div class="card card-table">
-                                <div class="card-header">
-                                    <h5>Danh sách <span class="text-danger">{{ $role == 'admin' ? 'quản trị viên' : 'người dùng' }}</span></h5>
+                                <div class="card-header d-flex justify-content-between">
+                                    <div>
+                                        <h5>Danh sách <span class="text-danger">{{ $role == 'admin' ? 'quản trị viên' : 'người dùng' }}</span></h5>
+                                    </div>
+                                    <div>
+                                        <div class="d-inline-flex">
+                                            @can('users_create')
+                                            <a href="{{ route('users.create') }}"
+                                               class="align-items-center btn btn-theme d-flex">
+                                                <i data-feather="plus-square"></i> Thêm mới
+                                            </a>
+                                            @endcan
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive table-product">
@@ -35,14 +47,14 @@
                                                 <tr>
                                                     <td>
                                                         <div class="table-image">
-                                                            <img src="{{ isset($user->profile->avatar) && file_exists(storage_path($user->profile->avatar)) ? \Illuminate\Support\Facades\Storage::url($user->profile->avatar) : "/assets/images/logo/logoadmin.jfif" }}" class="img-fluid" alt="">
+                                                            <img src="{{ isset($user->profile) && isset($user->profile->avatar) && file_exists(storage_path($user->profile->avatar)) ? \Illuminate\Support\Facades\Storage::url($user->profile->avatar) : "/assets/images/logo/logoadmin.jfif" }}" class="img-fluid" alt="">
                                                         </div>
                                                     </td>
                                                     <td>{{ $user->name }}</td>
-                                                    <td>{{ $user->email . '/' . $user->profile->phone }}</td>
-                                                    <td>{{ isset($user->profile->dob) ? \Carbon\Carbon::now()->diffInYears($user->profile->dob) . '/' : ""}} {{ $user->profile->gender == '0' ? 'Nam' : 'Nữ' }}</td>
+                                                    <td>{{ $user->email . '/' . isset($user->profile) && isset($user->profile->phone) ? $user->profile->phone : '' }}</td>
+                                                    <td>{{ isset($user->profile->dob) ? \Carbon\Carbon::now()->diffInYears($user->profile->dob) . '/' : ""}} {{ isset($user->profile) && isset($user->profile->gender) == '0' ? 'Nam' : 'Nữ' }}</td>
                                                     <td class="text-center">
-                                                        {{ $user->last_login_at->diffForHumans() }}
+                                                        {{ isset($user->profile) && isset($user->profile->last_login_at) ? $user->last_login_at->diffForHumans() : "" }}
                                                     </td>
                                                     @can('users_update')
                                                         <td class="text-center">

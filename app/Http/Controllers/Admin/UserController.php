@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -28,7 +31,36 @@ class UserController extends Controller
 
         return view('admin.pages.user.index', compact("users", 'role'));
     }
+    public function create()
+    {
+        $roles = Role::all();
+        return view('admin.pages.user.create', compact('roles'));
+    }
 
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|exists:roles,name',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => 'admin',
+            'password' => Hash::make($request->password),
+        ]);
+
+        Profile::create([
+            'user_id' => $user->id,
+        ]);
+
+        $user->assignRole($request->role);
+
+        return redirect()->route('admin.user.index', 'role=admin')->with('success', 'Tạo nhân viên thành công!');
+    }
 
     public function destroy($id)
     {
