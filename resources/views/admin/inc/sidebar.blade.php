@@ -19,7 +19,7 @@
                 <a href="index.html">
                     <img class="img-fluid main-logo main-white" src="/assets/images/logo/logo.png" alt="logo">
                     <img class="img-fluid main-logo main-dark" src="/assets/images/logo/logo-white.png"
-                        alt="logo">
+                         alt="logo">
                 </a>
             </div>
             <nav class="sidebar-main">
@@ -63,29 +63,34 @@
                             </a>
                             <ul class="sidebar-submenu">
                                 <li>
-                                <a href="{{route('admin.product.index')}}">Danh sách sản phẩm</a>
+                                    <a href="{{route('admin.product.index')}}">Danh sách sản phẩm</a>
                                 </li>
 
                                 <li>
-                                <a href="{{route('admin.product.create')}}">Thêm mới sản phẩm</a>                                </li>
+                                    <a href="{{route('admin.product.create')}}">Thêm mới sản phẩm</a></li>
                             </ul>
                         </li>
 
-                        <li class="sidebar-list">
-                            <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
-                                <i class="ri-list-check-2"></i>
-                                <span>Danh mục</span>
-                            </a>
-                            <ul class="sidebar-submenu">
-                                <li>
-                                    <a href="{{route('categories.index')}}">Danh sách</a>
-                                </li>
-
-                                <li>
-                                    <a href="{{route('categories.create')}}">Thêm mới danh mục</a>
-                                </li>
-                            </ul>
-                        </li>
+{{--                        @canany(['categories_list', 'categories_create'])--}}
+                            <li class="sidebar-list">
+                                <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
+                                    <i class="ri-list-check-2"></i>
+                                    <span>Danh mục</span>
+                                </a>
+                                <ul class="sidebar-submenu">
+                                    @can('categories_list')
+                                        <li>
+                                            <a href="{{route('categories.index')}}">Danh sách</a>
+                                        </li>
+                                    @endcan
+                                    @can('categories_create')
+                                        <li>
+                                            <a href="{{route('categories.create')}}">Thêm mới danh mục</a>
+                                        </li>
+                                    @endcan
+                                </ul>
+                            </li>
+{{--                        @endcanany--}}
 
                         <li class="sidebar-list">
                             <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
@@ -94,11 +99,11 @@
                             </a>
                             <ul class="sidebar-submenu">
                                 <li>
-                                <a href="{{route('admin.attribute.index')}}">Thuộc tính sản phẩm</a>
+                                    <a href="{{route('admin.attribute.index')}}">Thuộc tính sản phẩm</a>
                                 </li>
 
                                 <li>
-                                <a href="{{route('admin.attribute.create')}}">Thêm thuộc tính sản phẩm</a>                                </li>
+                                    <a href="{{route('admin.attribute.create')}}">Thêm thuộc tính sản phẩm</a></li>
                             </ul>
                         </li>
 
@@ -109,10 +114,10 @@
                             </a>
                             <ul class="sidebar-submenu">
                                 <li>
-                                    <a href="{{route('admin.user.index')}}">All users</a>
+                                    <a href="{{route('admin.user.index', 'role=user')}}">Danh sách khách hàng</a>
                                 </li>
                                 <li>
-                                    <a href="add-new-user.html">Add new user</a>
+                                    <a href="{{route('admin.user.index', 'role=admin')}}">Danh sách quản trị viên</a>
                                 </li>
                             </ul>
                         </li>
@@ -133,19 +138,19 @@
                         </li>
 
                         <li class="sidebar-list">
-    <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
-        <i class="ri-article-line"></i>
-        <span>Bài viết</span>
-    </a>
-    <ul class="sidebar-submenu">
-        <li>
-            <a href="{{ route("admin.blogs.index") }}">Danh sách bài viết</a>
-        </li>
-        <li>
-            <a href="{{ route("admin.blogs.create") }}">Thêm bài viết</a>
-        </li>
-    </ul>
-</li>
+                            <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
+                                <i class="ri-article-line"></i>
+                                <span>Bài viết</span>
+                            </a>
+                            <ul class="sidebar-submenu">
+                                <li>
+                                    <a href="{{ route("admin.blogs.index") }}">Danh sách bài viết</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route("admin.blogs.create") }}">Thêm bài viết</a>
+                                </li>
+                            </ul>
+                        </li>
 
 
                         <li class="sidebar-list">

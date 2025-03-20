@@ -11,12 +11,13 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
-
+use Spatie\Permission\Traits\HasRoles;
 
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+
     const Role_Admin = 'admin';
     const Role_User = 'user';
     /**
@@ -54,24 +55,27 @@ class User extends Authenticatable
 
     ];
 
-    public function profile(){
+    public function profile()
+    {
         return $this->hasOne(Profile::class);
     }
+
     public function addresses()
     {
         return $this->hasMany(Address::class, 'user_id', 'id');
     }
-    public function wishlist()
-{
-    return $this->hasMany(Wishlist::class, 'user_id');
-}
 
-public function isOnline()
-{
-    if (Cache::has('user-is-offline-' . $this->id)) {
-        return false;
+    public function wishlist()
+    {
+        return $this->hasMany(Wishlist::class, 'user_id');
     }
-    return $this->last_login_at && $this->last_login_at->gt(Carbon::now()->subMinutes(5));
-}
+
+    public function isOnline()
+    {
+        if (Cache::has('user-is-offline-' . $this->id)) {
+            return false;
+        }
+        return $this->last_login_at && $this->last_login_at->gt(Carbon::now()->subMinutes(5));
+    }
 
 }

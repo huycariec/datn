@@ -116,7 +116,7 @@ Route::post('/admin-variant-store',[ProductVariantController::class,'store'])->n
     Route::get('profile', [ProfileController::class, 'profile'])->name('admin.profile');
     Route::put('updateProfile', [ProfileController::class, 'updateProfile'])->name('admin.updateProfile');
 
-    Route::get('/user', [UserController::class, 'index'])->name('admin.user.index');
+    Route::get('/users', [UserController::class, 'index'])->name('admin.user.index');
     Route::delete('user/destroy/{id}', [UserController::class, 'destroy'])->name('admin.user.destroy');
 });
 

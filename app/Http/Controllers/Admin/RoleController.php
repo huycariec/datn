@@ -32,7 +32,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $permission_groups = Permission::get()->groupBy('guard_name');
+        $permission_groups = Permission::get()->groupBy('section');
         return view('admin.pages.roles.form', compact('permission_groups'));
     }
 
@@ -72,7 +72,7 @@ class RoleController extends Controller
     public function edit(string $id)
     {
         $role = Role::findOrFail($id);
-        $permission_groups = Permission::get()->groupBy('guard_name');
+        $permission_groups = Permission::get()->groupBy('section');
         return view('admin.pages.roles.form', compact('role', 'permission_groups'));
     }
 

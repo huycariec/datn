@@ -43,7 +43,7 @@
                                             @foreach ($permission_groups as $groupIndex => $permission_group)
                                                 <div class="col-12">
                                                     <ul>
-                                                        <li>{{ $permission_group[0]['guard_name'] }} :</li>
+                                                        <li>{{ __($permission_group[0]['section']) }} :</li>
                                                         <li>
                                                             <input class="checkbox_animated checkall-group" type="checkbox" data-group="{{ $groupIndex }}" id="group{{ $groupIndex }}">
                                                             <label class="form-check-label m-0" for="group{{ $groupIndex }}">Tất cả</label>
@@ -51,7 +51,7 @@
                                                         @foreach ($permission_group as $permission)
                                                             <li>
                                                                 <input class="checkbox_animated check-it" type="checkbox" name="permissions[]" value="{{ $permission->id }}" data-group="{{ $groupIndex }}" id="perm{{ $permission->id }}" {{ isset($role) && $role->permissions->contains('id', $permission->id) ? 'checked' : '' }}>
-                                                                <label class="form-check-label m-0" for="perm{{ $permission->id }}">{{ $permission->name }}</label>
+                                                                <label class="form-check-label m-0" for="perm{{ $permission->id }}">{{ __($permission->name) }}</label>
                                                             </li>
                                                         @endforeach
                                                     </ul>

@@ -26,6 +26,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'role' => 'user',
             'password' => Hash::make($request->password),
         ]);
 
@@ -33,12 +34,7 @@ class AuthController extends Controller
 
         Auth::login($user);
         return redirect('/')->with('message', 'Đăng kí toàn khoản thành công!');
-        //return response()->json(['message' => 'Đăng ký thành công'], 200);
     }
-
-
-
-
     public function showRegisterForm()
     {
         return view('auth.register');
