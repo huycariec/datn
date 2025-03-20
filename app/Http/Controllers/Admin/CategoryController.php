@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -98,7 +100,8 @@ class CategoryController extends Controller
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('categories', 'public');
             if ($category->image && file_exists(storage_path('app/public/' . $category->image))) {
-                Storage::delete('public/' . $category->image);            }
+                Storage::delete('public/' . $category->image);
+            }
         }
         $category->update($data);
 
@@ -111,20 +114,18 @@ class CategoryController extends Controller
     public function destroy(string $id)
     {
         $category = Category::findOrFail($id);
-        // $hash = Product::where('category_id', $id)->exists();
-        // if (!$hash) {
-        $category->delete();
-        $catefories = Category::all();
-        foreach ($catefories as $x) {
-            if ($x->parent_id == $id) {
-                $x->delete();
+        $hash = Product::where('category_id', $id)->exists();
+        if (!$hash) {
+            $category->delete();
+            $catefories = Category::all();
+            foreach ($catefories as $x) {
+                if ($x->parent_id == $id) {
+                    $x->delete();
+                }
             }
+            return redirect()->route('categories.index')->with('success', 'Xoá danh mục thành công !');
+        } else {
+            return redirect()->route('admin.categories.index')->with('error', 'Vui lòng chuyển các sản phẩm sang danh mục khác để tiền hành xoá danh mục này.');
         }
-        return redirect()->route('categories.index')->with('success', 'Xoá danh mục thành công !');
-
-        // }else{
-        //     return redirect()->route('admin.categories.index')->with('error', 'Vui lòng chuyển các sản phẩm sang danh mục khác để tiền hành xoá danh mục này.');
-
-        // }
     }
 }
