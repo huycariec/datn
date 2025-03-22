@@ -109,8 +109,6 @@ Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remov
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index'); // Hiển thị trang checkout
 
 
-
-
 //Route::group(['prefix' => 'admin', 'name' => 'admin.', 'middleware' => 'checkAdmin'], function () {
     Route::group(['prefix' => 'admin', 'name' => 'admin.'], function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
