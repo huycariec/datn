@@ -47,8 +47,9 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($request->only('email', 'password'))) {
-            return redirect('/')->with('message', 'Đăng nhập thành công!');
+            return redirect()->intended('/')->with('message', 'Đăng nhập thành công!');
         }
+        
 
         return redirect()->back()->with('error', 'Tài khoản hoặc mật khẩu không đúng!');
     }
