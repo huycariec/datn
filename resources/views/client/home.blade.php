@@ -411,9 +411,14 @@
                         <div>
                             <div class="product-box-5 wow fadeInUp">
                                 <div class="product-image">
-                                    <a href="product-left-thumbnail.html">
-                                        <img src="../assets/client/assets/images/fashion/product/7.jpg"
-                                             class="img-fluid blur-up lazyload bg-img" alt="">
+                                    <a href="{{ route('product.detail', $product->id) }}">
+                                        {{-- <img src="{{ asset('uploads/products/' . $product->id . '.jpg') }}" 
+                                            class="img-fluid blur-up lazyload bg-img" alt="{{ $product->name }}"> --}}
+                                        @foreach ($product->images as $image)
+                                            @if(empty($image->product_variant_id))
+                                                <img src="{{ Storage::url($image->url) }}" alt="Hình ảnh sản phẩm" width="100">
+                                            @endif
+                                        @endforeach
                                     </a>
 
                                     <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
@@ -455,6 +460,14 @@
                             </div>
                         </div>
 
+<!-- banner section start -->
+<section>
+    <div class="container-fluid-lg">
+        <div class="row g-md-4 g-3">
+            <div class="col-xxl-8 col-xl-12 col-md-7">
+                <div class="banner-contain hover-effect">
+                    <img src="../assets/client/assets/images/fashion/banner/1.jpg" class="bg-img blur-up lazyload" alt="">
+                    <div class="banner-details p-center-left p-4">
                         <div>
                             <div class="product-box-5 wow fadeInUp">
                                 <div class="product-image">

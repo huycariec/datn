@@ -35,9 +35,67 @@ class HomeController extends Controller
 
     public function showProductDetail($id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::with([
+            'variants.variantAttributes.attributeValue.attribute'
+        ])->find($id);
 
-        return view('client.page.detail', compact('product'));
+        $attributesGrouped = [];
+        foreach ($product->variants as $variant) {
+            foreach ($variant->variantAttributes as $variantAttribute) {
+                if (
+                    isset($variantAttribute->attributeValue) && 
+                    isset($variantAttribute->attributeValue->attribute)
+                ) {
+                    $attributeId   = $variantAttribute->attributeValue->attribute->id;  // Lấy ID của attribute
+                    $attributeName = $variantAttribute->attributeValue->attribute->name; // Lấy tên attribute
+                    $attributeValue = $variantAttribute->attributeValue->value; // Lấy giá trị attribute
+                    
+                    // Khởi tạo mảng nếu chưa có key
+                    if (!isset($attributesGrouped[$attributeName])) {
+                        $attributesGrouped[$attributeName] = [];
+                    }
+        
+                    // Tránh trùng lặp bằng cách kiểm tra theo ID
+                    $exists = false;
+                    foreach ($attributesGrouped[$attributeName] as $attr) {
+                        if ($attr['id'] == $attributeId && $attr['value'] == $attributeValue) {
+                            $exists = true;
+                            break;
+                        }
+                    }
+        
+                    // Nếu chưa tồn tại, thêm vào mảng
+                    if (!$exists) {
+                        $attributesGrouped[$attributeName][] = [
+                            'id'    => $attributeId,
+                            'value' => $attributeValue
+                        ];
+                    }
+                }
+            }
+        }
+        $result = [];
+        foreach ($product->variants as $variant) {
+            $sku = $variant->sku;
+            $variantData = [
+                'product_variant' => $variant,
+                'attributes' => []
+            ];
+
+            foreach ($variant->variantAttributes as $variantAttribute) {
+                $variantData['attributes'][] = [
+                    'attributes_id' => $variantAttribute->attributeValue->attributes_id ?? null, // Tên thuộc tính (Màu sắc, Size, ...)
+                    'value' => $variantAttribute->attributeValue->value ?? null // Giá trị thuộc tính (Vàng, S, ...)
+                ];
+            }
+
+            $result[$sku] = $variantData;
+        }
+        // dd($result);
+
+         // Chuyển `$result` thành JSON rồi gửi qua view
+        $resultJson = json_encode($result, JSON_PRETTY_PRINT);
+        return view('client.page.detail', compact('product', 'attributesGrouped', 'resultJson'));
     }
 
     public function addToWishlist($productId)
