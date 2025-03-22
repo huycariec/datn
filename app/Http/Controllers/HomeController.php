@@ -158,7 +158,8 @@ class HomeController extends Controller
         return view('client.page.introduction', compact('data'));
     }
     public function error()
-     {
-         return view('client.error');
-     }
+    {
+        return view('client.error');
+    }
+
 }
