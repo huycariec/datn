@@ -8,6 +8,7 @@ use App\Models\Address;
 use App\Models\District;
 use App\Models\Profile;
 use App\Models\Province;
+use App\Models\UserAddress;
 use App\Models\Ward;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -83,26 +84,34 @@ class AddressController extends Controller
 
     public function addAddressForm()
     {
-        return view('client.add-address');
+        $provinces = Province::all();
+        return view('client.add-address', compact('provinces'));
+    }
+
+    public function getDistricts($province_id)
+    {
+        $districts = District::where('province_id', $province_id)->get();
+        return response()->json($districts);
+    }
+
+    public function getWards($district_id)
+    {
+        $wards = Ward::where('district_id', $district_id)->get();
+        return response()->json($wards);
     }
 
     public function addAddress(Request $request)
     {
         $validated = $request->validate([
-            'province_name' => 'required|string',
-            'district_name' => 'required|string',
-            'ward_name' => 'required|string',
-            'address' => 'required|string',
+            'province_id' => 'required',
+            'district_id' => 'required',
+            'ward_id' => 'required',
+            'address_detail' => 'required|string',
         ]);
 
         $user = Auth::user();
-        $user->addresses()->create([
-            'province_name' => $validated['province_name'],
-            'district_name' => $validated['district_name'],
-            'ward_name' => $validated['ward_name'],
-            'address_detail' => $validated['address'],
-        ]);
-
+        $validated['user_id'] = $user->id;
+        UserAddress::create($validated);
         return redirect()->route('client.profile')->with('success', 'Thêm địa chỉ thành công!');
     }
 

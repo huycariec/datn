@@ -81,7 +81,8 @@ Route::post('/address/add', [AddressController::class, 'addAddress'])->name('cli
 Route::get('/address/edit/{id}', [AddressController::class, 'editAddress'])->name('client.editAddress');
 Route::put('/address/update/{id}', [AddressController::class, 'updateAddress'])->name('client.updateAddress');
 Route::delete('/address/delete/{id}', [AddressController::class, 'deleteAddress'])->name('client.deleteAddress');
-
+Route::get('/get-districts/{province_id}', [AddressController::class, 'getDistricts']);
+Route::get('/get-wards/{district_id}', [AddressController::class, 'getWards']);
 
 Route::post('/add-address', [AddressController::class, 'addAddress'])->name('client.addAddress');
 Route::put('/update-address/{id}', [AddressController::class, 'updateAddress'])->name('client.updateAddress');

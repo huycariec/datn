@@ -11,8 +11,11 @@
                             <form action="{{ route('client.addAddress') }}" method="POST">
                                 @csrf
                                 <div class="form-floating mb-3">
-                                    <select name="province_name" class="form-select @error('province_name') is-invalid @enderror" id="province" required>
+                                    <select name="province_id" class="form-select @error('province_name') is-invalid @enderror" id="province" required>
                                         <option value="" selected>Chọn Tỉnh/Thành</option>
+                                        @foreach($provinces as $province)
+                                            <option value="{{ $province->id }}">{{ $province->name }}</option>
+                                        @endforeach
                                     </select>
                                     <label for="province">Tỉnh/Thành</label>
                                     @error('province_name')
@@ -21,7 +24,7 @@
                                 </div>
 
                                 <div class="form-floating mb-3">
-                                    <select name="district_name" class="form-select @error('district_name') is-invalid @enderror" id="district" required>
+                                    <select name="district_id" class="form-select @error('district_name') is-invalid @enderror" id="district" required>
                                         <option value="" selected>Chọn Quận/Huyện</option>
                                     </select>
                                     <label for="district">Quận/Huyện</label>
@@ -31,7 +34,7 @@
                                 </div>
 
                                 <div class="form-floating mb-3">
-                                    <select name="ward_name" class="form-select @error('ward_name') is-invalid @enderror" id="ward" required>
+                                    <select name="ward_id" class="form-select @error('ward_name') is-invalid @enderror" id="ward" required>
                                         <option value="" selected>Chọn Phường/Xã</option>
                                     </select>
                                     <label for="ward">Phường/Xã</label>
@@ -57,78 +60,55 @@
         </div>
     </section>
 
+    <!-- Thêm jQuery và script Ajax -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const provinceSelect = document.getElementById("province");
-            const districtSelect = document.getElementById("district");
-            const wardSelect = document.getElementById("ward");
-
-            function loadProvinces() {
-                fetch("https://provinces.open-api.vn/api/p/")
-                    .then(response => response.json())
-                    .then(data => {
-                        provinceSelect.innerHTML = '<option value="" selected>Chọn Tỉnh/Thành</option>';
-                        data.forEach(province => {
-                            provinceSelect.innerHTML += `<option value="${province.name}">${province.name}</option>`;
-                        });
-                    });
-            }
-
-            function loadDistricts(provinceName) {
-                fetch(`https://provinces.open-api.vn/api/p/`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const province = data.find(p => p.name === provinceName);
-                        if (province) {
-                            fetch(`https://provinces.open-api.vn/api/p/${province.code}?depth=2`)
-                                .then(response => response.json())
-                                .then(data => {
-                                    districtSelect.innerHTML = '<option value="" selected>Chọn Quận/Huyện</option>';
-                                    wardSelect.innerHTML = '<option value="" selected>Chọn Phường/Xã</option>';
-                                    data.districts.forEach(district => {
-                                        districtSelect.innerHTML += `<option value="${district.name}">${district.name}</option>`;
-                                    });
-                                });
+        $(document).ready(function() {
+            // Khi thay đổi tỉnh/thành
+            $('#province').change(function() {
+                var provinceId = $(this).val();
+                if (provinceId) {
+                    $.ajax({
+                        url: '/get-districts/' + provinceId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#district').empty();
+                            $('#district').append('<option value="">Chọn Quận/Huyện</option>');
+                            $.each(data, function(key, value) {
+                                $('#district').append('<option value="' + value.id + '">' + value.name + '</option>');
+                            });
+                            $('#ward').empty();
+                            $('#ward').append('<option value="">Chọn Phường/Xã</option>');
                         }
                     });
-            }
-
-            function loadWards(districtName) {
-                fetch(`https://provinces.open-api.vn/api/d/`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const district = data.find(d => d.name === districtName);
-                        if (district) {
-                            fetch(`https://provinces.open-api.vn/api/d/${district.code}?depth=2`)
-                                .then(response => response.json())
-                                .then(data => {
-                                    wardSelect.innerHTML = '<option value="" selected>Chọn Phường/Xã</option>';
-                                    data.wards.forEach(ward => {
-                                        wardSelect.innerHTML += `<option value="${ward.name}">${ward.name}</option>`;
-                                    });
-                                });
-                        }
-                    });
-            }
-
-            loadProvinces();
-
-            provinceSelect.addEventListener("change", function() {
-                const provinceName = this.value;
-                if (provinceName) {
-                    loadDistricts(provinceName);
                 } else {
-                    districtSelect.innerHTML = '<option value="" selected>Chọn Quận/Huyện</option>';
-                    wardSelect.innerHTML = '<option value="" selected>Chọn Phường/Xã</option>';
+                    $('#district').empty();
+                    $('#district').append('<option value="">Chọn Quận/Huyện</option>');
+                    $('#ward').empty();
+                    $('#ward').append('<option value="">Chọn Phường/Xã</option>');
                 }
             });
 
-            districtSelect.addEventListener("change", function() {
-                const districtName = this.value;
-                if (districtName) {
-                    loadWards(districtName);
+            // Khi thay đổi quận/huyện
+            $('#district').change(function() {
+                var districtId = $(this).val();
+                if (districtId) {
+                    $.ajax({
+                        url: '/get-wards/' + districtId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#ward').empty();
+                            $('#ward').append('<option value="">Chọn Phường/Xã</option>');
+                            $.each(data, function(key, value) {
+                                $('#ward').append('<option value="' + value.id + '">' + value.name + '</option>');
+                            });
+                        }
+                    });
                 } else {
-                    wardSelect.innerHTML = '<option value="" selected>Chọn Phường/Xã</option>';
+                    $('#ward').empty();
+                    $('#ward').append('<option value="">Chọn Phường/Xã</option>');
                 }
             });
         });
