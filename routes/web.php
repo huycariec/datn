@@ -72,7 +72,17 @@ Route::get('huong-dan-mua-hang', [HomeController::class, 'Instruct'])->name('ins
 Route::get('gioi-thieu', [HomeController::class, 'Introduction'])->name('introduction');
 
 Route::get('/profile', [AddressController::class, 'showProfile'])->name('client.profile');
-Route::put('/profile', [AddressController::class, 'updateProfile'])->name('client.updateProfile');
+Route::get('/profile/edit', [AddressController::class, 'editProfile'])->name('client.editProfile');
+Route::put('/profile/update', [AddressController::class, 'updateProfile'])->name('client.updateProfile');
+Route::put('/profile/update-avatar', [AddressController::class, 'updateAvatar'])->name('client.updateAvatar');
+
+Route::get('/address/add', [AddressController::class, 'addAddressForm'])->name('client.addAddressForm');
+Route::post('/address/add', [AddressController::class, 'addAddress'])->name('client.addAddress');
+Route::get('/address/edit/{id}', [AddressController::class, 'editAddress'])->name('client.editAddress');
+Route::put('/address/update/{id}', [AddressController::class, 'updateAddress'])->name('client.updateAddress');
+Route::delete('/address/delete/{id}', [AddressController::class, 'deleteAddress'])->name('client.deleteAddress');
+
+
 Route::post('/add-address', [AddressController::class, 'addAddress'])->name('client.addAddress');
 Route::put('/update-address/{id}', [AddressController::class, 'updateAddress'])->name('client.updateAddress');
 Route::delete('/delete/{id}', [AddressController::class, 'deleteAddress'])->name('client.deleteAddress');
