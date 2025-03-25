@@ -30,6 +30,10 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $profile = $user->profile()->create([
+            'user_id' => $user->id,
+        ]);
+
         event(new Registered($user));
 
         Auth::login($user);
@@ -49,7 +53,7 @@ class AuthController extends Controller
         if (Auth::attempt($request->only('email', 'password'))) {
             return redirect()->intended('/')->with('message', 'Đăng nhập thành công!');
         }
-        
+
 
         return redirect()->back()->with('error', 'Tài khoản hoặc mật khẩu không đúng!');
     }

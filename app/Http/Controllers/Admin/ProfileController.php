@@ -14,7 +14,6 @@ class ProfileController extends Controller
 
     public function profile(Request $request)
     {
-        // $user = $request->user();
         $user = $request->user();
         $profile = $user->profile();
         return view('admin.pages.profile',compact('profile'));
