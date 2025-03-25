@@ -26,6 +26,7 @@
         href="https://fonts.googleapis.com/css2?family=Great+Vibes&amp;family=Qwitcher+Grypen:wght@400;700&amp;display=swap">
 
     @include('client.inc.style')
+    @yield('css')
 </head>
 
 <body class="theme-color-5">
@@ -39,6 +40,7 @@
     @include('client.inc.footer')
 
     @include('client.inc.script')
+    @yield('js-custom')
 </body>
 
 

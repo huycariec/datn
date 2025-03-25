@@ -26,19 +26,19 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'role' => 'user',
             'password' => Hash::make($request->password),
+        ]);
+
+        $profile = $user->profile()->create([
+            'user_id' => $user->id,
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
         return redirect('/')->with('message', 'Đăng kí toàn khoản thành công!');
-        //return response()->json(['message' => 'Đăng ký thành công'], 200);
     }
-
-
-
-
     public function showRegisterForm()
     {
         return view('auth.register');
@@ -51,8 +51,9 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($request->only('email', 'password'))) {
-            return redirect('/')->with('message', 'Đăng nhập thành công!');
+            return redirect()->intended('/')->with('message', 'Đăng nhập thành công!');
         }
+
 
         return redirect()->back()->with('error', 'Tài khoản hoặc mật khẩu không đúng!');
     }

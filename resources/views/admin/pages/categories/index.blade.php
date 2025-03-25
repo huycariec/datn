@@ -11,12 +11,14 @@
                             <div class="title-header option-title">
                                 <h5>Danh sách danh mục</h5>
 
-                                <form class="d-inline-flex">
-                                    <a href="{{route('categories.create')}}"
-                                       class="align-items-center btn btn-theme d-flex">
-                                        <i data-feather="plus-square"></i>Thêm mới
-                                    </a>
-                                </form>
+                                @can('categories_create')
+                                    <div class="d-inline-flex">
+                                        <a href="{{route('categories.create')}}"
+                                           class="align-items-center btn btn-theme d-flex">
+                                            <i data-feather="plus-square"></i>Thêm mới
+                                        </a>
+                                    </div>
+                                @endcan
                             </div>
 
                             <form method="GET" action="{{ route('categories.index') }}"
@@ -63,71 +65,30 @@
                                                 </td>
                                                 <td>{{$cate->name}}</td>
                                                 <td>{{$cate->description}}</td>
-                                                <td>
-                                                    <ul>
-                                                        <!-- <li>
-                                                            <a href="order-detail.html">
-                                                                <i class="ri-eye-line"></i>
-                                                            </a>
-                                                        </li> -->
+                                                @canany(['categories_update', 'categories_delete'])
+                                                    <td>
+                                                        <ul>
 
-                                                        <li>
-                                                            <a href="{{route('categories.edit',$cate)}}">
-                                                                <i class="ri-pencil-line"></i>
-                                                            </a>
-                                                        </li>
+                                                            @can('categories_update')
+                                                                <li>
+                                                                    <a href="{{route('categories.edit',$cate)}}">
+                                                                        <i class="ri-pencil-line"></i>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
 
-                                                        <li>
-
-
-                                                            <!-- Nút mở modal, không chứa sự kiện submit -->
-                                                            <button type="button" class="btn p-0 border-0 delete-btn"
-                                                                    data-url="{{ route('categories.destroy', $cate) }}">
-                                                                <i class="ri-delete-bin-line"></i>
-                                                            </button>
-
-
-                                                            <!-- Bootstrap Modal -->
-                                                            <div class="modal fade" id="deleteConfirmModal"
-                                                                 tabindex="-1" aria-labelledby="deleteConfirmLabel"
-                                                                 aria-hidden="true">
-                                                                <div class="modal-dialog">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header">
-                                                                            <h5 class="modal-title"
-                                                                                id="deleteConfirmLabel">Xác nhận
-                                                                                xóa</h5>
-                                                                            <button type="button" class="btn-close"
-                                                                                    data-bs-dismiss="modal"
-                                                                                    aria-label="Close"></button>
-                                                                        </div>
-                                                                        <div class="modal-body">
-                                                                            Bạn có chắc chắn muốn xóa danh mục này
-                                                                            không?
-                                                                        </div>
-                                                                        <div class="modal-footer">
-                                                                            <button type="button"
-                                                                                    class="btn btn-secondary"
-                                                                                    data-bs-dismiss="modal">Hủy
-                                                                            </button>
-                                                                            <!-- Form xóa với action được cập nhật động -->
-                                                                            <form id="deleteForm" action=""
-                                                                                  method="POST" style="display:inline;">
-                                                                                @csrf
-                                                                                @method('DELETE')
-                                                                                <button type="submit"
-                                                                                        class="btn btn-danger">Xóa
-                                                                                </button>
-                                                                            </form>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-
-                                                        </li>
-                                                    </ul>
-                                                </td>
+                                                            @can('categories_delete')
+                                                                <li>
+                                                                    <button type="button"
+                                                                            class="btn p-0 border-0 delete-btn"
+                                                                            data-url="{{ route('categories.destroy', $cate) }}">
+                                                                        <i class="ri-delete-bin-line"></i>
+                                                                    </button>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </td>
+                                                @endcanany
                                             </tr>
                                         @endforeach
                                         </tbody>
@@ -150,7 +111,41 @@
             </div>
         </div>
     </div>
-
+    <div class="modal fade" id="deleteConfirmModal"
+         tabindex="-1" aria-labelledby="deleteConfirmLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"
+                        id="deleteConfirmLabel">Xác nhận
+                        xóa</h5>
+                    <button type="button" class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Bạn có chắc chắn muốn xóa danh mục này
+                    không?
+                </div>
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">Hủy
+                    </button>
+                    <!-- Form xóa với action được cập nhật động -->
+                    <form id="deleteForm" action=""
+                          method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit"
+                                class="btn btn-danger">Xóa
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('script')

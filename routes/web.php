@@ -1,16 +1,18 @@
 <?php
 
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\PageController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Client\CartController;
+use App\Http\Controllers\Admin\ProductAttribute;
+use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DiscountController;
-use App\Http\Controllers\Admin\PageController;
-use App\Http\Controllers\Admin\RoleController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Admin\ReviewController;
-use App\Http\Controllers\Admin\ProductAttribute;
-use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Client\CheckoutController;
 use App\Http\Controllers\Admin\ProductVariantController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\ProfileController;
@@ -18,7 +20,6 @@ use App\Models\Admin\Profile;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AddressController;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -71,8 +72,18 @@ Route::get('huong-dan-mua-hang', [HomeController::class, 'Instruct'])->name('ins
 Route::get('gioi-thieu', [HomeController::class, 'Introduction'])->name('introduction');
 
 Route::get('/profile', [AddressController::class, 'showProfile'])->name('client.profile');
-Route::put('/profile', [AddressController::class, 'updateProfile'])->name('client.updateProfile');
-Route::post('/add-address', [AddressController::class, 'addAddress'])->name('client.addAddress');
+Route::get('/profile/edit', [AddressController::class, 'editProfile'])->name('client.editProfile');
+Route::put('/profile/update', [AddressController::class, 'updateProfile'])->name('client.updateProfile');
+Route::put('/profile/update-avatar', [AddressController::class, 'updateAvatar'])->name('client.updateAvatar');
+
+Route::get('/address/add', [AddressController::class, 'addAddressForm'])->name('client.addAddressForm');
+Route::post('/address/add', [AddressController::class, 'addAddress'])->name('client.addAddress');
+Route::get('/edit-address/{id}', [AddressController::class, 'editAddress'])->name('client.editAddress');
+Route::put('/update-address/{id}', [AddressController::class, 'updateAddress'])->name('client.updateAddress');
+Route::delete('/address/delete/{id}', [AddressController::class, 'deleteAddress'])->name('client.deleteAddress');
+Route::get('/get-districts/{province_id}', [AddressController::class, 'getDistricts']);
+Route::get('/get-wards/{district_id}', [AddressController::class, 'getWards']);
+
 Route::put('/update-address/{id}', [AddressController::class, 'updateAddress'])->name('client.updateAddress');
 Route::delete('/delete/{id}', [AddressController::class, 'deleteAddress'])->name('client.deleteAddress');
 //kiều duy du 13/2/2025 product
@@ -97,9 +108,15 @@ Route::get('/admin-attribute-edit/{id}',[ProductAttribute::class,'edit'])->name(
 Route::get('/admin-variant-index/{id}',[ProductVariantController::class,'index'])->name('admin.variant.index');
 Route::post('/admin-variant-store',[ProductVariantController::class,'store'])->name('admin.variant.store');
 
+// Kiều Duy du 12/3/2025 cart
+Route::post('cart-store',[CartController::class,'store'])->name('cart.store')->middleware('auth');
+Route::get('cart-index',[CartController::class,'index'])->name('cart.index')->middleware('auth');
+Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity'])->name('cart.updateQuantity');
+Route::post('/cart/updateVariant', [CartController::class, 'updateVariant'])->name('cart.updateVariant');
+Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 
-
-
+//Kiều Duy Du 19/3/2025 checkout
+Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index'); // Hiển thị trang checkout
 
 
 //Route::group(['prefix' => 'admin', 'name' => 'admin.', 'middleware' => 'checkAdmin'], function () {
@@ -116,7 +133,10 @@ Route::post('/admin-variant-store',[ProductVariantController::class,'store'])->n
     Route::get('profile', [ProfileController::class, 'profile'])->name('admin.profile');
     Route::put('updateProfile', [ProfileController::class, 'updateProfile'])->name('admin.updateProfile');
 
-    Route::get('/user', [UserController::class, 'index'])->name('admin.user.index');
+    Route::get('/users', [UserController::class, 'index'])->name('admin.user.index');
     Route::delete('user/destroy/{id}', [UserController::class, 'destroy'])->name('admin.user.destroy');
+
+    Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
 });
 
