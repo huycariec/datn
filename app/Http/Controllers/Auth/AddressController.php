@@ -102,45 +102,74 @@ class AddressController extends Controller
 
     public function addAddress(Request $request)
     {
-        $validated = $request->validate([
-            'province_id' => 'required',
-            'district_id' => 'required',
-            'ward_id' => 'required',
-            'address_detail' => 'required|string',
-        ]);
+        try {
+            $rules = [
+                'province_id' => 'required',
+                'district_id' => 'required',
+                'ward_id' => 'required',
+                'address_detail' => 'required|string',
+            ];
 
-        $user = Auth::user();
-        $validated['user_id'] = $user->id;
-        UserAddress::create($validated);
-        return redirect()->route('client.profile')->with('success', 'Thêm địa chỉ thành công!');
+            $messages = [
+                'province_id.required' => 'Vui lòng chọn tỉnh/thành phố.',
+                'district_id.required' => 'Vui lòng chọn quận/huyện.',
+                'ward_id.required' => 'Vui lòng chọn phường/xã.',
+                'address_detail.required' => 'Vui lòng nhập địa chỉ chi tiết.',
+                'address_detail.string' => 'Địa chỉ chi tiết phải là chuỗi ký tự.',
+            ];
+
+            $validated = $request->validate($rules, $messages);
+            $user = Auth::user();
+            $validated['user_id'] = $user->id;
+            UserAddress::create($validated);
+            return redirect()->route('client.profile')->with('success', 'Thêm địa chỉ thành công!');
+        } catch (\Exception $exception) {
+            return redirect()->route('client.addAddress')->with('error', $exception->getMessage());
+        }
     }
 
     public function editAddress($id)
     {
+        $provinces = Province::all();
         $address = Auth::user()->addresses()->findOrFail($id);
-        return view('client.edit-address', compact('address'));
+        return view('client.edit-address', compact('address', 'provinces'));
     }
 
     public function updateAddress(Request $request, $id)
     {
-        $address = Auth::user()->addresses()->findOrFail($id);
+        try {
+            $rules = [
+                'province_id' => 'required',
+                'district_id' => 'required',
+                'ward_id' => 'required',
+                'address_detail' => 'required|string',
+            ];
 
-        $validated = $request->validate([
-            'province_name' => 'required|string',
-            'district_name' => 'required|string',
-            'ward_name' => 'required|string',
-            'address' => 'required|string',
-        ]);
+            $messages = [
+                'province_id.required' => 'Vui lòng chọn tỉnh/thành phố.',
+                'district_id.required' => 'Vui lòng chọn quận/huyện.',
+                'ward_id.required' => 'Vui lòng chọn phường/xã.',
+                'address_detail.required' => 'Vui lòng nhập địa chỉ chi tiết.',
+                'address_detail.string' => 'Địa chỉ chi tiết phải là chuỗi ký tự.',
+            ];
 
-        $address->update([
-            'province_name' => $validated['province_name'],
-            'district_name' => $validated['district_name'],
-            'ward_name' => $validated['ward_name'],
-            'address_detail' => $validated['address'],
-        ]);
+            $validated = $request->validate($rules, $messages);
 
-        return redirect()->route('client.profile')->with('success', 'Cập nhật địa chỉ thành công!');
+            $address = Auth::user()->addresses()->findOrFail($id);
+
+            $address->update([
+                'province_id' => $validated['province_id'],
+                'district_id' => $validated['district_id'],
+                'ward_id' => $validated['ward_id'],
+                'address_detail' => $validated['address_detail'],
+            ]);
+
+            return redirect()->route('client.profile')->with('success', 'Cập nhật địa chỉ thành công!');
+        } catch (\Exception $exception) {
+            return redirect()->route('client.editAddress', ['id' => $id])->with('error', $exception->getMessage());
+        }
     }
+
 
     public function deleteAddress($id)
     {

@@ -4,6 +4,9 @@
     <section class="profile-section section-b-space">
         <div class="container-fluid-lg w-100">
             <div class="row justify-content-center">
+                <div class="py-3">
+                    <h3 class="text-center">Thông tin cá nhân</h3>
+                </div>
                 <div class="col-lg-10">
                     <!-- Tab Navigation -->
                     <ul class="nav nav-tabs mb-4" id="profileTab" role="tablist">
@@ -15,7 +18,6 @@
                         </li>
                     </ul>
 
-                    <!-- Tab Content -->
                     <div class="tab-content" id="profileTabContent">
                         <!-- Tab Hồ sơ -->
                         <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">

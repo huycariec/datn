@@ -5,6 +5,7 @@
         <div class="container-fluid-lg w-100">
             <div class="row justify-content-center">
                 <div class="col-lg-6">
+                    <a href="{{ route('client.profile') }}">Trở lại</a>
                     <div class="card">
                         <div class="card-body">
                             <h3 class="mb-3">Chỉnh sửa hồ sơ</h3>

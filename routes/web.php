@@ -78,13 +78,12 @@ Route::put('/profile/update-avatar', [AddressController::class, 'updateAvatar'])
 
 Route::get('/address/add', [AddressController::class, 'addAddressForm'])->name('client.addAddressForm');
 Route::post('/address/add', [AddressController::class, 'addAddress'])->name('client.addAddress');
-Route::get('/address/edit/{id}', [AddressController::class, 'editAddress'])->name('client.editAddress');
-Route::put('/address/update/{id}', [AddressController::class, 'updateAddress'])->name('client.updateAddress');
+Route::get('/edit-address/{id}', [AddressController::class, 'editAddress'])->name('client.editAddress');
+Route::put('/update-address/{id}', [AddressController::class, 'updateAddress'])->name('client.updateAddress');
 Route::delete('/address/delete/{id}', [AddressController::class, 'deleteAddress'])->name('client.deleteAddress');
 Route::get('/get-districts/{province_id}', [AddressController::class, 'getDistricts']);
 Route::get('/get-wards/{district_id}', [AddressController::class, 'getWards']);
 
-Route::post('/add-address', [AddressController::class, 'addAddress'])->name('client.addAddress');
 Route::put('/update-address/{id}', [AddressController::class, 'updateAddress'])->name('client.updateAddress');
 Route::delete('/delete/{id}', [AddressController::class, 'deleteAddress'])->name('client.deleteAddress');
 //kiều duy du 13/2/2025 product

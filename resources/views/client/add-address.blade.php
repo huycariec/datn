@@ -5,6 +5,7 @@
         <div class="container-fluid-lg w-100">
             <div class="row justify-content-center">
                 <div class="col-lg-6">
+                    <a href="{{ route('client.profile') }}">Trở lại</a>
                     <div class="card">
                         <div class="card-body">
                             <h3 class="mb-3">Thêm địa chỉ mới</h3>
@@ -44,8 +45,8 @@
                                 </div>
 
                                 <div class="form-floating mb-3">
-                                    <input type="text" name="address" class="form-control @error('address') is-invalid @enderror" value="{{ old('address', '') }}" required>
-                                    <label for="address">Địa chỉ chi tiết</label>
+                                    <input type="text" name="address_detail" class="form-control @error('address') is-invalid @enderror" value="{{ old('address_detail', '') }}" required>
+                                    <label for="address_detail">Địa chỉ chi tiết</label>
                                     @error('address')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -60,11 +61,9 @@
         </div>
     </section>
 
-    <!-- Thêm jQuery và script Ajax -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Khi thay đổi tỉnh/thành
             $('#province').change(function() {
                 var provinceId = $(this).val();
                 if (provinceId) {
@@ -90,7 +89,6 @@
                 }
             });
 
-            // Khi thay đổi quận/huyện
             $('#district').change(function() {
                 var districtId = $(this).val();
                 if (districtId) {
