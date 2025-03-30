@@ -1,25 +1,26 @@
 <?php
 
-use App\Http\Controllers\Admin\BannerController;
-use App\Http\Controllers\Admin\PageController;
+use App\Models\Admin\Profile;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Client\CartController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\ProductAttribute;
 use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Auth\AddressController;
+use App\Http\Controllers\client\VNPayController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Client\CheckoutController;
 use App\Http\Controllers\Admin\ProductVariantController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Admin\ProfileController;
-use App\Models\Admin\Profile;
-use App\Http\Controllers\Admin\BlogController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Auth\AddressController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -117,7 +118,16 @@ Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remov
 
 //Kiều Duy Du 19/3/2025 checkout
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index'); // Hiển thị trang checkout
+// Xử lý đặt hàng
+Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.placeOrder');
 
+Route::post('/order/vnpay', [VNPayController::class, 'createPayment'])->name('order.vnpay');
+Route::get('/vnpay-return', [VNPayController::class, 'vnpayReturn'])->name('vnpay.return');
+// Kiều Duy Du 26/3/2025 địa chỉ
+Route::get('/checkout/get-districts/{province_id}', [CheckoutController::class, 'getDistricts']);
+Route::get('/checkout/get-wards/{district_id}', [CheckoutController::class, 'getWards']);
+Route::get('/checkout/get-shipping-fee/{district_id}', [CheckoutController::class, 'getShippingFee']);
+Route::post('/checkout/save-address', [CheckoutController::class, 'saveAddress']);
 
 //Route::group(['prefix' => 'admin', 'name' => 'admin.', 'middleware' => 'checkAdmin'], function () {
     Route::group(['prefix' => 'admin', 'name' => 'admin.'], function () {

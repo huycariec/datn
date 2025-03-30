@@ -16,6 +16,7 @@ class HomeController extends Controller
     {
         $categories = Category::all();
         $products = Product::where('is_active', 1)->get();
+        
         $banners = Banner::orderBy('position')
             ->get()
             ->keyBy('position');
