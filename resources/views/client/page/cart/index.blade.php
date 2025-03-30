@@ -70,6 +70,14 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            @if (empty($cartItems))
+
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">
+                                        <h5>Giỏ hàng của bạn đang trống. Hãy thêm sản phẩm vào giỏ hàng!</h5>
+                                    </td>
+                                </tr>
+                            @else
                                 @foreach ($cartItems as $item)
                                 <tr>
                                     <!-- Checkbox -->
@@ -208,6 +216,7 @@
                                     
                                 </tr>
                                 @endforeach
+                            @endif
                             </tbody>
                         </table>  
                     </div>
@@ -223,13 +232,6 @@
                     </div>
             
                     <div class="summery-contain">
-                        <div class="coupon-cart">
-                            <h6 class="text-content mb-2">Nhập mã giảm giá</h6>
-                            <div class="mb-3 coupon-box input-group">
-                                <input type="text" class="form-control" placeholder="Nhập mã giảm giá...">
-                                <button class="btn-apply">Áp dụng</button>
-                            </div>
-                        </div>
                         <ul>
                             <li>
                                 <h4>Tạm tính</h4>
@@ -253,10 +255,13 @@
                     <div class="button-group cart-button">
                         <ul>
                             <li>
+                                @if (!empty($cartItems))
                                 <div class="dynamic-hidden">
                                     <input type="hidden" name="cart_id[]" class="cart-id" data-cart-id="{{ $item['cart_id'] }}" value="{{ $item['cart_id'] }}">
                                     <input type="hidden" name="quantity_update[]" class="quantity-update" data-cart-id="{{ $item['cart_id'] }}" value="{{ $item['quantity'] }}">
                                 </div>
+                                @endif
+
                                 
     
                                 <button 
