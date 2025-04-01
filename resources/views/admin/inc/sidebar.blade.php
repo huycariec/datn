@@ -71,7 +71,7 @@
                             </ul>
                         </li>
 
-{{--                        @canany(['categories_list', 'categories_create'])--}}
+                        @canany(['categories_list', 'categories_create'])
                             <li class="sidebar-list">
                                 <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
                                     <i class="ri-list-check-2"></i>
@@ -90,7 +90,7 @@
                                     @endcan
                                 </ul>
                             </li>
-{{--                        @endcanany--}}
+                        @endcanany
 
                         <li class="sidebar-list">
                             <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">

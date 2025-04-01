@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatus;
+use App\Enums\PaymentMethod;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,4 +22,13 @@ class Order extends Model
         'district_id',
         'ward_id'
     ];
+
+    protected $casts = [
+        'status' => OrderStatus::class,
+        'payment_method' => PaymentMethod::class
+    ];
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
 }
