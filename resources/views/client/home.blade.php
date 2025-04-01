@@ -119,8 +119,10 @@
                                 <div class="product-box-5 wow fadeInUp">
                                     <div class="product-image">
                                         <a href="{{ route('product.detail', $product->id) }}">
-                                            <img src="{{ asset('uploads/products/' . $product->id . '.jpg') }}"
+                                                @foreach ($product->images as $image)
+                                                    <img src="{{Storage::url($image->url)}}"
                                                  class="img-fluid blur-up lazyload bg-img" alt="{{ $product->name }}">
+                                                @endforeach
                                         </a>
 
                                         <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
