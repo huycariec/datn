@@ -140,6 +140,8 @@ Route::post('/checkout/save-address', [CheckoutController::class, 'saveAddress']
     Route::resource("banners", BannerController::class);
     Route::resource("pages", PageController::class);
 
+    Route::resource("orders", \App\Http\Controllers\Admin\OrderController::class);
+
     Route::get('profile', [ProfileController::class, 'profile'])->name('admin.profile');
     Route::put('updateProfile', [ProfileController::class, 'updateProfile'])->name('admin.updateProfile');
 
