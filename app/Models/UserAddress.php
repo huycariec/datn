@@ -16,5 +16,13 @@ class UserAddress extends Model
         'ward_id',
         'address_detail',
     ];
-
+    public function province() {
+        return $this->belongsTo(Province::class);
+    }
+    public function district() {
+        return $this->belongsTo(District::class);
+    }
+    public function ward() {
+        return $this->belongsTo(Ward::class);
+    }
 }

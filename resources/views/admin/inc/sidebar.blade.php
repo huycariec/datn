@@ -39,21 +39,10 @@
                         </li>
 
                         <li class="sidebar-list">
-                            <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+                            <a class="sidebar-link sidebar-title link-nav" href="{{ route('orders.index') }}">
                                 <i class="ri-archive-line"></i>
                                 <span>Đơn hàng</span>
                             </a>
-                            <ul class="sidebar-submenu">
-                                <li>
-                                    <a href="order-list.html">Danh sách đơn hàng</a>
-                                </li>
-                                <li>
-                                    <a href="order-detail.html">Order Detail</a>
-                                </li>
-                                <li>
-                                    <a href="order-tracking.html">Order Tracking</a>
-                                </li>
-                            </ul>
                         </li>
 
                         <li class="sidebar-list">
