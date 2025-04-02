@@ -70,7 +70,15 @@ class OrderController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $order = Order::findOrFail($id);
+            if (!$order) {
+                return view('admin.pages.orders.list')->with('error', 'Đơn hàng không tồn tại !');
+            }
+            return view('admin.pages.orders.show', compact('order'));
+        } catch (\Exception $exception) {
+            return view('admin.pages.orders.list')->with('error', $exception->getMessage());
+        }
     }
 
     /**

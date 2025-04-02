@@ -47,10 +47,10 @@ class CheckoutController extends Controller
     public function index(Request $request)
     {
         $provinces = Province::all(); // Load sẵn Province
-    
+
         $cartIds = $request->input('cart_id');      // Mảng cart_id gửi lên
         $quantities = $request->input('quantity');  // Mảng quantity tương ứng
-    
+
         if (is_array($cartIds) && is_array($quantities) && count($cartIds) === count($quantities)) {
             foreach ($cartIds as $index => $cartId) {
                 $quantity = (int) $quantities[$index];
@@ -59,7 +59,7 @@ class CheckoutController extends Controller
                 }
             }
         }
-    
+
         $cartItems = [];
         foreach ($cartIds as $cartId) {
             $cartItem = Cart::with([
@@ -68,7 +68,7 @@ class CheckoutController extends Controller
                 'variant.product',
                 'variant.images'
             ])->where('id', $cartId)->first();
-    
+
             if ($cartItem) {
                 $cartItems[] = $cartItem;
             }
@@ -78,11 +78,11 @@ class CheckoutController extends Controller
             $totalPrice = $cartItem->variant->price * $cartItem->quantity;
             $totalCart += $totalPrice;
         }
-    
+
         $user = auth()->user();
         $userAddresses = $user ? $user->addresses : collect();
         $userAddress = $userAddresses->first(); // Lấy địa chỉ đầu tiên nếu có
-    
+
         // ✅ Load districts và wards nếu userAddress có
         $districts = $userAddress ? District::where('province_id', $userAddress->province_id)->get() : collect();
         $wards = $userAddress ? Ward::where('district_id', $userAddress->district_id)->get() : collect();
@@ -93,11 +93,11 @@ class CheckoutController extends Controller
             ->where('end_date', '>=', $today)
             ->where('quantity', '>', 0)
             ->get();
-        
+
         // Kiểm tra xem voucher là kiểu 'percent' (giảm giá phần trăm) hay 'fixed' (giảm giá cố định)
         $vouchers = $vouchers->map(function ($voucher) use ($totalCart) {
             $voucher->computed_value = 0;
-        
+
             if ($voucher->type === 'percent') {
                 $voucher->display_type   = 'Giảm giá theo %';
                 $voucher->computed_value = floor(($totalCart * $voucher->value) / 100);
@@ -108,10 +108,10 @@ class CheckoutController extends Controller
                 $voucher->display_type   = 'Không xác định';
                 $voucher->computed_value = 0;
             }
-        
+
             return $voucher;
         });
-        
+
         return view('client.page.checkout.index', compact('cartItems', 'provinces', 'user', 'userAddresses', 'userAddress', 'districts', 'wards','totalCart','vouchers'));
     }
 
@@ -146,41 +146,41 @@ class CheckoutController extends Controller
     public function placeOrder(Request $request)
     {
         $user = auth()->user();
-    
+
         // Lấy địa chỉ mặc định của user nếu có
         $defaultAddress = $user->addresses->first();
         $provinceId = $defaultAddress?->province_id ?? $request->province_id;
         $districtId = $defaultAddress?->district_id ?? $request->district_id;
         $wardId = $defaultAddress?->ward_id ?? $request->ward_id;
-    
+
         if (!$provinceId || !$districtId || !$wardId) {
             return back()->with('error', 'Không tìm thấy địa chỉ hợp lệ!');
         }
-    
+
         // Kiểm tra nếu không có sản phẩm nào được chọn
         if (!$request->has('cart_items')) {
             return back()->with('error', 'Không có sản phẩm nào được chọn trong giỏ hàng!');
         }
-    
+
         $selectedCartIds = array_keys($request->cart_items);
         $cartItems = Cart::where('user_id', $user->id)
                          ->whereIn('id', $selectedCartIds)
                          ->get();
-    
+
         if ($cartItems->isEmpty()) {
             return back()->with('error', 'Không tìm thấy sản phẩm trong giỏ hàng!');
         }
-    
+
         // Tính tổng tiền sản phẩm từ bảng variants
         $totalProductPrice = 0;
         foreach ($cartItems as $cartItem) {
             $price = $cartItem->variant->price ?? 0;
             $totalProductPrice += $price * $cartItem->quantity;
         }
-    
+
         // Lấy phí ship
         $shippingFee = (float) ($request->shipping_fee ?? 0);
-    
+
         // Kiểm tra voucher giảm giá
         $discountValue = 0;
         if ($request->filled('discount_id')) {
@@ -189,11 +189,13 @@ class CheckoutController extends Controller
                 $discountValue = $voucher->value;
             }
         }
-    
+
         // Tính tổng thanh toán
         $finalTotal = max(0, $totalProductPrice - $discountValue + $shippingFee);
-    
+
         // Tạo đơn hàng
+
+        // truyền thêm user_address_id vào đây nhé
         $order = Order::create([
             'user_id'         => $user->id,
             'shipper_id'      => 1,
@@ -207,7 +209,7 @@ class CheckoutController extends Controller
             'total_amount'    => $finalTotal,
             'status'          => 'pending',
         ]);
-    
+
         // 🌟 **Thêm vào bảng `order_details` và cập nhật stock sản phẩm**
         foreach ($cartItems as $cartItem) {
             OrderDetail::create([
@@ -216,14 +218,14 @@ class CheckoutController extends Controller
                 'product_variant_id' => $cartItem->product_variant_id,
                 'quantity'           => $cartItem->quantity,
             ]);
-    
+
             // Cập nhật stock của sản phẩm (giảm số lượng tồn kho)
             $variant = ProductVariant::find($cartItem->product_variant_id);
             if ($variant) {
                 $variant->decrement('stock', $cartItem->quantity);
             }
         }
-    
+
         // 🌟 **Thêm vào bảng `order_discounts` nếu có giảm giá**
         if ($discountValue > 0) {
             OrderDiscount::create([
@@ -232,27 +234,27 @@ class CheckoutController extends Controller
                 'discount_value'      => $discountValue,
             ]);
         }
-    
+
         // 🌟 **Xóa cart sau khi đặt hàng thành công**
         Cart::whereIn('id', $selectedCartIds)->delete();
-    
+
         // 🌟 **Xử lý phương thức thanh toán**
         switch ($request->payment_method) {
             case 'CASH':
                 return redirect()->route('order.success')->with('success', 'Đơn hàng đã được đặt thành công! Thanh toán khi nhận hàng.');
-            
+
             case 'bank_transfer':
                 return redirect()->route('order.bank_transfer')->with('success', 'Vui lòng chuyển khoản theo thông tin hiển thị.');
-    
+
             case 'momo':
                 return redirect()->route('order.momo')->with('success', 'Vui lòng thanh toán qua ví Momo.');
-    
+
             case 'VNPAY':
                 $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
                 $vnp_Returnurl = route('vnpay.return');
                 $vnp_TmnCode = "0BQGSJLL"; // Mã website tại VNPAY
                 $vnp_HashSecret = "YYDH932FZ19XBC6F79BXIG833K2UO7ON"; // Chuỗi bí mật
-                
+
                 $vnp_TxnRef = $order->id; // Mã đơn hàng
                 $vnp_OrderInfo = 'Thanh toán đơn hàng';
                 $vnp_OrderType = 'billpayment';
@@ -260,7 +262,7 @@ class CheckoutController extends Controller
                 $vnp_Locale = 'vn';
                 $vnp_BankCode = '';
                 $vnp_IpAddr = request()->ip();
-                
+
                 $inputData = array(
                     "vnp_Version" => "2.1.0",
                     "vnp_TmnCode" => $vnp_TmnCode,
@@ -275,7 +277,7 @@ class CheckoutController extends Controller
                     "vnp_ReturnUrl" => $vnp_Returnurl,
                     "vnp_TxnRef" => $vnp_TxnRef
                 );
-                
+
                 ksort($inputData);
                 $query = "";
                 $i = 0;
@@ -289,25 +291,25 @@ class CheckoutController extends Controller
                     }
                     $query .= urlencode($key) . "=" . urlencode($value) . '&';
                 }
-                
+
                 $vnp_Url = $vnp_Url . "?" . $query;
                 if (isset($vnp_HashSecret)) {
                     $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret);
                     $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
                 }
-                
+
                 return redirect($vnp_Url);
-            
+
             default:
                 return redirect()->route('cart.index')->with('error', 'Phương thức thanh toán không hợp lệ!');
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
 }
