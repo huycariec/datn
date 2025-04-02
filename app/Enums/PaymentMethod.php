@@ -4,9 +4,9 @@ namespace App\Enums;
 
 enum PaymentMethod: string
 {
-    case MOMO = 'momo';
-    case VNPAY = 'vnpay';
-    case CASH = 'cash';
+    case MOMO = 'MOMO';
+    case VNPAY = 'VNPAY';
+    case CASH = 'CASH';
 
     /**
      * Get the display name for the payment method
@@ -15,7 +15,7 @@ enum PaymentMethod: string
     {
         return match($this) {
             self::MOMO => 'Momo',
-            self::VNPAY => 'VNPAY',
+            self::VNPAY => 'Vnpay',
             self::CASH => 'Tiền mặt',
         };
     }
@@ -26,9 +26,9 @@ enum PaymentMethod: string
     public function getBadgeLabel(): string
     {
         return match($this) {
-            self::MOMO => '<span class="badge bg-primary">' . $this->label() . '</span>',
-            self::VNPAY => '<span class="badge bg-success">' . $this->label() . '</span>',
-            self::CASH => '<span class="badge bg-warning text-dark">' . $this->label() . '</span>',
+            self::MOMO => '<span class="badge bg-info">' . $this->label() . '</span>',
+            self::VNPAY => '<span class="badge bg-danger">' . $this->label() . '</span>',
+            self::CASH => '<span class="badge bg-primary">' . $this->label() . '</span>',
         };
     }
 
