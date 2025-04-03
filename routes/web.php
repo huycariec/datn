@@ -130,7 +130,7 @@ Route::get('/checkout/get-shipping-fee/{district_id}', [CheckoutController::clas
 Route::post('/checkout/save-address', [CheckoutController::class, 'saveAddress']);
 
 //Route::group(['prefix' => 'admin', 'name' => 'admin.', 'middleware' => 'checkAdmin'], function () {
-    Route::group(['prefix' => 'admin', 'name' => 'admin.'], function () {
+Route::group(['prefix' => 'admin', 'name' => 'admin.'], function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource("discounts", DiscountController::class);

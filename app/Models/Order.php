@@ -37,12 +37,16 @@ class Order extends Model
         return $this->hasMany(OrderDetail::class, 'order_id');
     }
 
-    public function orderDiscounts()
+    public function discounts()
     {
-        return $this->hasMany(OrderDiscount::class, 'order_id');
+        return $this->belongsToMany(Discount::class, 'order_discounts', 'order_id', 'discount_id')->withPivot('discount_value');
     }
 
     public function userAddress() {
         return $this->belongsTo(UserAddress::class,);
+    }
+
+    public function payment() {
+        return $this->hasOne(PaymentLog::class, 'order_id');
     }
 }

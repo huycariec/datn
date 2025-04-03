@@ -2,7 +2,6 @@
 
 @section("content")
     <div class="page-body">
-        <!-- Orders Table Start -->
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-12">
@@ -79,13 +78,15 @@
                                             <td>
                                                 @can('orders_update')
                                                     <ul class="d-flex list-unstyled">
-                                                        <li class="me-2">
-                                                            <a href="#" class="edit-order" data-id="{{ $order->id }}"
-                                                               data-status="{{ $order->status }}"
-                                                               data-bs-toggle="modal" data-bs-target="#editOrderModal">
-                                                                <i class="ri-pencil-line"></i>
-                                                            </a>
-                                                        </li>
+                                                        @if($order->status->value !== \App\Enums\OrderStatus::REFUNDED->value && $order->status->value !== \App\Enums\OrderStatus::CANCELLED->value)
+                                                            <li class="me-2">
+                                                                <a href="#" class="edit-order" data-id="{{ $order->id }}"
+                                                                   data-status="{{ $order->status }}"
+                                                                   data-bs-toggle="modal" data-bs-target="#editOrderModal">
+                                                                    <i class="ri-pencil-line"></i>
+                                                                </a>
+                                                            </li>
+                                                        @endif
                                                         <li>
                                                             <a href="{{ route('orders.show', $order) }}">
                                                                 <i class="ri-eye-line"></i>
@@ -113,49 +114,82 @@
             </div>
         </div>
 
-        <!-- Modal cập nhật trạng thái đơn hàng (BS5) -->
         <div class="modal fade" id="editOrderModal" tabindex="-1" aria-labelledby="editOrderModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="editOrderModalLabel">Cập nhật trạng thái đơn hàng</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form id="updateOrderForm" method="POST">
-                        @csrf
-                        @method('PUT')
+                    <form id="updateOrderForm">
                         <div class="modal-body">
                             <input type="hidden" name="order_id" id="order_id">
                             <div class="mb-3">
                                 <label for="status" class="form-label">Trạng thái</label>
                                 <select name="status" id="status" class="form-select">
-                                    @foreach (\App\Enums\OrderStatus::toArray() as $status)
-                                        <option value="{{ $status['value'] }}">{{ $status['label'] }}</option>
-                                    @endforeach
                                 </select>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                            <button type="submit" class="btn btn-primary">Cập nhật</button>
+                            <button type="button" id="updateBtn" class="btn btn-primary">Cập nhật</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
+            const statusTransitions = {
+                'pending_confirmation': ['pending_confirmation', 'confirmed', 'cancelled'],
+                'confirmed': ['confirmed', 'preparing', 'cancelled'],
+                'preparing': ['preparing', 'prepared', 'cancelled'],
+                'prepared': ['picked_up'],
+                'picked_up': ['picked_up', 'in_transit'],
+                'in_transit': ['in_transit', 'delivered'],
+                'delivered': ['delivered'],
+                'received': ['received'],
+                'returned': ['returned', 'refunded'],
+                'cancelled': [],
+                'refunded': []
+            };
+
+            const allStatuses = @json(\App\Enums\OrderStatus::toArray());
+
             $('.edit-order').on('click', function (e) {
                 e.preventDefault();
                 var orderId = $(this).data('id');
                 var currentStatus = $(this).data('status');
 
                 $('#order_id').val(orderId);
-                $('#status').val(currentStatus);
+
+                $('#status').empty();
+
+                var availableStatuses = statusTransitions[currentStatus] || [];
+
+                availableStatuses.forEach(function(statusValue) {
+                    var status = allStatuses.find(s => s.value === statusValue);
+                    if (status) {
+                        $('#status').append(
+                            `<option value="${status.value}" ${status.value === currentStatus ? 'selected' : ''}>
+                                ${status.label}
+                            </option>`
+                        );
+                    }
+                });
+
+                if (availableStatuses.length === 0) {
+                    $('#status').append(`<option value="${currentStatus}" selected disabled>Không thể thay đổi</option>`);
+                    $('#updateBtn').prop('disabled', true);
+                } else {
+                    $('#updateBtn').prop('disabled', false);
+                }
             });
 
-            $('#updateOrderForm').on('submit', function (e) {
+            $('#updateBtn').on('click', function (e) {
                 e.preventDefault();
                 var orderId = $('#order_id').val();
                 var status = $('#status').val();
@@ -169,7 +203,6 @@
                     },
                     success: function (response) {
                         if (response.success) {
-                            alert('Cập nhật trạng thái thành công!');
                             location.reload();
                         } else {
                             alert('Có lỗi xảy ra: ' + response.message);
