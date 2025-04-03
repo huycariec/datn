@@ -42,7 +42,7 @@ enum OrderStatus: string
     public function getBadgeLabel(): string
     {
         return match($this) {
-            self::PENDING_CONFIRMATION => '<span class="badge bg-secondary">' . $this->label() . '</span>',
+            self::PENDING_CONFIRMATION => '<span class="badge bg-success">' . $this->label() . '</span>',
             self::CONFIRMED => '<span class="badge bg-info">' . $this->label() . '</span>',
             self::PREPARING => '<span class="badge bg-warning text-dark">' . $this->label() . '</span>',
             self::PREPARED => '<span class="badge bg-warning">' . $this->label() . '</span>',

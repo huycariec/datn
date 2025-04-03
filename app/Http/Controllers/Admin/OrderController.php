@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
@@ -94,7 +96,60 @@ class OrderController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $order = Order::find($id);
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Đơn hàng không tồn tại'
+            ], 404);
+        }
+
+        $request->validate([
+            'status' => [
+                'required',
+                Rule::in(array_column(OrderStatus::toArray(), 'value')),
+            ],
+        ], [
+            'status.required' => 'Trạng thái không được để trống',
+            'status.in' => 'Trạng thái không hợp lệ',
+        ]);
+
+        $statusTransitions = [
+            'pending_confirmation' => ['pending_confirmation', 'confirmed', 'cancelled'],
+            'confirmed' => ['confirmed', 'preparing', 'cancelled'],
+            'preparing' => ['preparing', 'prepared', 'cancelled'],
+            'prepared' => ['picked_up'],
+            'picked_up' => ['picked_up', 'in_transit'],
+            'in_transit' => ['in_transit', 'delivered'],
+            'delivered' => ['delivered'],
+            'received' => ['received'],
+            'returned' => ['returned', 'refunded'],
+            'cancelled' => [],
+            'refunded' => []
+        ];
+
+        $currentStatus = $order->status->value;
+        $newStatus = $request->input('status');
+
+        if (!in_array($newStatus, $statusTransitions[$currentStatus] ?? [])) {
+            return response()->json([
+                'success' => false,
+                'message' => "Không thể chuyển từ trạng thái '$currentStatus' sang '$newStatus'"
+            ], 400);
+        }
+
+        $order->update(['status' => $newStatus]);
+
+        session()->flash('success', 'Cập nhật trạng thái đơn hàng thành công');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Cập nhật trạng thái đơn hàng thành công',
+            'data' => [
+                'order_id' => $order->id,
+                'new_status' => $newStatus,
+            ]
+        ], 200);
     }
 
     /**
