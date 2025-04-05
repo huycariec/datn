@@ -27,22 +27,22 @@
                                         </tr>
                                     </thead>
 
-                                    @foreach ($reviews as $data )
+                                    @foreach ($reviews as $review )
                                     <tbody>
                                         <tr>
-                                            <td>{{$data->user_id}}</td>
-                                            <td>{{$data->product_id}}</td>
-                                            <td>{{$data->product_variant_id}}</td>
-                                            <td>{{$data->rating}}</td>
+                                            <td>{{$review->user->name}}</td>
+                                            <td>{{$review->product->name}}</td>
+                                            <td>{{$review->productVariant->sku}}</td>
+                                            <td>{{$review->rating}}</td>
                                             <td>
                                                 <ul>
                                                     <li>
-                                                        <a href="{{route('reviews.show',$data->id)}}">
+                                                        <a href="{{route('reviews.show',$review->id)}}">
                                                             <i class="ri-eye-line"></i>
                                                         </a>
                                                     </li>
 
-                                                    
+
                                                 </ul>
                                             </td>
                                         </tr>

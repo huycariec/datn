@@ -17,4 +17,15 @@ class Review extends Model
         'image',
         'content',
     ];
+
+    public function user() {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+    public function product() {
+        return $this->belongsTo(Product::class, 'product_id', 'id');
+    }
+
+    public function productVariant() {
+        return $this->belongsTo(ProductVariant::class, 'product_variant_id', 'id');
+    }
 }
