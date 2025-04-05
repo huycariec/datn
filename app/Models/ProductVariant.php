@@ -12,7 +12,8 @@ class ProductVariant extends Model
         'product_id',
         'sku',
         'price',
-        'stock'
+        'stock',
+        'price_old'
     ];
     public function product()
     {

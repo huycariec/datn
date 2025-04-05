@@ -51,4 +51,5 @@
     <script>
         CKEDITOR.replace('editor');
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.3/tinymce.min.js"></script>
 
