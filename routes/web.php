@@ -93,7 +93,8 @@ Route::get('/admin-product-create',[ProductController::class,'create'])->name('a
 Route::post('/admin-product-store',[ProductController::class,'store'])->name('admin.product.store');
 Route::get('/admin-product-edit/{id}',[ProductController::class,'edit'])->name('admin.product.edit');
 Route::post('/admin-product-delete/{id}',[ProductController::class,'delete'])->name('admin.product.delete');
-
+Route::post('/admin/products/{id}/toggle-status', [ProductController::class, 'toggleStatus']);
+Route::put('/admin/products/{id}', [ProductController::class, 'update'])->name('admin.product.update');
 
 
 
@@ -108,6 +109,8 @@ Route::get('/admin-attribute-edit/{id}',[ProductAttribute::class,'edit'])->name(
 //kiều duy du 21/2/2025 variant
 Route::get('/admin-variant-index/{id}',[ProductVariantController::class,'index'])->name('admin.variant.index');
 Route::post('/admin-variant-store',[ProductVariantController::class,'store'])->name('admin.variant.store');
+Route::put('/update-status/{id}', [ProductVariantController::class, 'updateStatus']);
+Route::get('/product-variants/{id}/edit', [ProductVariantController::class, 'edit'])->name('product.variant.edit');
 
 // Kiều Duy du 12/3/2025 cart
 Route::post('cart-store',[CartController::class,'store'])->name('cart.store')->middleware('auth');

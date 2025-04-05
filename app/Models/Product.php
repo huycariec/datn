@@ -11,7 +11,7 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['category_id', 'name', 'description', 'price', 'view', 'is_active'];
+    protected $fillable = ['category_id', 'name', 'description','short_description', 'price', 'view', 'is_active','price_old'];
 
     public function category()
     {
@@ -26,7 +26,12 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class);
     }
     public function wishlistedByUsers()
-{
-    return $this->hasMany(Wishlist::class, 'product_id');
-}
+    {
+        return $this->hasMany(Wishlist::class, 'product_id');
+    }
+    public function getTotalQuantityAttribute()
+    {
+        // Tính tổng số lượng của tất cả biến thể của sản phẩm
+        return $this->variants->sum('stock');
+    }
 }

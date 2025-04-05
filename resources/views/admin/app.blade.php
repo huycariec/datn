@@ -17,6 +17,7 @@
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/x-icon">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Trang quản trị viên</title>
+    @yield('css')
 
     @include("admin.inc.style")
 </head>
