@@ -31,31 +31,47 @@
 
                                 </div>
                                 <div class="mb-4 row align-items-center">
+                                    <label class="form-label-title col-sm-3 mb-0">Giá cũ sản phẩm</label>
+                                    <div class="col-sm-9">
+                                        <input id="product_price_old" name="product_price_old" class="form-control prcie" type="number" placeholder="Giá cũ sản phẩm"></div>
+                                    @error('price_old')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+
+                                </div>
+                                <div class="mb-4 row align-items-center">
                                     <label class="form-label-title col-sm-3 mb-0">Mô tả ngắn sản phẩm</label>
                                     <div class="col-sm-9">
-                                        <input id="description" name="description" class="form-control" type="text" placeholder="Mô tả ngắn sản phẩm">
+                                        <textarea id="short_description" name="short_description" class="form-control" placeholder="Mô tả ngắn sản phẩm"></textarea>
+                                        @error('short_description')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4 row">
+                                    <label class="form-label-title col-sm-3 mb-0">Mô tả chi tiết</label>
+                                    <div class="col-sm-9">
+                                        <textarea id="description" name="description" class="form-control"></textarea>
                                         @error('description')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
-
                                     </div>
                                 </div>
+                                
+                                
                                 <div class="mb-4 row align-items-center">
-                                    <label
-                                        class="col-sm-3 col-form-label form-label-title">Danh mục sản phẩm</label>
+                                    <label class="col-sm-3 col-form-label form-label-title">Danh mục sản phẩm</label>
                                     <div class="col-sm-9">
-                                        <select class="js-example-basic-single w-100" name="state">
-                                            <option disabled>Menu Danh mục</option>
-                                            <option>Electronics</option>
-                                            <option>TV & Appliances</option>
-                                            <option>Home & Furniture</option>
-                                            <option>Another</option>
-                                            <option>Baby & Kids</option>
-                                            <option>Health, Beauty & Perfumes</option>
-                                            <option>Uncategorized</option>
+                                        <select class="js-example-basic-single w-100" name="category_id">
+                                            <option disabled selected>Menu Danh mục</option>
+                                            @foreach ($categories as $category)
+                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
+                                
                                 <div class="mb-4 row align-items-center">
                                     <label
                                         class="col-sm-3 col-form-label form-label-title">Thương hiệu</label>
@@ -234,22 +250,29 @@ document.addEventListener("DOMContentLoaded", function () {
     addAttributeBtn.addEventListener("click", function (event) {
         event.preventDefault();
         const name = attributeNameInput.value.trim();
-        const values = attributeValueInput.value.trim().split("|").map(v => v.trim());
-        const uniqueValues = [...new Set(values)];
         
-        if (!name || values.length === 0 || values[0] === "") {
+        // Lọc bỏ giá trị rỗng sau dấu |
+        const values = attributeValueInput.value
+            .split("|")
+            .map(v => v.trim())
+            .filter(v => v !== ""); // Loại bỏ giá trị rỗng
+
+        const uniqueValues = [...new Set(values)];
+
+        if (!name || uniqueValues.length === 0) {
             alert("Vui lòng nhập tên thuộc tính và giá trị hợp lệ!");
             return;
         }
 
-
-                // Kiểm tra giá trị không được trùng lặp
+        // Kiểm tra giá trị không được trùng lặp
         if (uniqueValues.length !== values.length) {
             alert("Các giá trị thuộc tính không được trùng nhau!");
             return false;
         }
-        
-        if (editingAttribute !== null) {
+
+        let isEditing = editingAttribute !== null;
+
+        if (isEditing) {
             // Cập nhật thuộc tính đang chỉnh sửa
             delete attributes[editingAttribute];
             editingAttribute = null;
@@ -257,12 +280,24 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Thuộc tính này đã tồn tại!");
             return;
         }
-        
-        attributes[name] = values;
+
+        attributes[name] = uniqueValues;
         attributeNameInput.value = "";
         attributeValueInput.value = "";
+
+        // Reset nút về "Thêm Thuộc Tính" sau khi sửa xong
+        addAttributeBtn.textContent = "Thêm Thuộc Tính";
+
         renderAttributeTable();
+
+        // Chỉ khi sửa mới gọi hàm tạo biến thể
+        if (isEditing) {
+            generateVariantsBtn.click();
+        }
     });
+
+
+
 
     // Hiển thị danh sách thuộc tính
     function renderAttributeTable() {
@@ -300,9 +335,11 @@ document.addEventListener("DOMContentLoaded", function () {
             if (confirm("Bạn có chắc muốn xóa thuộc tính này không?")) {
                 delete attributes[name];
                 renderAttributeTable();
+                generateVariantsBtn.click(); // Gọi hàm tạo biến thể tự động
             }
         }
     });
+
 
     // Chỉnh sửa thuộc tính
     attributeTableBody.addEventListener("click", function (event) {
@@ -312,8 +349,10 @@ document.addEventListener("DOMContentLoaded", function () {
             attributeNameInput.value = name;
             attributeValueInput.value = attributes[name].join("|");
             editingAttribute = name;
+            generateVariantsBtn.click(); // Gọi hàm tạo biến thể tự động
         }
     });
+
 
     // Sinh biến thể tự động
     generateVariantsBtn.addEventListener("click", function (event) {
@@ -321,30 +360,53 @@ document.addEventListener("DOMContentLoaded", function () {
         variantContainer.innerHTML = "";
         const variants = generateCombinations(attributes);
 
-        
         variants.forEach((variant, index) => {
-            let variantHTML = `<div class='variant-item border p-3 mb-2'>
-                <div class='d-flex gap-3'>`;
-            
-            Object.keys(variant).forEach(attr => {
-                variantHTML += `<div>
-                    <label>${attr}</label>
-                    <input type='text' class='form-control' name='variants[${index}][attributes][${attr}]' value='${variant[attr]}' readonly>
-                </div>`;
-            });
-            
-            variantHTML += `</div>
-                <div class='d-flex gap-3'>
-                    <input type='number' class='form-control' name='variants[${index}][pricing][price]' placeholder='Giá'>
-                    <input type='number' class='form-control' name='variants[${index}][pricing][stock]' placeholder='Số lượng'>
-                    <input type='file' class='form-control' name='variants[${index}][pricing][image]'>
-                    <button type='button' class='btn btn-danger btn-remove-variant'>Xóa</button>
+            let variantHTML = `<div class="variant-item border p-3 mb-2 rounded">
+                <div class="d-flex gap-3 mb-2">
+                    <!-- Số thứ tự -->
+                    <div class="col-12">
+                        <label class="form-label">Biến thể #${index + 1}</label>
+                    </div>
                 </div>
+                <div class="d-flex gap-3 mb-2">`;
+
+            Object.keys(variant).forEach(attr => {
+                variantHTML += `
+                    <div class="col-4">
+                        <label for="variant-${index}-${attr}" class="form-label">${attr}</label>
+                        <input type="text" class="form-control" id="variant-${index}-${attr}" name="variants[${index}][attributes][${attr}]" value="${variant[attr]}" readonly>
+                    </div>
+                `;
+            });
+
+            variantHTML += `
+                </div>
+                <div class="d-flex gap-3 mb-2 flex-wrap">
+                    <div class="col-3">
+                        <label for="price-${index}" class="form-label">Giá</label>
+                        <input type="number" class="form-control" id="price-${index}" name="variants[${index}][pricing][price]" placeholder="Giá">
+                    </div>
+                    <div class="col-3">
+                        <label for="old-price-${index}" class="form-label">Giá cũ</label>
+                        <input type="number" class="form-control" id="old-price-${index}" name="variants[${index}][pricing][price_old]" placeholder="Giá cũ">
+                    </div>
+                    <div class="col-3">
+                        <label for="stock-${index}" class="form-label">Số lượng</label>
+                        <input type="number" class="form-control" id="stock-${index}" name="variants[${index}][pricing][stock]" placeholder="Số lượng">
+                    </div>
+                    <div class="col-3">
+                        <label for="image-${index}" class="form-label">Ảnh</label>
+                        <input type="file" class="form-control" id="image-${index}" name="variants[${index}][pricing][image]">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-danger btn-sm btn-remove-variant">Xóa</button>
             </div>`;
-            
+
             variantContainer.innerHTML += variantHTML;
         });
     });
+
+
 
     // Xóa biến thể
     variantContainer.addEventListener("click", function (event) {
@@ -355,15 +417,18 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Hàm tạo kết hợp thuộc tính
+    // Hàm tạo kết hợp thuộc tính (bỏ qua giá trị rỗng)
     function generateCombinations(attrs) {
         const keys = Object.keys(attrs);
         if (keys.length === 0) return [];
 
         return keys.reduce((acc, key) => {
+            const validValues = attrs[key].filter(value => value.trim() !== ""); // Lọc bỏ giá trị rỗng
+            if (validValues.length === 0) return acc; // Nếu không có giá trị hợp lệ, bỏ qua
+
             const temp = [];
             acc.forEach(existing => {
-                attrs[key].forEach(value => {
+                validValues.forEach(value => {
                     temp.push({ ...existing, [key]: value });
                 });
             });
@@ -371,36 +436,42 @@ document.addEventListener("DOMContentLoaded", function () {
         }, [{}]);
     }
 
+
     function validateForm() {
         let isValid = true;
 
         // Lấy các input
         const productNameInput = document.querySelector('#product_name');
         const productPriceInput = document.querySelector('#product_price');
-        const shortDescInput = document.querySelector('#description');
+        const shortDescInput = document.querySelector('#short_description');
+        const descInput = document.querySelector('#description');
+        const categorySelect = document.querySelector('select[name="category_id"]');
+
+        // Nếu dùng TinyMCE, cập nhật nội dung vào textarea
+        if (typeof tinymce !== "undefined") {
+            tinymce.triggerSave(); // Lưu nội dung từ TinyMCE vào textarea
+            descInput.value = tinymce.get("description")?.getContent().trim() || "";
+        }
+
+        console.log("Mô tả ngắn:", shortDescInput.value.trim());
+        console.log("Mô tả chi tiết sau khi cập nhật:", descInput.value);
 
         // Tạo hoặc tìm phần hiển thị lỗi
-        let productNameError = productNameInput.nextElementSibling;
-        let productPriceError = productPriceInput.nextElementSibling;
-        let shortDescError = shortDescInput.nextElementSibling;
-
-        if (!productNameError || !productNameError.classList.contains("error-message")) {
-            productNameError = document.createElement("div");
-            productNameError.classList.add("error-message", "text-danger");
-            productNameInput.after(productNameError);
+        function getErrorElement(input) {
+            let errorElement = input.nextElementSibling;
+            if (!errorElement || !errorElement.classList.contains("error-message")) {
+                errorElement = document.createElement("div");
+                errorElement.classList.add("error-message", "text-danger");
+                input.after(errorElement);
+            }
+            return errorElement;
         }
 
-        if (!productPriceError || !productPriceError.classList.contains("error-message")) {
-            productPriceError = document.createElement("div");
-            productPriceError.classList.add("error-message", "text-danger");
-            productPriceInput.after(productPriceError);
-        }
-
-        if (!shortDescError || !shortDescError.classList.contains("error-message")) {
-            shortDescError = document.createElement("div");
-            shortDescError.classList.add("error-message", "text-danger");
-            shortDescInput.after(shortDescError);
-        }
+        let productNameError = getErrorElement(productNameInput);
+        let productPriceError = getErrorElement(productPriceInput);
+        let shortDescError = getErrorElement(shortDescInput);
+        let descError = getErrorElement(descInput);
+        let categoryError = getErrorElement(categorySelect);
 
         // Regex kiểm tra tên sản phẩm
         const nameRegex = /^[a-zA-Z0-9\sÀ-ỹ]+$/;
@@ -434,97 +505,115 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!shortDescInput.value.trim()) {
             isValid = false;
             shortDescInput.classList.add("is-invalid");
-            shortDescError.innerHTML = "Mô tả không được để trống!";
+            shortDescError.innerHTML = "Mô tả ngắn không được để trống!";
         } else if (shortDescInput.value.trim().length < 10) {
             isValid = false;
             shortDescInput.classList.add("is-invalid");
-            shortDescError.innerHTML = "Mô tả phải có ít nhất 10 ký tự!";
+            shortDescError.innerHTML = "Mô tả ngắn phải có ít nhất 10 ký tự!";
         } else {
             shortDescInput.classList.remove("is-invalid");
             shortDescError.innerHTML = "";
         }
 
-        // Kiểm tra biến thể
-        if (!validateVariants()) {
+        // Kiểm tra mô tả chi tiết
+        if (!descInput.value.trim()) {
             isValid = false;
+            descInput.classList.add("is-invalid");
+            descError.innerHTML = "Mô tả chi tiết không được để trống!";
+        } else {
+            descInput.classList.remove("is-invalid");
+            descError.innerHTML = "";
+        }
+
+        // Kiểm tra danh mục sản phẩm
+        if (!categorySelect.value) {
+            isValid = false;
+            categorySelect.classList.add("is-invalid");
+            categoryError.innerHTML = "Vui lòng chọn danh mục sản phẩm!";
+        } else {
+            categorySelect.classList.remove("is-invalid");
+            categoryError.innerHTML = "";
         }
 
         return isValid;
     }
 
 
+
+
+
     // kiểm tra trước khi submit form
     function validateVariants() {
-        let isValid = true;
-        const variantItems = document.querySelectorAll(".variant-item");
+            let isValid = true;
+            const variantItems = document.querySelectorAll(".variant-item");
 
-        variantItems.forEach((variant, index) => {
-        const priceInput = variant.querySelector(`input[name="variants[${index}][pricing][price]"]`);
-        const stockInput = variant.querySelector(`input[name="variants[${index}][pricing][stock]"]`);
-        const imageInput = variant.querySelector(`input[name="variants[${index}][pricing][image]"]`);
+            variantItems.forEach((variant, index) => {
+            const priceInput = variant.querySelector(`input[name="variants[${index}][pricing][price]"]`);
+            const stockInput = variant.querySelector(`input[name="variants[${index}][pricing][stock]"]`);
+            const imageInput = variant.querySelector(`input[name="variants[${index}][pricing][image]"]`);
 
-        // Tạo hoặc tìm phần hiển thị lỗi
-        let priceError = priceInput.nextElementSibling;
-        let stockError = stockInput.nextElementSibling;
-        let imageError = imageInput.nextElementSibling;
+            // Tạo hoặc tìm phần hiển thị lỗi
+            let priceError = priceInput.nextElementSibling;
+            let stockError = stockInput.nextElementSibling;
+            let imageError = imageInput.nextElementSibling;
 
-        if (!priceError || !priceError.classList.contains("error-message")) {
-            priceError = document.createElement("div");
-            priceError.classList.add("error-message", "text-danger");
-            priceInput.after(priceError);
-        }
-
-        if (!stockError || !stockError.classList.contains("error-message")) {
-            stockError = document.createElement("div");
-            stockError.classList.add("error-message", "text-danger");
-            stockInput.after(stockError);
-        }
-
-        if (!imageError || !imageError.classList.contains("error-message")) {
-            imageError = document.createElement("div");
-            imageError.classList.add("error-message", "text-danger");
-            imageInput.after(imageError);
-        }
-
-        let price = parseFloat(priceInput.value);
-        let stock = parseInt(stockInput.value);
-        let imageFile = imageInput.files[0];
-
-        // Kiểm tra giá
-        if (isNaN(price) || price <= 0) {
-            isValid = false;
-            priceInput.classList.add("is-invalid");
-            priceError.innerHTML = "Giá phải lớn hơn 0!";
-        } else {
-            priceInput.classList.remove("is-invalid");
-            priceError.innerHTML = "";
-        }
-
-        // Kiểm tra số lượng
-        if (isNaN(stock) || stock < 1) {
-            isValid = false;
-            stockInput.classList.add("is-invalid");
-            stockError.innerHTML = "Số lượng phải là số nguyên dương!";
-        } else {
-            stockInput.classList.remove("is-invalid");
-            stockError.innerHTML = "";
-        }
-
-        // Kiểm tra file ảnh
-        if (imageFile) {
-            const allowedExtensions = ["image/jpeg", "image/png", "image/jpg"];
-            if (!allowedExtensions.includes(imageFile.type)) {
-                isValid = false;
-                imageInput.classList.add("is-invalid");
-                imageError.innerHTML = "Ảnh phải có định dạng .jpg, .jpeg, .png!";
-            } else {
-                imageInput.classList.remove("is-invalid");
-                imageError.innerHTML = "";
+            if (!priceError || !priceError.classList.contains("error-message")) {
+                priceError = document.createElement("div");
+                priceError.classList.add("error-message", "text-danger");
+                priceInput.after(priceError);
             }
-        } else {
-            imageError.innerHTML = ""; // Không bắt buộc có ảnh, nên không báo lỗi
-        }
-    });
+
+            if (!stockError || !stockError.classList.contains("error-message")) {
+                stockError = document.createElement("div");
+                stockError.classList.add("error-message", "text-danger");
+                stockInput.after(stockError);
+            }
+
+            if (!imageError || !imageError.classList.contains("error-message")) {
+                imageError = document.createElement("div");
+                imageError.classList.add("error-message", "text-danger");
+                imageInput.after(imageError);
+            }
+
+            let price = parseFloat(priceInput.value);
+            let stock = parseInt(stockInput.value);
+            let imageFile = imageInput.files[0];
+
+            // Kiểm tra giá
+            if (isNaN(price) || price <= 0) {
+                isValid = false;
+                priceInput.classList.add("is-invalid");
+                priceError.innerHTML = "Giá phải lớn hơn 0!";
+            } else {
+                priceInput.classList.remove("is-invalid");
+                priceError.innerHTML = "";
+            }
+
+            // Kiểm tra số lượng
+            if (isNaN(stock) || stock < 1) {
+                isValid = false;
+                stockInput.classList.add("is-invalid");
+                stockError.innerHTML = "Số lượng phải là số nguyên dương!";
+            } else {
+                stockInput.classList.remove("is-invalid");
+                stockError.innerHTML = "";
+            }
+
+            // Kiểm tra file ảnh
+            if (imageFile) {
+                const allowedExtensions = ["image/jpeg", "image/png", "image/jpg"];
+                if (!allowedExtensions.includes(imageFile.type)) {
+                    isValid = false;
+                    imageInput.classList.add("is-invalid");
+                    imageError.innerHTML = "Ảnh phải có định dạng .jpg, .jpeg, .png!";
+                } else {
+                    imageInput.classList.remove("is-invalid");
+                    imageError.innerHTML = "";
+                }
+            } else {
+                imageError.innerHTML = ""; // Không bắt buộc có ảnh, nên không báo lỗi
+            }
+            });
 
         return isValid;
     }
@@ -537,6 +626,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
-
+<script>
+    tinymce.init({
+        selector: 'textarea',
+        plugins: 'advlist autolink lists link charmap print preview anchor',
+        toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
+        menubar: false
+    });
+</script>
 @endsection
 

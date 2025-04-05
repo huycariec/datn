@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\Discount;
 use App\Models\District;
 use App\Models\Province;
+use App\Enums\OrderStatus;
 use App\Models\OrderDetail;
 use App\Models\ShippingFee;
 use App\Models\UserAddress;
@@ -207,7 +208,7 @@ class CheckoutController extends Controller
             'shipping_fee'    => $shippingFee,
             'shipping_status' => 'pending',
             'total_amount'    => $finalTotal,
-            'status'          => 'pending',
+            'status'          => OrderStatus::PENDING_CONFIRMATION->value
         ]);
 
         // 🌟 **Thêm vào bảng `order_details` và cập nhật stock sản phẩm**
@@ -237,7 +238,7 @@ class CheckoutController extends Controller
 
         // 🌟 **Xóa cart sau khi đặt hàng thành công**
         Cart::whereIn('id', $selectedCartIds)->delete();
-
+    // DB::beginTransaction()
         // 🌟 **Xử lý phương thức thanh toán**
         switch ($request->payment_method) {
             case 'CASH':
