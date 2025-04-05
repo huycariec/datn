@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Banner;
 use App\Models\Page;
+use App\Models\ProductVariant;
+use App\Models\Review;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Product;
@@ -16,7 +18,7 @@ class HomeController extends Controller
     {
         $categories = Category::all();
         $products = Product::where('is_active', 1)->get();
-        
+
         $banners = Banner::orderBy('position')
             ->get()
             ->keyBy('position');
@@ -44,18 +46,18 @@ class HomeController extends Controller
         foreach ($product->variants as $variant) {
             foreach ($variant->variantAttributes as $variantAttribute) {
                 if (
-                    isset($variantAttribute->attributeValue) && 
+                    isset($variantAttribute->attributeValue) &&
                     isset($variantAttribute->attributeValue->attribute)
                 ) {
                     $attributeId   = $variantAttribute->attributeValue->attribute->id;  // Lấy ID của attribute
                     $attributeName = $variantAttribute->attributeValue->attribute->name; // Lấy tên attribute
                     $attributeValue = $variantAttribute->attributeValue->value; // Lấy giá trị attribute
-                    
+
                     // Khởi tạo mảng nếu chưa có key
                     if (!isset($attributesGrouped[$attributeName])) {
                         $attributesGrouped[$attributeName] = [];
                     }
-        
+
                     // Tránh trùng lặp bằng cách kiểm tra theo ID
                     $exists = false;
                     foreach ($attributesGrouped[$attributeName] as $attr) {
@@ -64,7 +66,7 @@ class HomeController extends Controller
                             break;
                         }
                     }
-        
+
                     // Nếu chưa tồn tại, thêm vào mảng
                     if (!$exists) {
                         $attributesGrouped[$attributeName][] = [
@@ -96,7 +98,26 @@ class HomeController extends Controller
 
          // Chuyển `$result` thành JSON rồi gửi qua view
         $resultJson = json_encode($result, JSON_PRETTY_PRINT);
-        return view('client.page.detail', compact('product', 'attributesGrouped', 'resultJson'));
+
+        $reviews = Review::where('product_id', $id)
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $variants = ProductVariant::where('product_id', $id)->get();
+
+        $averageRating = $reviews->avg('rating');
+
+        $ratingStats = [
+            5 => $reviews->where('rating', 5)->count(),
+            4 => $reviews->where('rating', 4)->count(),
+            3 => $reviews->where('rating', 3)->count(),
+            2 => $reviews->where('rating', 2)->count(),
+            1 => $reviews->where('rating', 1)->count(),
+        ];
+
+        $totalReviews = $reviews->count();
+
+        return view('client.page.detail', compact('product', 'attributesGrouped', 'resultJson', 'reviews', 'averageRating', 'ratingStats', 'totalReviews', 'variants'));
     }
 
     public function addToWishlist($productId)
