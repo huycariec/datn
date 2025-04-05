@@ -274,7 +274,7 @@
                 'pending_confirmation': ['pending_confirmation', 'confirmed', 'cancelled'],
                 'confirmed': ['confirmed', 'preparing', 'cancelled'],
                 'preparing': ['preparing', 'prepared', 'cancelled'],
-                'prepared': ['picked_up'],
+                'prepared': ['prepared', 'picked_up'],
                 'picked_up': ['picked_up', 'in_transit'],
                 'in_transit': ['in_transit', 'delivered'],
                 'delivered': ['delivered'],

@@ -17,31 +17,25 @@
                                     <div class="mb-4 row align-items-center">
                                         <label class="form-label-title col-sm-3 mb-0">Khách hàng</label>
                                         <div class="col-sm-9">
-                                            <input class="form-control" type="text" value=" {{$review->user_id}}" disabled>
+                                            <input class="form-control" type="text" value=" {{$review->user->name}}" disabled>
                                         </div>
                                     </div>
                                     <div class="mb-4 row align-items-center">
                                         <label class="form-label-title col-sm-3 mb-0">Sản phẩm</label>
                                         <div class="col-sm-9">
-                                            <input class="form-control" type="text" value=" {{$review->product_id}}" disabled>
+                                            <input class="form-control" type="text" value=" {{$review->product?->name}}" disabled>
                                         </div>
                                     </div>
                                     <div class="mb-4 row align-items-center">
                                         <label class="form-label-title col-sm-3 mb-0">Sản phẩm biến thể</label>
                                         <div class="col-sm-9">
-                                            <input class="form-control" type="text" value=" {{$review->product_variant_id}}" disabled>
+                                            <input class="form-control" type="text" value=" {{$review->productVariant?->sku}}" disabled>
                                         </div>
                                     </div>
                                     <div class="mb-4 row align-items-center">
                                         <label class="form-label-title col-sm-3 mb-0">Đánh giá</label>
                                         <div class="col-sm-9">
-                                            <input class="form-control" type="text" value=" {{$review->rating}}" disabled>
-                                        </div>
-                                    </div>
-                                    <div class="mb-4 row align-items-center">
-                                        <label class="form-label-title col-sm-3 mb-0">Ảnh</label>
-                                        <div class="col-sm-9">
-                                            <input class="form-control" type="text" value=" {{$review->image}}" disabled>
+                                            {!! $review->image ? '<img src="' . \Illuminate\Support\Facades\Storage::url($review->image) . '" style="width: 70px; height: 100px" alt="Ảnh review">' : '' !!}
                                         </div>
                                     </div>
                                     <div class="mb-4 row align-items-center">
