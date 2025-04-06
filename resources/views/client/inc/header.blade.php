@@ -245,7 +245,7 @@
                                                     <span class="visually-hidden">unread messages</span>
                                                 </span>
                                             </button>
-                                    
+
                                             <!-- Dropdown giỏ hàng -->
                                             <div class="onhover-div">
                                                 <ul class="cart-list">
@@ -255,7 +255,7 @@
                                                                 <a href="#" class="drop-image">
                                                                     <img src="{{ Storage::url($item['product_image']) }}" class="blur-up lazyload" alt="{{ $item['product_name'] }}">
                                                                 </a>
-                                    
+
                                                                 <div class="drop-contain">
                                                                     <a href="#">
                                                                         <h5>{{ $item['product_name'] }}</h5>
@@ -271,7 +271,7 @@
                                                         <li class="text-center p-3">Giỏ hàng trống</li>
                                                     @endforelse
                                                 </ul>
-                                    
+
                                                 <!-- Tổng giá tiền -->
                                                 <div class="price-box">
                                                     <h5>Total :</h5>
@@ -279,7 +279,7 @@
                                                         {{ number_format($cart_items->sum(fn($item) => $item['variant_price'] * $item['quantity']), 0, ',', '.') }}₫
                                                     </h4>
                                                 </div>
-                                    
+
                                                 <!-- Nút hành động -->
                                                 <div class="button-group">
                                                     <a href="{{route('cart.index')}}" class="btn btn-sm cart-button">View Cart</a>
@@ -288,7 +288,7 @@
                                             </div>
                                         </div>
                                     </li>
-                                    
+
                                     <li class="right-side onhover-dropdown">
                                         <div class="delivery-login-box">
                                             <div class="delivery-icon">
@@ -303,7 +303,7 @@
                                                 @endif
                                             </div>
                                         </div>
-                                    
+
 
                                     <div class="onhover-div onhover-div-login">
                                         <ul class="user-box-name">
@@ -311,6 +311,11 @@
                                                 <li class="product-box-contain">
                                                     <i></i>
                                                     <a href="{{ route('client.profile') }}">Thông tin cá nhân
+                                                    </a>
+                                                </li>
+                                                <li class="product-box-contain">
+                                                    <i></i>
+                                                    <a href="{{ route('order') }}">Đơn hàng của tôi
                                                     </a>
                                                 </li>
                                                 <li class="product-box-contain">
