@@ -120,6 +120,10 @@ Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.in
     Route::resource("banners", BannerController::class);
     Route::resource("pages", PageController::class);
 
+    Route::get('/huong-dan-mua-hang', function () {
+        return view('huongdan'); // nếu file view ở trong resources/views
+    });
+
     Route::get('profile', [ProfileController::class, 'profile'])->name('admin.profile');
     Route::put('updateProfile', [ProfileController::class, 'updateProfile'])->name('admin.updateProfile');
 
