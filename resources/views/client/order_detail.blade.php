@@ -100,7 +100,7 @@
                                         <tbody>
                                         @forelse($order->orderDetails as $detail)
                                             <tr>
-                                                <td>{{ $detail->product_name ?? 'N/A' }}</td>
+                                                <td>{{ $detail->name ?? 'N/A' }}</td>
                                                 <td>{{ $detail->quantity }}</td>
                                                 <td>{{ number_format($detail->price, 0, ',', '.') }} VNĐ</td>
                                                 <td>{{ number_format($detail->quantity * $detail->price, 0, ',', '.') }}
