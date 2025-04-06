@@ -141,15 +141,32 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @foreach ($order->orderDetails as $detail)
+                                        @forelse($order->orderDetails as $detail)
                                             <tr>
-                                                <td>{{ $detail->product ? $detail->product->name : 'N/A' }}</td>
-                                                <td>{{ $detail->productVariant ? $detail->productVariant->sku : 'N/A' }}</td>
+                                                <td>
+                                                    {{ $detail->product->name ?? 'N/A' }}
+                                                </td>
+                                                <td>
+                                                    @if($detail->product_variant_id)
+                                                        @php
+                                                            $variant = \App\Models\ProductVariant::find($detail->product_variant_id);
+                                                        @endphp
+                                                        @if($variant)
+                                                            <p class="text-muted">({{ $variant->sku }})</p>
+                                                        @endif
+                                                    @endif
+                                                </td>
                                                 <td>{{ $detail->quantity }}</td>
-                                                <td>{{ $detail->product ? number_format($detail->product->price, 0, ',', '.') . ' VND' : 'N/A' }}</td>
-                                                <td>{{ $detail->product ? number_format($detail->quantity * $detail->product->price, 0, ',', '.') . ' VND' : 'N/A' }}</td>
+                                                <td>{{ number_format($detail->price, 0, ',', '.') }} VNĐ</td>
+                                                <td>{{ number_format($detail->quantity * $detail->price, 0, ',', '.') }}
+                                                    VNĐ
+                                                </td>
                                             </tr>
-                                        @endforeach
+                                        @empty
+                                            <tr>
+                                                <td colspan="5" class="text-center">Không có sản phẩm nào.</td>
+                                            </tr>
+                                        @endforelse
                                         </tbody>
                                     </table>
                                 </div>

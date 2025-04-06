@@ -218,6 +218,7 @@ class HomeController extends Controller
                 OrderStatus::CONFIRMED->value => [OrderStatus::CANCELLED->value],
                 OrderStatus::PREPARING->value => [OrderStatus::CANCELLED->value],
                 OrderStatus::PREPARED->value => [OrderStatus::CANCELLED->value],
+                OrderStatus::RECEIVED->value => [OrderStatus::RETURNED->value],
                 OrderStatus::DELIVERED->value => [
                     OrderStatus::RECEIVED->value,
                     OrderStatus::NOT_RECEIVED->value
