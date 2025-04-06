@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     @include('client.inc.style')
     @yield('css')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body class="theme-color-5">
@@ -40,6 +41,7 @@
     @include('client.inc.footer')
 
     @include('client.inc.script')
+    @include('admin.inc.notification')
     @yield('js-custom')
 </body>
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
 use App\Models\Banner;
 use App\Models\Order;
 use App\Models\Page;
@@ -199,6 +200,79 @@ class HomeController extends Controller
             ->firstOrFail();
 
         return view('client.order_detail', compact('order'));
+    }
+
+    public function updateStatusOrder(Request $request)
+    {
+        try {
+            $request->validate([
+                'order_id' => 'required|exists:orders,id',
+                'status' => 'required|in:' . implode(',', array_column(OrderStatus::cases(), 'value'))
+            ]);
+
+            $order = Order::findOrFail($request->order_id);
+
+            $allowedTransitions = [
+                OrderStatus::PENDING_CONFIRMATION->value => [OrderStatus::CANCELLED->value],
+                OrderStatus::CONFIRMED->value => [OrderStatus::CANCELLED->value],
+                OrderStatus::PREPARING->value => [OrderStatus::CANCELLED->value],
+                OrderStatus::PREPARED->value => [OrderStatus::CANCELLED->value],
+                OrderStatus::DELIVERED->value => [
+                    OrderStatus::RECEIVED->value,
+                    OrderStatus::NOT_RECEIVED->value
+                ]
+            ];
+
+            if (!in_array($request->status, $allowedTransitions[$order->status->value] ?? [])) {
+                return redirect()->back()->with('error', 'Không thể chuyển sang trạng thái này');
+            }
+
+            $order->status = $request->status;
+            $order->save();
+
+            return redirect()->back()->with('success', 'Cập nhật trạng thái thành công');
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Đã có lỗi xảy ra: ' . $e->getMessage());
+        }
+    }
+
+    public function addReview(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'order_id' => 'required|exists:orders,id',
+            'rating' => 'required|integer|between:1,5',
+            'content' => 'required|string|max:255',
+            'image' => 'required|image|max:2048',
+        ]);
+        $data = $request->all();
+
+        $order = Order::findOrFail($request->order_id);
+
+        if ($order->user_id !== auth()->id() ||
+            !in_array($order->status, [\App\Enums\OrderStatus::RECEIVED, \App\Enums\OrderStatus::RETURNED])) {
+            return redirect()->back()->with('error', 'Bạn không có quyền đánh giá sản phẩm này.');
+        }
+
+        $existingReview = Review::where('user_id', auth()->id())
+            ->where('product_id', $request->product_id)
+            ->where('product_variant_id', $request->product_variant_id)
+            ->exists();
+
+        if ($existingReview) {
+            return redirect()->back()->with('error', 'Bạn đã đánh giá sản phẩm này rồi.');
+        }
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('reviews', 'public');
+        }
+        $data['user_id'] = auth()->id();
+        $data['product_variant_id'] = $request->product_variant_id ?? 0;
+
+        Review::create($data);
+
+        return redirect()->back()->with('success', 'Đánh giá của bạn đã được gửi thành công!');
     }
 
     public function error()

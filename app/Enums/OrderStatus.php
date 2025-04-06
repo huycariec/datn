@@ -15,6 +15,7 @@ enum OrderStatus: string
     case CANCELLED = 'cancelled';
     case RETURNED = 'returned';
     case REFUNDED = 'refunded';
+    case NOT_RECEIVED = 'not_received';
 
     /**
      * Get the display name for the status
@@ -25,14 +26,15 @@ enum OrderStatus: string
             self::PENDING_CONFIRMATION => 'Chờ xác nhận',
             self::CONFIRMED => 'Đã xác nhận',
             self::PREPARING => 'Đang chuẩn bị hàng',
-            self::PREPARED => 'Đã chuẩn bị xong & chờ lấy hàng',
-            self::PICKED_UP => 'Đã lấy hàng',
-            self::IN_TRANSIT => 'Đang giao hàng',
-            self::DELIVERED => 'Đã giao hàng',
+            self::PREPARED => 'Đã chuẩn bị xong & chờ shipper lấy hàng',
+            self::PICKED_UP => 'Shipper đã lấy hàng',
+            self::IN_TRANSIT => 'Shipper đang giao hàng',
+            self::DELIVERED => 'Đơn hàng đã được giao cho người nhận',
             self::RECEIVED => 'Đã nhận được hàng',
             self::CANCELLED => 'Đã hủy',
             self::RETURNED => 'Trả hàng',
             self::REFUNDED => 'Đã hoàn tiền',
+            self::NOT_RECEIVED => 'Không nhận được hàng',
         };
     }
 
@@ -53,6 +55,7 @@ enum OrderStatus: string
             self::CANCELLED => '<span class="badge bg-danger">' . $this->label() . '</span>',
             self::RETURNED => '<span class="badge bg-primary">' . $this->label() . '</span>',
             self::REFUNDED => '<span class="badge bg-dark">' . $this->label() . '</span>',
+            self::NOT_RECEIVED => '<span class="badge bg-danger">' . $this->label() . '</span>',
         };
     }
 

@@ -78,12 +78,57 @@
                                         <div class="d-flex gap-2 justify-content-md-end">
                                             <a href="{{ route('order.detail', $order->id) }}"
                                                class="btn btn-outline-primary btn-sm fw-bold"
-                                               style="border-radius: 20px; padding: 6px 15px;">Chi tiết</a>
-                                            @if($order->status === \App\Enums\OrderStatus::PENDING_CONFIRMATION)
-                                                <a href="#" class="btn btn-outline-danger btn-sm fw-bold"
-                                                   style="border-radius: 20px; padding: 6px 15px;">Hủy đơn</a>
+                                               style="border-radius: 20px; padding: 6px 15px;">Chi tiết đơn hàng</a>
+
+                                            @if(in_array($order->status, [
+                                                \App\Enums\OrderStatus::PENDING_CONFIRMATION,
+                                                \App\Enums\OrderStatus::CONFIRMED,
+                                                \App\Enums\OrderStatus::PREPARING,
+                                                \App\Enums\OrderStatus::PREPARED
+                                            ]))
+                                                <form action="{{ route('update-status') }}" method="POST" style="display: inline;">
+                                                    @csrf
+                                                    <input type="hidden" name="order_id" value="{{ $order->id }}">
+                                                    <input type="hidden" name="status" value="{{ \App\Enums\OrderStatus::CANCELLED }}">
+                                                    <button type="submit"
+                                                            class="btn btn-outline-danger btn-sm fw-bold"
+                                                            style="border-radius: 20px; padding: 6px 15px;"
+                                                            onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
+                                                        Hủy đơn
+                                                    </button>
+                                                </form>
+                                            @endif
+
+                                            @if($order->status === \App\Enums\OrderStatus::DELIVERED)
+                                                <form action="{{ route('update-status') }}" method="POST" style="display: inline;">
+                                                    @csrf
+                                                    <input type="hidden" name="order_id" value="{{ $order->id }}">
+                                                    <input type="hidden" name="status" value="{{ \App\Enums\OrderStatus::RECEIVED }}">
+                                                    <button type="submit"
+                                                            class="btn btn-outline-success btn-sm fw-bold"
+                                                            style="border-radius: 20px; padding: 6px 15px;"
+                                                            onclick="return confirm('Bạn có chắc đã nhận được hàng?')">
+                                                        Xác nhận đã nhận được hàng
+                                                    </button>
+                                                </form>
+
+                                                <form action="{{ route('update-status') }}" method="POST" style="display: inline;">
+                                                    @csrf
+                                                    <input type="hidden" name="order_id" value="{{ $order->id }}">
+                                                    <input type="hidden" name="status" value="{{ \App\Enums\OrderStatus::NOT_RECEIVED }}">
+                                                    <button type="submit"
+                                                            class="btn btn-outline-danger btn-sm fw-bold"
+                                                            style="border-radius: 20px; padding: 6px 15px;"
+                                                            onclick="return confirm('Bạn có chắc chưa nhận được hàng?')">
+                                                        Không nhận được hàng
+                                                    </button>
+                                                </form>
                                             @endif
                                         </div>
+                                        @if($order->status === \App\Enums\OrderStatus::NOT_RECEIVED)
+                                            <p class="text-danger">Chờ quản trị viên liên hệ cho bạn hoặc
+                                                <a href="tel:0338475943"> liên hệ quản trị viên</a></p>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

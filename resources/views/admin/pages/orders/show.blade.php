@@ -8,7 +8,9 @@
                     <div class="card">
                         <div class="card-header bg-warning p-2 text-white rounded-2 d-flex justify-content-between">
                             <h5 class="mb-0">Chi tiết đơn hàng #{{ GenerateOrderNumber($order->id) }}</h5>
-                            <button onclick="window.print()" class="btn btn-secondary">In hóa đơn</button>
+                            @if($order->status->value !== \App\Enums\OrderStatus::CANCELLED->value)
+                                <button onclick="window.print()" class="btn btn-secondary">In hóa đơn</button>
+                            @endif
                         </div>
                         <div class="card-body">
                             <div class="mb-4">
@@ -57,11 +59,16 @@
                                             <label class="col-sm-4 font-weight-bold">Trạng thái</label>
                                             <div class="col-sm-8 d-flex align-items-center gap-2">
                                                 {!!  $order->status->getBadgeLabel() !!}
-                                                @if($order->status->value !== \App\Enums\OrderStatus::REFUNDED->value && $order->status->value !== \App\Enums\OrderStatus::CANCELLED->value)
+                                                @if(!in_array($order->status->value, [\App\Enums\OrderStatus::REFUNDED->value, \App\Enums\OrderStatus::CANCELLED->value, \App\Enums\OrderStatus::RECEIVED->value, \App\Enums\OrderStatus::DELIVERED->value, \App\Enums\OrderStatus::NOT_RECEIVED->value]))
                                                     <a href="#" class="edit-order" data-id="{{ $order->id }}"
                                                        data-status="{{ $order->status }}"
                                                        data-bs-toggle="modal" data-bs-target="#editOrderModal">
                                                         <i class="ri-pencil-line fs-5"></i>
+                                                    </a>
+                                                @endif
+                                                @if($order->status->value == \App\Enums\OrderStatus::NOT_RECEIVED->value)
+                                                    <a class="text-decoration-underline text-danger" href="tel:{{ $order->user->profile->phone }}">
+                                                        <i class="ri-phone-line"></i> Liên hệ người mua
                                                     </a>
                                                 @endif
                                             </div>
