@@ -124,8 +124,9 @@ Route::post('/checkout/save-address', [CheckoutController::class, 'saveAddress']
 Route::get('/order', [HomeController::class, 'Order'])->name('order');
 Route::get('/order/{id}', [HomeController::class, 'OrderDetail'])->name('order.detail');
 
+Route::post('/update-status', [HomeController::class, 'updateStatusOrder'])->name('update-status');
 
-
+Route::post('/review', [HomeController::class, 'addReview'])->name('review.store');
 
 //Route::group(['prefix' => 'admin', 'name' => 'admin.', 'middleware' => 'checkAdmin'], function () {
 Route::group(['prefix' => 'admin', 'name' => 'admin.'], function () {

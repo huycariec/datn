@@ -76,14 +76,21 @@
                                             <td>{!! $order->payment_method->getBadgeLabel() !!}</td>
                                             <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
                                             <td>
-                                                @can('orders_update')
+{{--                                                @can('orders_update')--}}
                                                     <ul class="d-flex list-unstyled">
-                                                        @if($order->status->value !== \App\Enums\OrderStatus::REFUNDED->value && $order->status->value !== \App\Enums\OrderStatus::CANCELLED->value)
+                                                        @if(!in_array($order->status->value, [\App\Enums\OrderStatus::REFUNDED->value, \App\Enums\OrderStatus::CANCELLED->value, \App\Enums\OrderStatus::RECEIVED->value, \App\Enums\OrderStatus::DELIVERED->value, \App\Enums\OrderStatus::NOT_RECEIVED->value]))
                                                             <li class="me-2">
                                                                 <a href="#" class="edit-order" data-id="{{ $order->id }}"
                                                                    data-status="{{ $order->status }}"
                                                                    data-bs-toggle="modal" data-bs-target="#editOrderModal">
                                                                     <i class="ri-pencil-line"></i>
+                                                                </a>
+                                                            </li>
+                                                        @endif
+                                                        @if($order->status->value == \App\Enums\OrderStatus::NOT_RECEIVED->value)
+                                                            <li class="me-2">
+                                                                <a href="tel:{{ $order->user->profile->phone }}">
+                                                                    <i class="ri-phone-line"></i>
                                                                 </a>
                                                             </li>
                                                         @endif
@@ -93,7 +100,7 @@
                                                             </a>
                                                         </li>
                                                     </ul>
-                                                @endcan
+{{--                                                @endcan--}}
                                             </td>
                                         </tr>
                                     @endforeach

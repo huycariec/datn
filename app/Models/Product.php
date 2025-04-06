@@ -34,4 +34,8 @@ class Product extends Model
         // Tính tổng số lượng của tất cả biến thể của sản phẩm
         return $this->variants->sum('stock');
     }
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }
