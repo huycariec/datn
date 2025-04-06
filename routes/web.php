@@ -87,14 +87,7 @@ Route::get('/get-wards/{district_id}', [AddressController::class, 'getWards']);
 
 Route::put('/update-address/{id}', [AddressController::class, 'updateAddress'])->name('client.updateAddress');
 Route::delete('/delete/{id}', [AddressController::class, 'deleteAddress'])->name('client.deleteAddress');
-//kiều duy du 13/2/2025 product
-Route::get('/admin-product-index',[ProductController::class,'index'])->name('admin.product.index');
-Route::get('/admin-product-create',[ProductController::class,'create'])->name('admin.product.create');
-Route::post('/admin-product-store',[ProductController::class,'store'])->name('admin.product.store');
-Route::get('/admin-product-edit/{id}',[ProductController::class,'edit'])->name('admin.product.edit');
-Route::post('/admin-product-delete/{id}',[ProductController::class,'delete'])->name('admin.product.delete');
-Route::post('/admin/products/{id}/toggle-status', [ProductController::class, 'toggleStatus']);
-Route::put('/admin/products/{id}', [ProductController::class, 'update'])->name('admin.product.update');
+
 
 
 
@@ -106,11 +99,7 @@ Route::post('/admin-attribute-store',[ProductAttribute::class,'store'])->name('a
 Route::delete('/admin-attributes-destroy/{key}', [ProductAttribute::class, 'destroy']);
 Route::get('/admin-attribute-edit/{id}',[ProductAttribute::class,'edit'])->name('admin.attribute.edit');
 
-//kiều duy du 21/2/2025 variant
-Route::get('/admin-variant-index/{id}',[ProductVariantController::class,'index'])->name('admin.variant.index');
-Route::post('/admin-variant-store',[ProductVariantController::class,'store'])->name('admin.variant.store');
-Route::put('/update-status/{id}', [ProductVariantController::class, 'updateStatus']);
-Route::get('/product-variants/{id}/edit', [ProductVariantController::class, 'edit'])->name('product.variant.edit');
+
 
 // Kiều Duy du 12/3/2025 cart
 Route::post('cart-store',[CartController::class,'store'])->name('cart.store')->middleware('auth');
@@ -153,5 +142,25 @@ Route::group(['prefix' => 'admin', 'name' => 'admin.'], function () {
 
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
+
+        //kiều duy du 13/2/2025 product
+    Route::get('/product/index',[ProductController::class,'index'])->name('admin.product.index');
+    Route::get('/product/create',[ProductController::class,'create'])->name('admin.product.create');
+    Route::post('/product/store',[ProductController::class,'store'])->name('admin.product.store');
+    Route::get('/product/edit/{id}',[ProductController::class,'edit'])->name('admin.product.edit');
+    Route::post('/product/delete/{id}',[ProductController::class,'delete'])->name('admin.product.delete');
+    Route::post('/products/{id}/toggle-status', [ProductController::class, 'toggleStatus'])->name('admin.toggleStatus');
+    Route::put('/products/{id}', [ProductController::class, 'update'])->name('admin.product.update');
+
+
+    //kiều duy du 21/2/2025 variant
+    Route::get('/variant/index/{id}',[ProductVariantController::class,'index'])->name('admin.variant.index');
+    Route::post('/variant/store',[ProductVariantController::class,'store'])->name('admin.variant.store');
+    Route::put('/variant/status/{id}', [ProductVariantController::class, 'updateStatus']);
+    Route::get('/variants/{id}/edit', [ProductVariantController::class, 'edit'])->name('product.variant.edit');
+    Route::post('/variant/update-status', [ProductVariantController::class, 'updateStatus'])->name('variant.updateStatus');
+    Route::put('/admin/variants/{id}', [ProductVariantController::class, 'update'])->name('variant.update');
+
+
 });
 
