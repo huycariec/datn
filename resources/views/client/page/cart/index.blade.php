@@ -56,8 +56,21 @@
     <div class="container-fluid-lg">
         <div class="row g-sm-5 g-3">
             <div class="col-xxl-9">
+
+
                 <div class="cart-table">
                     <div class="table-responsive-xl">
+                        @if (session('success'))
+                            <div id="alert-message" class="alert alert-success">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+        
+                        @if (session('error'))
+                            <div id="alert-message" class="alert alert-danger">
+                                {{ session('error') }}
+                            </div>
+                        @endif
                         <table class="table table-bordered align-middle text-center">
                             <thead class="table-dark">
                                 <tr>
@@ -108,64 +121,70 @@
                                         <!-- Nút mở popup, gắn data-cart-id để nhận diện -->
                                         <button class="edit-btn" data-cart-id="{{ $item['cart_id'] }}">Chỉnh sửa</button>
 
-                                        <!-- Popup gắn ID theo cart_id -->
-                                        <div class="edit-popup hidden" id="edit-popup-{{ $item['cart_id'] }}" data-all-attributes='@json((object) $item["all_attributes"])'>
+                                    <!-- Popup gắn ID theo cart_id -->
+                                    <div class="edit-popup hidden" id="edit-popup-{{ $item['cart_id'] }}" data-all-attributes='@json((object) $item["all_attributes"])'>
 
-                                                <h3>Phân loại hàng</h3>
-                                            
-                                                @php
-                                                    // Lấy key các thuộc tính như size, color
-                                                    $attributeKeys = [];
-                                                    foreach ($item['all_attributes'] as $variant) {
-                                                        $attributeKeys = array_keys($variant);
-                                                        break;
+                                        <h3>Phân loại hàng</h3>
+                                    
+                                        @php
+                                            // Lấy key các thuộc tính (bỏ qua stock)
+                                            $attributeKeys = [];
+                                            foreach ($item['all_attributes'] as $variant) {
+                                                foreach($variant as $key => $value) {
+                                                    if($key != 'stock') {
+                                                        $attributeKeys[] = $key;
                                                     }
-                                            
-                                                    // Gom tất cả giá trị theo từng thuộc tính (loại bỏ trùng lặp)
-                                                    $attributeValues = [];
-                                                    foreach ($attributeKeys as $key) {
-                                                        $attributeValues[$key] = [];
-                                                        foreach ($item['all_attributes'] as $variant) {
-                                                            if (!in_array($variant[$key], $attributeValues[$key])) {
-                                                                $attributeValues[$key][] = $variant[$key];
-                                                            }
-                                                        }
+                                                }
+                                                break;
+                                            }
+                                    
+                                            // Gom giá trị từng thuộc tính (loại trùng lặp)
+                                            $attributeValues = [];
+                                            foreach ($attributeKeys as $key) {
+                                                $attributeValues[$key] = [];
+                                                foreach ($item['all_attributes'] as $variant) {
+                                                    if (isset($variant[$key]) && !in_array($variant[$key], $attributeValues[$key])) {
+                                                        $attributeValues[$key][] = $variant[$key];
                                                     }
-                                                @endphp
-                                            
-                                                @foreach($attributeValues as $attrKey => $values)
-                                                    <div style="margin-top: 10px;">
-                                                        <strong>{{ ucfirst($attrKey) }}:</strong>
-                                                        <div class="options {{ $attrKey }}-options">
-                                                            @foreach($values as $value)
-                                                                <button 
-                                                                    data-key="{{ $attrKey }}" 
-                                                                    data-value="{{ $value }}"
-                                                                    @if(($item['selected_attributes'][$attrKey] ?? '') == $value) 
-                                                                        class="selected" 
-                                                                    @endif
-                                                                >
-                                                                    {{ ucfirst($value) }}
-                                                                </button>
-                                                            @endforeach
-                                                        </div>
-                                                    </div>
-                                                @endforeach
-                                            
-                                                {{-- ✅ Nơi hiển thị lỗi realtime --}}
-                                                <div class="error-message text-red-500 text-sm mt-2"></div>
-                                            
-                                                <div class="popup-actions" style="margin-top: 15px;">
-                                                    <form action="{{ route('cart.updateVariant') }}" method="POST">
-                                                        @csrf
-                                                        <input type="hidden" name="cart_id" id="" value="{{ $item['cart_id'] }}">
-                                                        {{-- ✅ Đặt name="sku" để JS gán SKU đúng input --}}
-                                                        <input type="hidden" name="sku" value="">
-                                                        <button type="button" class="back-btn">Trở lại</button>
-                                                        <button type="button" class="confirm-btn" data-cart-id="{{ $item['cart_id'] }}">Xác nhận</button>
-                                                    </form>
+                                                }
+                                            }
+                                        @endphp
+                                    
+                                        @foreach($attributeValues as $attrKey => $values)
+                                            <div style="margin-top: 10px;">
+                                                <strong>{{ ucfirst($attrKey) }}:</strong>
+                                                <div class="options {{ $attrKey }}-options">
+                                                    @foreach($values as $value)
+                                                        <button 
+                                                            data-key="{{ $attrKey }}" 
+                                                            data-value="{{ $value }}"
+                                                            @if(($item['selected_attributes'][$attrKey] ?? '') == $value) 
+                                                                class="selected" 
+                                                            @endif
+                                                        >
+                                                            {{ ucfirst($value) }}
+                                                        </button>
+                                                    @endforeach
                                                 </div>
+                                            </div>
+                                        @endforeach
+                                    
+                                        {{-- ✅ Hiển thị lỗi realtime --}}
+                                        <div class="error-message text-red-500 text-sm mt-2"></div>
+                                    
+                                        <div class="popup-actions" style="margin-top: 15px;">
+                                            <form action="{{ route('cart.updateVariant') }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" name="cart_id" value="{{ $item['cart_id'] }}">
+                                                <input type="hidden" name="sku" value="">
+                                                <button type="button" class="back-btn">Trở lại</button>
+                                                <button type="button" class="confirm-btn" data-cart-id="{{ $item['cart_id'] }}">Xác nhận</button>
+                                            </form>
                                         </div>
+                                    </div>
+                                    
+                                    
+                                    
                                             
                          
                                     </td>
@@ -292,126 +311,338 @@
 @section('js-custom')
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const selectAllCheckbox = document.getElementById('selectAll');
-    const checkboxes = document.querySelectorAll('.cart-item-checkbox');
-    const quantityInputs = document.querySelectorAll(".qty-input");
-    const orderTotalElement = document.getElementById("total-price"); 
-    const subtotalElement = document.getElementById("subtotal-price"); 
-    const checkoutForm = document.querySelector("form[action='{{route('checkout.index')}}']");
 
-    // Hàm định dạng tiền
-    function numberFormat(number) {
-        return new Intl.NumberFormat("vi-VN").format(number);
-    }
+const selectAllCheckbox = document.getElementById('selectAll');
+const checkboxes = document.querySelectorAll('.cart-item-checkbox');
+const quantityInputs = document.querySelectorAll(".qty-input");
+const orderTotalElement = document.getElementById("total-price");
+const subtotalElement = document.getElementById("subtotal-price");
+const checkoutForm = document.querySelector("form[action='{{route('checkout.index')}}']");
 
-    // ✅ Hàm update hidden input cho form checkout
-    function updateHiddenInputs() {
-        const hiddenContainer = checkoutForm.querySelector('.dynamic-hidden') || document.createElement('div');
-        hiddenContainer.classList.add('dynamic-hidden');
-        hiddenContainer.innerHTML = ''; // Xóa hết input cũ
+function numberFormat(number) {
+    return new Intl.NumberFormat("vi-VN").format(number);
+}
 
-        document.querySelectorAll('.cart-item-checkbox:checked').forEach(checkbox => {
-            const row = checkbox.closest('tr');
-            const cartId = row.querySelector('.qty-input').dataset.id;
-            const quantity = row.querySelector('.qty-input').value;
+function updateHiddenInputs() {
+    const hiddenContainer = checkoutForm.querySelector('.dynamic-hidden') || document.createElement('div');
+    hiddenContainer.classList.add('dynamic-hidden');
+    hiddenContainer.innerHTML = '';
 
-            hiddenContainer.innerHTML += `<input type="hidden" name="cart_id[]" value="${cartId}">`;
-            hiddenContainer.innerHTML += `<input type="hidden" name="quantity[]" value="${quantity}">`;
-        });
+    document.querySelectorAll('.cart-item-checkbox:checked').forEach(checkbox => {
+        const row = checkbox.closest('tr');
+        const cartId = row.querySelector('.qty-input').dataset.id;
+        const quantity = row.querySelector('.qty-input').value;
 
-        checkoutForm.appendChild(hiddenContainer);
-    }
-
-    // ✅ Hàm tính tổng
-    function updateOrderTotal() {
-        let subtotal = 0;
-        document.querySelectorAll('.cart-item-checkbox:checked').forEach(checkbox => {
-            const row = checkbox.closest("tr");
-            const itemTotal = parseFloat(row.querySelector(".item-total").dataset.total);
-            subtotal += itemTotal;
-        });
-
-        subtotalElement.textContent = numberFormat(subtotal) + "₫";
-        orderTotalElement.textContent = numberFormat(subtotal) + "₫";
-        updateHiddenInputs(); // Cập nhật hidden input khi tính tổng
-    }
-
-    // ✅ Chức năng chọn tất cả
-    selectAllCheckbox.addEventListener('change', function () {
-        const isChecked = this.checked;
-        checkboxes.forEach(checkbox => checkbox.checked = isChecked);
-        updateOrderTotal();
+        hiddenContainer.innerHTML += `<input type="hidden" name="cart_id[]" value="${cartId}">`;
+        hiddenContainer.innerHTML += `<input type="hidden" name="quantity[]" value="${quantity}">`;
     });
 
-    // ✅ Check từng item
+    checkoutForm.appendChild(hiddenContainer);
+}
+
+function updateOrderTotal() {
+    let subtotal = 0;
+    document.querySelectorAll('.cart-item-checkbox:checked').forEach(checkbox => {
+        const row = checkbox.closest("tr");
+        const itemTotal = parseFloat(row.querySelector(".item-total").dataset.total);
+        subtotal += itemTotal;
+    });
+
+    subtotalElement.textContent = numberFormat(subtotal) + "₫";
+    orderTotalElement.textContent = numberFormat(subtotal) + "₫";
+    updateHiddenInputs();
+}
+
+selectAllCheckbox.addEventListener('change', function () {
+    const isChecked = this.checked;
     checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function () {
-            selectAllCheckbox.checked = document.querySelectorAll('.cart-item-checkbox:checked').length === checkboxes.length;
-            updateOrderTotal();
-        });
-    });
-
-    // ✅ Xử lý cộng trừ số lượng
-    quantityInputs.forEach(input => {
-        const stock = parseInt(input.dataset.stock);
-        const cartId = input.dataset.id;
-        const minusBtn = input.closest(".input-group").querySelector(".qty-left-minus");
-        const plusBtn = input.closest(".input-group").querySelector(".qty-right-plus");
-
-        function updateItemTotal() {
-            const row = input.closest("tr");
-            const price = parseFloat(row.querySelector(".text-danger").dataset.price);
-            const quantity = parseInt(input.value);
-            const totalElement = row.querySelector(".item-total");
-            const itemTotal = price * quantity;
-
-            totalElement.dataset.total = itemTotal;
-            totalElement.textContent = numberFormat(itemTotal) + "₫";
-            updateOrderTotal();
+        if (!checkbox.disabled) {
+            checkbox.checked = isChecked;
         }
-
-        plusBtn.addEventListener("click", function () {
-            let currentQty = parseInt(input.value);
-            if (currentQty < stock) {
-                input.value = currentQty + 1;
-                updateItemTotal();
-            } else {
-                alert(`Số lượng tối đa có thể đặt là ${stock}`);
-            }
-        });
-
-        minusBtn.addEventListener("click", function () {
-            let currentQty = parseInt(input.value);
-            if (currentQty > 1) {
-                input.value = currentQty - 1;
-                updateItemTotal();
-            }
-        });
-
-        input.addEventListener("input", function () {
-            let value = parseInt(input.value);
-            if (isNaN(value) || value < 1) {
-                input.value = 1;
-            } else if (value > stock) {
-                input.value = stock;
-                alert(`Số lượng tối đa có thể đặt là ${stock}`);
-            }
-            updateItemTotal();
-        });
     });
-
-    // ✅ Khi submit form thì kiểm tra và gửi đúng cart_id[] và quantity[]
-    checkoutForm.addEventListener('submit', function (e) {
-        if (document.querySelectorAll('.cart-item-checkbox:checked').length === 0) {
-            e.preventDefault();
-            alert('Vui lòng chọn ít nhất 1 sản phẩm để thanh toán.');
-        }
-        // updateHiddenInputs(); // Có thể gọi lại nếu cần chắc chắn
-    });
-
-    // ✅ Cập nhật tổng khi vừa load trang
     updateOrderTotal();
 });
+
+checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function () {
+        selectAllCheckbox.checked = document.querySelectorAll('.cart-item-checkbox:checked').length === document.querySelectorAll('.cart-item-checkbox:not(:disabled)').length;
+        updateOrderTotal();
+    });
+});
+
+quantityInputs.forEach(input => {
+    const stock = parseInt(input.dataset.stock);
+    const minusBtn = input.closest(".input-group").querySelector(".qty-left-minus");
+    const plusBtn = input.closest(".input-group").querySelector(".qty-right-plus");
+    const row = input.closest("tr");
+    const checkbox = row.querySelector('.cart-item-checkbox');
+
+    if (stock === 0) {
+        input.value = 0;
+        input.disabled = true;
+        minusBtn.disabled = true;
+        plusBtn.disabled = true;
+        checkbox.disabled = true;
+
+        const stockNotice = document.createElement('small');
+        stockNotice.classList.add('text-danger');
+        stockNotice.textContent = 'Hết hàng';
+        input.closest('.input-group').appendChild(stockNotice);
+        return;
+    }
+
+    function updateItemTotal() {
+        const price = parseFloat(row.querySelector(".text-danger").dataset.price);
+        const quantity = parseInt(input.value);
+        const totalElement = row.querySelector(".item-total");
+        const itemTotal = price * quantity;
+
+        totalElement.dataset.total = itemTotal;
+        totalElement.textContent = numberFormat(itemTotal) + "₫";
+        updateOrderTotal();
+    }
+
+    plusBtn.addEventListener("click", function () {
+        let currentQty = parseInt(input.value);
+        if (currentQty < stock) {
+            input.value = currentQty + 1;
+            hideStockError(input);
+            updateItemTotal();
+        } else {
+            showStockError(input, stock);
+        }
+    });
+
+    minusBtn.addEventListener("click", function () {
+        let currentQty = parseInt(input.value);
+        if (currentQty > 1) {
+            input.value = currentQty - 1;
+            hideStockError(input);
+            updateItemTotal();
+        }
+    });
+
+    input.addEventListener("input", function () {
+        let value = parseInt(input.value);
+        if (isNaN(value) || value < 1) {
+            input.value = 1;
+            hideStockError(input);
+        } else if (value > stock) {
+            input.value = stock;
+            showStockError(input, stock);
+        } else {
+            hideStockError(input);
+        }
+        updateItemTotal();
+    });
+
+});
+
+checkoutForm.addEventListener('submit', function (e) {
+    let hasError = false;
+    let errorMessages = [];
+
+    quantityInputs.forEach(input => {
+        const stock = parseInt(input.dataset.stock);
+        const qty = parseInt(input.value);
+        const productName = input.dataset.name; // lấy tên sản phẩm từ data-name
+
+        if (!input.disabled && qty > stock) {
+            showStockError(input, stock);
+            hasError = true;
+            errorMessages.push(`- ${productName}: tối đa ${stock} sản phẩm`);
+        }
+    });
+
+    if (document.querySelectorAll('.cart-item-checkbox:checked').length === 0) {
+        e.preventDefault();
+        alert('Vui lòng chọn ít nhất 1 sản phẩm để thanh toán.');
+    } else if (hasError) {
+        e.preventDefault();
+        alert('Có sản phẩm vượt quá số lượng trong kho:\n' + errorMessages.join('\n'));
+    }
+});
+
+
+function showStockError(input, stock) {
+    let errorElement = input.closest('.input-group').querySelector('.stock-error');
+
+    if (!errorElement) {
+        errorElement = document.createElement('small');
+        errorElement.classList.add('stock-error', 'text-danger');
+        input.closest('.input-group').appendChild(errorElement);
+    }
+
+    errorElement.textContent = `⚠️ Tối đa chỉ còn ${stock} sản phẩm trong kho!`;
+}
+
+function hideStockError(input) {
+    const errorElement = input.closest('.input-group').querySelector('.stock-error');
+    if (errorElement) {
+        errorElement.remove();
+    }
+}
+
+updateOrderTotal();
+
+});
+
+// document.addEventListener("DOMContentLoaded", function () {
+
+//     const selectAllCheckbox = document.getElementById('selectAll');
+//     const checkboxes = document.querySelectorAll('.cart-item-checkbox');
+//     const quantityInputs = document.querySelectorAll(".qty-input");
+//     const orderTotalElement = document.getElementById("total-price");
+//     const subtotalElement = document.getElementById("subtotal-price");
+//     const checkoutForm = document.querySelector("form[action='{{route('checkout.index')}}']");
+
+//     function numberFormat(number) {
+//         return new Intl.NumberFormat("vi-VN").format(number);
+//     }
+
+//     function updateHiddenInputs() {
+//         const hiddenContainer = checkoutForm.querySelector('.dynamic-hidden') || document.createElement('div');
+//         hiddenContainer.classList.add('dynamic-hidden');
+//         hiddenContainer.innerHTML = '';
+
+//         document.querySelectorAll('.cart-item-checkbox:checked').forEach(checkbox => {
+//             const row = checkbox.closest('tr');
+//             const cartId = row.querySelector('.qty-input').dataset.id;
+//             const quantity = row.querySelector('.qty-input').value;
+
+//             hiddenContainer.innerHTML += `<input type="hidden" name="cart_id[]" value="${cartId}">`;
+//             hiddenContainer.innerHTML += `<input type="hidden" name="quantity[]" value="${quantity}">`;
+//         });
+
+//         checkoutForm.appendChild(hiddenContainer);
+//     }
+
+//     function updateOrderTotal() {
+//         let subtotal = 0;
+//         document.querySelectorAll('.cart-item-checkbox:checked').forEach(checkbox => {
+//             const row = checkbox.closest("tr");
+//             const itemTotal = parseFloat(row.querySelector(".item-total").dataset.total);
+//             subtotal += itemTotal;
+//         });
+
+//         subtotalElement.textContent = numberFormat(subtotal) + "₫";
+//         orderTotalElement.textContent = numberFormat(subtotal) + "₫";
+//         updateHiddenInputs();
+//     }
+
+//     selectAllCheckbox.addEventListener('change', function () {
+//         const isChecked = this.checked;
+//         checkboxes.forEach(checkbox => {
+//             if (!checkbox.disabled) {
+//                 checkbox.checked = isChecked;
+//             }
+//         });
+//         updateOrderTotal();
+//     });
+
+//     checkboxes.forEach(checkbox => {
+//         checkbox.addEventListener('change', function () {
+//             selectAllCheckbox.checked = document.querySelectorAll('.cart-item-checkbox:checked').length === document.querySelectorAll('.cart-item-checkbox:not(:disabled)').length;
+//             updateOrderTotal();
+//         });
+//     });
+
+//     quantityInputs.forEach(input => {
+//         const stock = parseInt(input.dataset.stock);
+//         const minusBtn = input.closest(".input-group").querySelector(".qty-left-minus");
+//         const plusBtn = input.closest(".input-group").querySelector(".qty-right-plus");
+//         const row = input.closest("tr");
+//         const checkbox = row.querySelector('.cart-item-checkbox');
+
+//         // Nếu hết hàng
+//         if (stock === 0) {
+//             input.value = 0;
+//             input.disabled = true;
+//             minusBtn.disabled = true;
+//             plusBtn.disabled = true;
+//             checkbox.disabled = true;
+
+//             const stockNotice = document.createElement('small');
+//             stockNotice.classList.add('text-danger');
+//             stockNotice.textContent = 'Hết hàng';
+//             input.closest('.input-group').appendChild(stockNotice);
+//             return; // bỏ qua không gán event nữa
+//         }
+
+//         function updateItemTotal() {
+//             const price = parseFloat(row.querySelector(".text-danger").dataset.price);
+//             const quantity = parseInt(input.value);
+//             const totalElement = row.querySelector(".item-total");
+//             const itemTotal = price * quantity;
+
+//             totalElement.dataset.total = itemTotal;
+//             totalElement.textContent = numberFormat(itemTotal) + "₫";
+//             updateOrderTotal();
+//         }
+
+//         plusBtn.addEventListener("click", function () {
+//             let currentQty = parseInt(input.value);
+//             if (currentQty < stock) {
+//                 input.value = currentQty + 1;
+//                 updateItemTotal();
+//             } else {
+//                 showStockError(input, stock);
+//             }
+//         });
+
+//         minusBtn.addEventListener("click", function () {
+//             let currentQty = parseInt(input.value);
+//             if (currentQty > 1) {
+//                 input.value = currentQty - 1;
+//                 hideStockError(input);
+//                 updateItemTotal();
+//             }
+//         });
+
+//         input.addEventListener("input", function () {
+//             let value = parseInt(input.value);
+//             if (isNaN(value) || value < 1) {
+//                 input.value = 1;
+//                 hideStockError(input);
+//             } else if (value > stock) {
+//                 input.value = stock;
+//                 showStockError(input, stock);
+//             } else {
+//                 hideStockError(input);
+//             }
+//             updateItemTotal();
+//         });
+//     });
+
+//     checkoutForm.addEventListener('submit', function (e) {
+//         if (document.querySelectorAll('.cart-item-checkbox:checked').length === 0) {
+//             e.preventDefault();
+//             alert('Vui lòng chọn ít nhất 1 sản phẩm để thanh toán.');
+//         }
+//     });
+
+//     function showStockError(input, stock) {
+//         let errorElement = input.closest('.input-group').querySelector('.stock-error');
+
+//         if (!errorElement) {
+//             errorElement = document.createElement('small');
+//             errorElement.classList.add('stock-error', 'text-danger');
+//             input.closest('.input-group').appendChild(errorElement);
+//         }
+
+//         errorElement.textContent = `⚠️ Tối đa chỉ còn ${stock} sản phẩm trong kho!`;
+//     }
+
+//     function hideStockError(input) {
+//         const errorElement = input.closest('.input-group').querySelector('.stock-error');
+//         if (errorElement) {
+//             errorElement.remove();
+//         }
+//     }
+
+//     updateOrderTotal();
+
+// });
 
 document.addEventListener('DOMContentLoaded', () => {
     // Mở popup
@@ -491,29 +722,43 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
     // ✅ Hàm validate chung - gọi được khi chọn hoặc bấm xác nhận
-function validateSelectionAndSetSKU(popup) {
+    function validateSelectionAndSetSKU(popup) {
     let selected = {};
     let errorEl = popup.querySelector('.error-message');
-    errorEl.textContent = ''; // Xóa lỗi cũ
+    errorEl.textContent = ''; // Clear lỗi cũ
 
-    // Lấy các lựa chọn
-    popup.querySelectorAll('.options').forEach(optionGroup => {
-        const key = optionGroup.classList[1].replace('-options', '');
-        const activeBtn = optionGroup.querySelector('button.active');
+    const optionGroups = popup.querySelectorAll('.options');
+    const totalOptions = optionGroups.length;
+
+    // Lấy lựa chọn của user
+    if (totalOptions === 1) {
+        // Sản phẩm chỉ có 1 thuộc tính -> key cố định là 'option'
+        const activeBtn = popup.querySelector('.options button.active') || popup.querySelector('.options button.selected');
         if (activeBtn) {
-            selected[key] = activeBtn.dataset.value;
+            selected['option'] = activeBtn.dataset.value;
         }
-    });
+    } else {
+        // Sản phẩm có nhiều thuộc tính -> lấy key động
+        optionGroups.forEach(optionGroup => {
+            const key = optionGroup.dataset.key 
+                || Array.from(optionGroup.classList).find(cls => cls !== 'options')?.replace('-options', '') 
+                || 'option';
 
-    // Kiểm tra đủ phân loại chưa
-    const totalOptions = popup.querySelectorAll('.options').length;
+            const activeBtn = optionGroup.querySelector('button.active') || optionGroup.querySelector('button.selected');
+            if (activeBtn) {
+                selected[key] = activeBtn.dataset.value;
+            }
+        });
+    }
+
+    // Check đã chọn đủ chưa
     if (Object.keys(selected).length < totalOptions) {
         popup.querySelector('input[name="sku"]').value = '';
         errorEl.textContent = '❌ Vui lòng chọn đầy đủ các phân loại!';
         return { success: false };
     }
 
-    // Parse biến thể
+    // Parse all_attributes
     let allAttributes;
     try {
         allAttributes = JSON.parse(popup.dataset.allAttributes);
@@ -523,7 +768,7 @@ function validateSelectionAndSetSKU(popup) {
         return { success: false };
     }
 
-    // So khớp SKU
+    // So khớp SKU và check stock
     let matchedSKU = null;
     for (const [skuKey, variant] of Object.entries(allAttributes)) {
         let isMatch = true;
@@ -534,7 +779,13 @@ function validateSelectionAndSetSKU(popup) {
             }
         }
         if (isMatch) {
-            matchedSKU = skuKey;
+            if (variant.stock > 0) {
+                matchedSKU = skuKey;
+            } else {
+                popup.querySelector('input[name="sku"]').value = '';
+                errorEl.textContent = '❌ Biến thể bạn chọn đã hết hàng!';
+                return { success: false };
+            }
             break;
         }
     }
@@ -545,11 +796,21 @@ function validateSelectionAndSetSKU(popup) {
         return { success: false };
     }
 
-    // ✅ Gán SKU realtime
+    // Thành công
     popup.querySelector('input[name="sku"]').value = matchedSKU;
-    errorEl.textContent = ''; // Không có lỗi
+    errorEl.textContent = ''; // Clear lỗi
     return { success: true, sku: matchedSKU, selected };
 }
+
+
+setTimeout(function () {
+    const alert = document.getElementById('alert-message');
+    if (alert) {
+        alert.style.transition = 'opacity 0.5s ease';
+        alert.style.opacity = '0';
+        setTimeout(() => alert.style.display = 'none', 500);
+    }
+}, 5000);
 
 
 </script>

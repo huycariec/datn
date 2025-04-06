@@ -17,6 +17,16 @@ class CartController extends Controller
         if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.');
         }
+        $request->validate([
+            'sku'      => 'required|exists:product_variants,sku',
+            'quantity' => 'required|integer|min:1',
+        ], [
+            'sku.required'      => 'Thiếu thông tin SKU!',
+            'sku.exists'        => 'Sản phẩm không tồn tại!',
+            'quantity.required' => 'Vui lòng nhập số lượng!',
+            'quantity.integer'  => 'Số lượng phải là số!',
+            'quantity.min'      => 'Số lượng phải lớn hơn 0!',
+        ]);
 
         // Lấy SKU từ request
         $sku = $request->input('sku');
@@ -36,21 +46,42 @@ class CartController extends Controller
 
         // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
         $cartItem = Cart::where('user_id', $userId)
-                        ->where('product_id', $productId)
-                        ->where('product_variant_id', $variantId)
-                        ->first();
+        ->where('product_id', $productId)
+        ->where('product_variant_id', $variantId)
+        ->first();
+
+        $stock = $productVariant->stock; // Số lượng tồn kho hiện tại
 
         if ($cartItem) {
-            // Nếu đã có, cập nhật lại số lượng thay vì cộng dồn
-            $cartItem->update(['quantity' => $quantity]);
+        $newQuantity = $cartItem->quantity + $quantity;
+
+        if ($newQuantity > $stock) {
+        // Nếu cộng vào vượt quá kho
+        $cartItem->update(['quantity' => $stock]);
+
+        return redirect()->back()->with('error', 'Số lượng sản phẩm trong giỏ hàng đã được điều chỉnh bằng số lượng tồn kho!');
         } else {
-            // Nếu chưa có, thêm mới vào giỏ hàng
-            Cart::create([
-                'user_id' => $userId,
-                'product_id' => $productId,
-                'product_variant_id' => $variantId,
-                'quantity' => $quantity,
-            ]);
+        // Cộng dồn bình thường
+        $cartItem->update(['quantity' => $newQuantity]);
+        }
+        } else {
+        // Thêm mới
+        $addQuantity = $quantity > $stock ? $stock : $quantity;
+
+        if ($quantity > $stock) {
+        $message = 'Số lượng bạn chọn vượt quá kho, sản phẩm được thêm với số lượng tối đa hiện có!';
+        } else {
+        $message = 'Sản phẩm đã được thêm vào giỏ hàng!';
+        }
+
+        Cart::create([
+        'user_id' => $userId,
+        'product_id' => $productId,
+        'product_variant_id' => $variantId,
+        'quantity' => $addQuantity,
+        ]);
+
+        return redirect()->back()->with('success', $message);
         }
 
         return redirect()->back()->with('success', 'Sản phẩm đã được thêm vào giỏ hàng!');
@@ -68,46 +99,49 @@ class CartController extends Controller
         ->map(function ($cart) {
             $product = $cart->product;
             $variant = $cart->variant;
-
-            // Lấy danh sách thuộc tính đã chọn của biến thể hiện tại
+    
+            // Thuộc tính đã chọn của variant hiện tại
             $selectedAttributes = $variant->variantAttributes->mapWithKeys(function ($variantAttribute) {
                 return [
                     optional($variantAttribute->attributeValue->attribute)->name => optional($variantAttribute->attributeValue)->value
                 ];
             })->toArray();
-
-            // Lấy tất cả thuộc tính của sản phẩm theo từng biến thể, nhóm theo `product_id-variant_id`
+    
+            // Lấy tất cả thuộc tính + stock của từng variant
             $allAttributes = $product->variants->mapWithKeys(function ($variant) {
                 $variantKey = $variant->product_id . '-' . $variant->id;
-
+    
+                $attributes = $variant->variantAttributes->mapWithKeys(function ($variantAttribute) {
+                    return [
+                        optional($variantAttribute->attributeValue->attribute)->name => optional($variantAttribute->attributeValue)->value
+                    ];
+                })->toArray();
+    
                 return [
-                    $variantKey => $variant->variantAttributes->mapWithKeys(function ($variantAttribute) {
-                        return [
-                            optional($variantAttribute->attributeValue->attribute)->name => optional($variantAttribute->attributeValue)->value
-                        ];
-                    })->toArray()
+                    $variantKey => array_merge($attributes, [
+                        'stock' => $variant->stock
+                    ])
                 ];
             })->toArray();
-
+    
             return [
                 'cart_id' => $cart->id,
                 'quantity' => $cart->quantity,
-                'stock' => optional($variant)->stock ,
+                'stock' => optional($variant)->stock,
                 'product_name' => optional($product)->name ?? 'Sản phẩm không tồn tại',
                 'variant_price' => number_format(optional($variant)->price ?? 0, 2, '.', ''),
-                'product_image' => optional($variant->images->first())->url ??
-                                   optional($product->images->first())->url ?? null,
-                'selected_attributes' => $selectedAttributes, // Chỉ thuộc tính của biến thể hiện tại
-                'all_attributes' => $allAttributes // Nhóm tất cả biến thể theo product_id-variant_id
+                'product_image' => optional($variant->images->first())->url
+                                    ?? optional($product->images->first())->url
+                                    ?? null,
+                'selected_attributes' => $selectedAttributes,
+                'all_attributes' => $allAttributes
             ];
         })->values()->toArray();
-
-
         // dd($cartItems);
-
+    
         return view('client.page.cart.index', compact('cartItems'));
-
     }
+    
 
     public function remove(Request $request)
     {
@@ -129,28 +163,43 @@ class CartController extends Controller
     }
     public function updateVariant(Request $request)
     {
-
-        // Tìm product_variant theo SKU
-        $variant =ProductVariant::where('sku', $request->sku)->first();
-
+        $request->validate([
+            'cart_id' => 'required|exists:carts,id',
+            'sku' => 'required|exists:product_variants,sku',
+        ]);
+    
+        $variant = ProductVariant::where('sku', $request->sku)->first();
+        $cart = Cart::find($request->cart_id);
+    
         if (!$variant) {
             return back()->with('error', 'Biến thể sản phẩm không tồn tại!');
         }
-
-        // Lấy giỏ hàng cần cập nhật
-        $cart =Cart::find($request->cart_id);
-
-        // Nếu số lượng trong giỏ lớn hơn tồn kho, cập nhật lại số lượng bằng tồn kho
+    
+        if ($variant->stock <= 0) {
+            return back()->with('error', 'Sản phẩm đã hết hàng!');
+        }
+    
+        $message = 'Cập nhật phân loại thành công!';
+    
+        // Số lượng tối thiểu là 1
+        if ($cart->quantity < 1) {
+            $cart->quantity = 1;
+            $message .= ' Số lượng tối thiểu là 1.';
+        }
+    
+        // Số lượng tối đa là tồn kho
         if ($cart->quantity > $variant->stock) {
             $cart->quantity = $variant->stock;
+            $message .= ' Số lượng đã được điều chỉnh về tối đa trong kho (' . $variant->stock . ').';
         }
-
-        // Cập nhật biến thể sản phẩm
+    
         $cart->product_variant_id = $variant->id;
         $cart->save();
-
-        return back()->with('success', 'Cập nhật phân loại thành công!');
+    
+        return back()->with('success', $message);
     }
+    
+    
 
 
 

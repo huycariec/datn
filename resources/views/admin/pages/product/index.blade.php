@@ -65,17 +65,73 @@
                         <div class="col-sm-12">
                             <div class="card card-table">
                                 <div class="card-body">
-                                    <div class="title-header option-title d-sm-flex d-block">
-                                        <h5>Danh Sách Sản Phẩm</h5>
-                                        <div class="right-options">
-                                            <ul>
-                                                <li>
-                                                    <a href="{{route('admin.product.create')}}" class="btn btn-solid" href="add-new-product.html">Thêm Mới Sản Phẩm</a>
-                                                </li>
-                                            </ul>
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+                                        <div class="title-header option-title">
+                                            <h5>Danh sách sản phẩm</h5>
                                         </div>
+                                    
+                                        <a href="{{ route('admin.product.create') }}" class="btn btn-primary">
+                                            <i class="fas fa-plus me-1"></i> Thêm Mới Sản Phẩm
+                                        </a>
                                     </div>
-                                    <div>
+                                    <div class="mb-4">
+                                        <form method="GET" action="{{ route('admin.product.index') }}">
+                                            <div class="row g-2">
+                                                <div class="col-md-2">
+                                                    <input type="text" name="id" class="form-control" placeholder="ID Sản phẩm" value="{{ request('id') }}">
+                                                </div>
+                                    
+                                                <div class="col-md-2">
+                                                    <input type="text" name="name" class="form-control" placeholder="Tên Sản phẩm" value="{{ request('name') }}">
+                                                </div>
+                                    
+                                                <div class="col-md-2">
+                                                    <select name="category_id" class="form-select">
+                                                        <option value="">Tất cả danh mục</option>
+                                                        @foreach ($categories as $category)
+                                                            <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                                                {{ $category->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                    
+                                                <div class="col-md-2">
+                                                    <select name="is_active" class="form-select">
+                                                        <option value="">Tất cả trạng thái</option>
+                                                        <option value="1" {{ request('is_active') == '1' ? 'selected' : '' }}>Hiển thị</option>
+                                                        <option value="0" {{ request('is_active') == '0' ? 'selected' : '' }}>Ẩn</option>
+                                                    </select>
+                                                </div>
+                                    
+                                                <div class="col-md-2">
+                                                    <input type="number" name="min_price" class="form-control" placeholder="Giá tối thiểu" value="{{ request('min_price') }}" min="0">
+                                                </div>
+                                    
+                                                <div class="col-md-2">
+                                                    <input type="number" name="max_price" class="form-control" placeholder="Giá tối đa" value="{{ request('max_price') }}" min="0">
+                                                </div>
+                                    
+                                                <div class="col-md-2">
+                                                    <input type="number" name="min_quantity" class="form-control" placeholder="SL tối thiểu" value="{{ request('min_quantity') }}" min="0">
+                                                </div>
+                                    
+                                                <div class="col-md-2">
+                                                    <input type="number" name="max_quantity" class="form-control" placeholder="SL tối đa" value="{{ request('max_quantity') }}" min="0">
+                                                </div>
+                                    
+                                                <div class="col-md-2 d-flex gap-2">
+                                                    <button type="submit" class="btn btn-primary w-100">
+                                                        <i class="fas fa-search me-1"></i> Lọc
+                                                    </button>
+                                                    <a href="{{ route('admin.product.index') }}" class="btn btn-secondary w-100">
+                                                        Reset
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>                                    
+                                    <div class="card mt-4">
                                         <div class="table-responsive">
                                             <table class="table all-package theme-table table-product" id="table_id">
                                                 <thead>
@@ -156,35 +212,53 @@
 @endsection
 @section('js-custom')
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll('.toggle-status').forEach(item => {
-        item.addEventListener('change', function () {
-            let productId = this.dataset.id;
-            let isActive = this.checked ? 1 : 0;
+    const toggleStatusUrl = "{{ route('admin.toggleStatus', ['id' => 'temp_id']) }}";
+    
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.toggle-status').forEach(item => {
+            item.addEventListener('change', function () {
+                let productId = this.dataset.id;
+                let isActive = this.checked ? 1 : 0;
 
-            fetch(`/admin/products/${productId}/toggle-status`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({ is_active: isActive })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Cập nhật trạng thái thành công!');
-                    console.log('Cập nhật thành công');
-                } else {
-                    console.error('Có lỗi xảy ra');
-                }
-            })
-            .catch(error => console.error('Lỗi:', error));
+                let url = toggleStatusUrl.replace('temp_id', productId);
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ is_active: isActive })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công!',
+                            text: 'Cập nhật trạng thái thành công!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Thất bại!',
+                            text: 'Có lỗi xảy ra!',
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: 'Không thể kết nối server!',
+                    });
+                });
+            });
         });
     });
-});
-
-
 </script>
 
 @endsection
