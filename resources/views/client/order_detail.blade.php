@@ -236,9 +236,6 @@
                                        style="border-radius: 20px; padding: 10px 20px;"
                                        onclick="confirm('Bạn muốn trả đơn hàng này?') && alert('Chức năng trả hàng đang phát triển.')">Trả
                                         đơn</a>
-                                    <a href="#" class="btn btn-success fw-bold"
-                                       style="border-radius: 20px; padding: 10px 20px;"
-                                       onclick="alert('Chức năng đánh giá đang phát triển.')">Đánh giá</a>
                                 @endif
                                 <a href="{{ route('order') }}" class="btn btn-outline-primary fw-bold"
                                    style="border-radius: 20px; padding: 10px 20px;">Quay lại</a>
