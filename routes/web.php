@@ -132,6 +132,12 @@ Route::get('/checkout/get-wards/{district_id}', [CheckoutController::class, 'get
 Route::get('/checkout/get-shipping-fee/{district_id}', [CheckoutController::class, 'getShippingFee']);
 Route::post('/checkout/save-address', [CheckoutController::class, 'saveAddress']);
 
+Route::get('/order', [HomeController::class, 'Order'])->name('order');
+Route::get('/order/{id}', [HomeController::class, 'OrderDetail'])->name('order.detail');
+
+
+
+
 //Route::group(['prefix' => 'admin', 'name' => 'admin.', 'middleware' => 'checkAdmin'], function () {
 Route::group(['prefix' => 'admin', 'name' => 'admin.'], function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');

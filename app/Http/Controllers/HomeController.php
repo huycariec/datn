@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Banner;
+use App\Models\Order;
 use App\Models\Page;
 use App\Models\ProductVariant;
 use App\Models\Review;
@@ -179,6 +180,27 @@ class HomeController extends Controller
         $data = Page::where('type', 'introduction')->first();
         return view('client.page.introduction', compact('data'));
     }
+
+    public function order()
+    {
+        $orders = Order::where('user_id', Auth::id())
+            ->with(['payment', 'userAddress'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('client.order', compact('orders'));
+    }
+
+    public function orderDetail(Request $request, $id)
+    {
+        $order = Order::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->with(['orderDetails', 'payment', 'userAddress', 'discounts'])
+            ->firstOrFail();
+
+        return view('client.order_detail', compact('order'));
+    }
+
     public function error()
     {
         return view('client.error');
