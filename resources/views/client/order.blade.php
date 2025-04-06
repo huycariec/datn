@@ -99,6 +99,27 @@
                                                 </form>
                                             @endif
 
+                                            @if(in_array($order->status, [\App\Enums\OrderStatus::RECEIVED]))
+                                                @php
+                                                    $canReturn = \Carbon\Carbon::now()->diffInDays($order->updated_at) <= 7;
+                                                @endphp
+                                                @if($canReturn)
+                                                    <form action="{{ route('update-status') }}" method="POST" style="display: inline;">
+                                                        @csrf
+                                                        <input type="hidden" name="order_id" value="{{ $order->id }}">
+                                                        <input type="hidden" name="status" value="{{ \App\Enums\OrderStatus::RETURNED }}">
+                                                        <button type="submit"
+                                                                class="btn btn-outline-danger btn-sm fw-bold"
+                                                                style="border-radius: 20px; padding: 6px 15px;"
+                                                                onclick="return confirm('Bạn có chắc muốn trả đơn hàng này?')">
+                                                            Trả hàng
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <span class="badge bg-secondary">Đã quá 7 ngày, không thể trả hàng</span>
+                                                @endif
+                                            @endif
+
                                             @if($order->status === \App\Enums\OrderStatus::DELIVERED)
                                                 <form action="{{ route('update-status') }}" method="POST" style="display: inline;">
                                                     @csrf
@@ -145,7 +166,6 @@
         </div>
     </section>
 
-    <!-- Script cho hiệu ứng hover -->
     <script>
         document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('mouseover', () => {
