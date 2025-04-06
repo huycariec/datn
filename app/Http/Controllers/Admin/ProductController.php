@@ -17,13 +17,54 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    public function index(){
-        // Lấy sản phẩm với các biến thể và ảnh
-        $products = Product::with('images', 'variants')->latest()->get();
-        
-        // Truyền biến $products sang view
-        return view('admin.pages.product.index', compact('products'));
+    // public function index(){
+    //     // Lấy sản phẩm với các biến thể và ảnh
+    //     $products = Product::with('images', 'variants')->latest()->get();
+    //     return view('admin.pages.product.index', compact('products'));
+    // }
+    public function index(Request $request)
+    {
+        $query = Product::query();
+    
+        if ($request->id) {
+            $query->where('id', $request->id);
+        }
+    
+        if ($request->name) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+    
+        if ($request->category_id) {
+            $query->where('category_id', $request->category_id);
+        }
+    
+        if ($request->is_active != '') {
+            $query->where('is_active', $request->is_active);
+        }
+    
+        if ($request->min_price) {
+            $query->where('price', '>=', $request->min_price);
+        }
+    
+        if ($request->max_price) {
+            $query->where('price', '<=', $request->max_price);
+        }
+    
+        if ($request->min_quantity) {
+            $query->where('total_quantity', '>=', $request->min_quantity);
+        }
+    
+        if ($request->max_quantity) {
+            $query->where('total_quantity', '<=', $request->max_quantity);
+        }
+    
+        $products = $query->with('images', 'variants')->latest()->paginate(10);
+        $categories = Category::all();
+    
+        return view('admin.pages.product.index', compact('products', 'categories'));
     }
+    
+
     
     
     public function create(){

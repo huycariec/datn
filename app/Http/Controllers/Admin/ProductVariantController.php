@@ -69,37 +69,57 @@ class ProductVariantController extends Controller
 
             return redirect()->back()->with('success', 'Biến thể sản phẩm đã được thêm thành công!');
     }
-
-    public function updateStatus(Request $request, $id)
-    {
-        $productVariant = ProductVariant::findOrFail($id);
-        $productVariant->is_active = $request->is_active;
-        $productVariant->save();
-
-        return response()->json(['success' => true]);
-    }
     public function edit($id)
     {
         $variant = ProductVariant::with([
-            'variantAttributes.attribute',
-            'variantAttributes.attributeValue'
+            'variantAttributes.attributeValue.attribute'
         ])->findOrFail($id);
-    
-        // Tạo mảng thuộc tính
-        $attributes = [];
-    
-        foreach ($variant->variantAttributes as $variantAttribute) {
-            if ($variantAttribute->attribute && $variantAttribute->attributeValue) {
-                $attributes[] = [
-                    'attribute_name' => $variantAttribute->attribute->name,
-                    'attribute_value' => $variantAttribute->attributeValue->value,
-                ];
-            }
-        }
+        
+        $attributes = $variant->variantAttributes->map(function($item) {
+            return [
+                'attribute_name' => optional($item->attributeValue->attribute)->name,
+                'attribute_value' => optional($item->attributeValue)->value,
+            ];
+        });
     
         return view('admin.pages.variant.edit', compact('variant', 'attributes'));
     }
+    public function update(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'price' => 'required|numeric|min:0',
+                'quantity' => 'required|integer|min:0',
+            ]);
     
+            ProductVariant::findOrFail($id)->update([
+                'price' => $request->price,
+                'stock' => $request->quantity,
+            ]);
+    
+            return response()->json(['status' => 'success', 'message' => 'Cập nhật thành công!']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'message' => 'Đã có lỗi xảy ra!']);
+        }
+    }
+    
+    
+    
+
+    public function updateStatus(Request $request)
+    {
+        $variant = ProductVariant::findOrFail($request->id);
+        
+        $variant->is_active = $variant->is_active == 1 ? 0 : 1;
+        $variant->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Cập nhật trạng thái thành công!',
+            'is_active' => $variant->is_active // gửi về luôn để frontend xử lý nếu cần
+        ]);
+    }
+
     
 
     

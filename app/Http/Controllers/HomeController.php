@@ -78,7 +78,7 @@ class HomeController extends Controller
             }
         }
         $result = [];
-        foreach ($product->variants as $variant) {
+        foreach ($product->variants->where('stock', '>', 0)->where('is_active', 1) as $variant) { // chỉ lấy variant có stock > 0
             $sku = $variant->sku;
             $variantData = [
                 'product_variant' => $variant,
@@ -87,13 +87,14 @@ class HomeController extends Controller
 
             foreach ($variant->variantAttributes as $variantAttribute) {
                 $variantData['attributes'][] = [
-                    'attributes_id' => $variantAttribute->attributeValue->attributes_id ?? null, // Tên thuộc tính (Màu sắc, Size, ...)
-                    'value' => $variantAttribute->attributeValue->value ?? null // Giá trị thuộc tính (Vàng, S, ...)
+                    'attributes_id' => $variantAttribute->attributeValue->attributes_id ?? null,
+                    'value' => $variantAttribute->attributeValue->value ?? null
                 ];
             }
 
             $result[$sku] = $variantData;
         }
+
         // dd($result);
 
          // Chuyển `$result` thành JSON rồi gửi qua view

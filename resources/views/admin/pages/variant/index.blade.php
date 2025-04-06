@@ -266,7 +266,8 @@
                                                     {{ $variantAttribute->attributeValue->value }}
                                                 @endforeach
                                             </td>
-                                            <td class="td-price">{{ number_format($variant->price, 0, ',', '.') }}</td>
+                                            <td class="td-price">{{ number_format($variant->price, 0, ',', '.') }} vnđ</td>
+
 
                                             <td class="td-price">{{$variant->stock}}</td>
                                             <td>
@@ -274,7 +275,7 @@
                                                   <input type="checkbox" class="status-toggle" data-id="{{ $variant->id }}" {{ $variant->is_active ? 'checked' : '' }}>
                                                   <span class="slider round"></span>
                                                 </label>
-                                              </td>
+                                            </td>
                                               
                                             <td>
                                                 <ul>
@@ -387,28 +388,46 @@
 
 </script>
 <script>
-    $(document).ready(function() {
-        $('.status-toggle').change(function() {
-            var id = $(this).data('id');
-            var isActive = $(this).prop('checked') ? 1 : 0;
+    $(document).ready(function () {
+        $('.status-toggle').change(function () {
+            var variantId = $(this).data('id');
 
             $.ajax({
-            url: '/update-status/' + id,  // Địa chỉ URL của route cập nhật trạng thái
-            method: 'PUT',
-            data: {
-                _token: '{{ csrf_token() }}',
-                is_active: isActive
-            },
-            success: function(response) {
-                if (response.success) {
-                alert('Trạng thái đã được cập nhật!');
-                } else {
-                alert('Có lỗi xảy ra!');
+                url: '{{ route('variant.updateStatus') }}',
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: variantId,
+                },
+                success: function (response) {
+                    if(response.status){
+                        // Alert đẹp
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công!',
+                            text: 'Cập nhật trạng thái thành công!',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    }else{
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Thất bại!',
+                            text: 'Cập nhật thất bại!',
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi!',
+                        text: 'Có lỗi xảy ra!',
+                    });
                 }
-            }
             });
         });
     });
-
 </script>
+
+
 @endsection
