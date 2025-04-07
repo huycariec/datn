@@ -111,8 +111,9 @@
                                 <h2 class="fw-bold mb-2">{{ $product->name }}</h2>
                             
                                 <h3 class="text-primary fw-bold mb-0">
-                                    {{ number_format($product->price, 0, ',', '.') }} vnđ
-                            
+                                    <span class="theme-color price" id="product-price">{{ number_format($product->price, 0, ',', '.') }} vnđ</span>
+
+                                
                                     @if(!empty($product->old) && $product->old > 0)
                                         <del class="text-muted fs-6 ms-2">{{ number_format($product->old, 0, ',', '.') }} vnđ</del>
                                     @endif
@@ -194,7 +195,9 @@
                                             <li>Loại : <a href="javascript:void(0)">{{ $product->category->name}}</a></li>
                                             <li>Mã sản phẩm : <a href="javascript:void(0)">{{ $product->id}}</a></li>
                                             <li>Ngày đăng : <a href="javascript:void(0)">{{ $product->created_at->format('d/m/Y') }}</a></li>
-                                            <li id="product-stock">Còn : <a href="javascript:void(0)">{{ number_format($product->total_quantity) }} sản phẩm trong kho</a></li>
+                                            <li id="product-stock">
+                                                Còn : <a href="javascript:void(0)" class="stock-value">{{ number_format($product->total_quantity) }} sản phẩm trong kho</a>
+                                            </li>                                        
                                         </ul>
                                     </div>
                                 </div>
@@ -469,7 +472,7 @@
     </section>
 @endsection
 @section('js-custom')
-    <script>
+<script>
 document.addEventListener("DOMContentLoaded", function () {
     const skuFilter = document.getElementById('sku-filter');
     const reviewList = document.getElementById('review-list');
@@ -487,6 +490,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const btnPlus = document.querySelector(".qty-right-plus");
     const btnMinus = document.querySelector(".qty-left-minus");
     const quantityError = document.getElementById("quantity-error");
+    
 
     skuFilter.addEventListener('change', function () {
         const selectedSku = this.value;
@@ -577,17 +581,25 @@ document.addEventListener("DOMContentLoaded", function () {
         let matched = null;
         let totalStock = 0;
 
+        console.log("Selected Attrs:", selectedAttrs);
+
         for (let sku in productVariants) {
             const variant = productVariants[sku];
-            const isMatch = Object.keys(selectedAttrs).every(key => variant.attributes.some(attr => attr.value == selectedAttrs[key]));
+            const isMatch = Object.keys(selectedAttrs).every(
+                key => variant.attributes.some(attr => attr.value == selectedAttrs[key])
+            );
 
             if (isMatch) {
                 totalStock += variant.product_variant.stock;
+
                 if (Object.keys(selectedAttrs).length === variant.attributes.length) {
                     matched = variant;
                 }
             }
         }
+
+        console.log("Matched Variant:", matched);
+        console.log("Total Stock Of Matched Variants:", totalStock);
 
         if (!totalStock) {
             showError();
@@ -596,7 +608,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (matched) {
             const { price, stock, sku } = matched.product_variant;
-            priceElement.innerHTML = `$${parseFloat(price).toFixed(2)} <del class="text-content">$58.46</del>`;
+
+            if (priceElement) {
+                priceElement.innerHTML = `${parseInt(price).toLocaleString()} vnđ`;
+            }
+
+            if (stockElement) {
+                stockElement.innerHTML = `${stock} sản phẩm trong kho`;
+            }
+
             skuInput.value = sku;
             quantityInput.setAttribute("max", stock);
             if (+quantityInput.value > stock) quantityInput.value = stock;
@@ -604,13 +624,22 @@ document.addEventListener("DOMContentLoaded", function () {
             skuInput.value = "";
             quantityInput.setAttribute("max", totalStock);
             if (+quantityInput.value > totalStock) quantityInput.value = totalStock;
+
+            if (stockElement) {
+                stockElement.innerHTML = `${totalStock} sản phẩm trong kho`;
+            }
+
+            if (priceElement) {
+                priceElement.innerHTML = `<span class="text-muted">Vui lòng chọn đủ thuộc tính để xem giá</span>`;
+            }
         }
 
-        stockElement.innerHTML = `Còn : <a href="javascript:void(0)">${totalStock} sản phẩm trong kho</a>`;
-        errorMessage.style.display = "none";
 
+        errorMessage.style.display = "none";
         validateAddToCart();
     }
+
+
 
     function validateAddToCart() {
         const selectedAttrs = getSelectedAttrs();
@@ -713,10 +742,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     //     validateAddToCart();
     // });
-    btnPlus.addEventListener("click", e => {
-        e.preventDefault();
-        changeQuantity(1);
-    });
+        btnPlus.addEventListener("click", e => {
+            e.preventDefault();
+            changeQuantity(1);
+        });
 
         btnMinus.addEventListener("click", e => {
             e.preventDefault();
@@ -777,13 +806,13 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
 
-    });
+});
 
 
 
     </script>
 
-    <script>
+<script>
         document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll(".wishlist-btn").forEach((button) => {
                 button.addEventListener("click", function () {
@@ -810,6 +839,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         });
                 });
             });
-        });
-    </script>
+    });
+</script>
+    
 @endsection
