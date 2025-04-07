@@ -9,6 +9,14 @@ use Illuminate\Http\Request;
 
 class DiscountController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:coupons_list')->only(['index']);
+        $this->middleware('permission:coupons_create')->only(['create', 'store']);
+        $this->middleware('permission:coupons_detail')->only(['show']);
+        $this->middleware('permission:coupons_update')->only(['edit', 'update']);
+        $this->middleware('permission:coupons_delete')->only(['destroy']);
+    }
     /**
      * Display a listing of the resource.
      */

@@ -37,7 +37,7 @@ use App\Http\Controllers\Admin\ProductVariantController;
 // });
 // Khanh Linh 10/2/2024
 //dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+//Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/error', [HomeController::class, 'error'])->name('error');
 
@@ -130,7 +130,7 @@ Route::post('/review', [HomeController::class, 'addReview'])->name('review.store
 
 //Route::group(['prefix' => 'admin', 'name' => 'admin.', 'middleware' => 'checkAdmin'], function () {
 Route::group(['prefix' => 'admin', 'name' => 'admin.'], function () {
-    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
     Route::resource("discounts", DiscountController::class);
     Route::resource("roles", RoleController::class);
