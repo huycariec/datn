@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:reviews_list')->only(['index']);
+        $this->middleware('permission:reviews_detail')->only(['show']);
+    }
     /**
      * Display a listing of the resource.
      */

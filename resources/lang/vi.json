@@ -62,10 +62,19 @@
     "reviews_list": "Danh sách Đánh giá",
     "review": "Đánh giá",
 
-    "settings_create": "Tạo Cài đặt",
-    "settings_update": "Cập nhật Cài đặt",
-    "settings_delete": "Xóa Cài đặt",
-    "settings_detail": "Xem chi tiết Cài đặt",
-    "settings_list": "Danh sách Cài đặt",
-    "setting": "Cài đặt"
+    "banners_create": "Tạo banner",
+    "banners_update": "Cập nhật banner",
+    "banners_delete": "Xóa banner",
+    "banners_detail": "Xem chi tiết banner",
+    "banners_list": "Danh sách banner",
+    "pages": "Banner",
+
+    "pages_create": "Tạo trang",
+    "pages_update": "Cập nhật trang",
+    "pages_delete": "Xóa trang",
+    "pages_detail": "Xem chi tiết trang",
+    "pages_list": "Danh sách trang",
+    "pages": "Trang",
+
+    "dashboard": "Bảng điều khiển"
 }
