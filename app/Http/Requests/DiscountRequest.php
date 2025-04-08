@@ -26,7 +26,7 @@ class DiscountRequest extends FormRequest
             ],
             'value' => 'required|numeric|min:0',
             'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
+            'end_date' => 'required|date|after:start_date|after:now',
             'min_order_amount' => 'required|integer|min:0',
             'max_discount_value' => 'required|integer|min:0',
             'status' => 'required|in:active,inactive',
