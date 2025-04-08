@@ -9,7 +9,9 @@ use Illuminate\Http\Request;
 use App\Models\AttributeValue;
 use App\Models\ProductVariant;
 use App\Models\VariantAttribute;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class ProductVariantController extends Controller
 {
@@ -25,6 +27,7 @@ class ProductVariantController extends Controller
     }
     public function store(Request $request)
     {
+        // dd($request->all());
         // Tạo biến thể sản phẩm (lưu ngay vào database)
         $variant = ProductVariant::create([
             'product_id' => $request->product_id,
@@ -38,22 +41,27 @@ class ProductVariantController extends Controller
             'sku' => $variant->product_id . '-' . $variant->id
         ]);
 
-            // Lưu thuộc tính vào bảng variant_attributes
-            if (!empty($request->variants['attributes'])) {
-                foreach ($request->variants['attributes'] as $attribute_id => $attribute_value_name) {
-                    $attributeValue = AttributeValue::where('value', $attribute_value_name)
-                        ->where('attributes_id', $attribute_id)
-                        ->first();
+        // Lưu thuộc tính vào bảng variant_attributes
+        if (!empty($request->variants['attributes'])) {
+            foreach ($request->variants['attributes'] as $attribute_id => $attribute_value_name) {
+                
+                // Tìm hoặc tạo mới attribute_value
+                $attributeValue = AttributeValue::firstOrCreate(
+                    [
+                        'attributes_id' => $attribute_id,
+                        'value' => $attribute_value_name,
+                    ]
+                );
 
-                    if ($attributeValue) {
-                        VariantAttribute::create([
-                            'product_variant_id' => $variant->id,
-                            'attributes_id' => $attribute_id,
-                            'attribute_value_id' => $attributeValue->id,
-                        ]);
-                    }
-                }
+                // Lưu vào variant_attributes
+                VariantAttribute::create([
+                    'product_variant_id' => $variant->id,
+                    'attributes_id' => $attribute_id,
+                    'attribute_value_id' => $attributeValue->id,
+                ]);
             }
+        }
+
 
             // Nếu có hình ảnh, xử lý lưu ảnh
             if ($request->hasFile('variants.image')) {
@@ -86,22 +94,50 @@ class ProductVariantController extends Controller
     }
     public function update(Request $request, $id)
     {
+        // dd($request->all());
         try {
             $request->validate([
                 'price' => 'required|numeric|min:0',
                 'quantity' => 'required|integer|min:0',
             ]);
     
-            ProductVariant::findOrFail($id)->update([
+            $variant = ProductVariant::findOrFail($id);
+    
+            $variant->update([
                 'price' => $request->price,
                 'stock' => $request->quantity,
             ]);
+    
+            // Nếu có ảnh mới
+            if ($request->hasFile('image')) {
+    
+                // Xoá ảnh cũ
+                foreach ($variant->images as $image) {
+                    if (Storage::disk('public')->exists($image->url)) {
+                        Storage::disk('public')->delete($image->url);
+                    }
+                    $image->delete();
+                }
+    
+                // Lưu ảnh mới
+                foreach ($request->file('image') as $file) {
+                    $imagePath = $file->store('product_variants', 'public');
+    
+                    Images::create([
+                        'product_id' => $variant->product_id,
+                        'product_variant_id' => $variant->id,
+                        'url' => $imagePath,
+                    ]);
+                }
+            }
     
             return response()->json(['status' => 'success', 'message' => 'Cập nhật thành công!']);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => 'Đã có lỗi xảy ra!']);
         }
     }
+    
+    
     
     
     
