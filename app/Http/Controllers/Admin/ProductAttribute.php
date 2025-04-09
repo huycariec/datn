@@ -8,6 +8,14 @@ use Illuminate\Support\Facades\Session;
 
 class ProductAttribute extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:attributes_create')->only(['index']);
+        $this->middleware('permission:attributes_create')->only(['create', 'store']);
+        $this->middleware('permission:attributes_detail')->only(['show']);
+        $this->middleware('permission:attributes_update')->only(['edit', 'update']);
+        $this->middleware('permission:attributes_delete')->only(['destroy']);
+    }
     public function index(){
         $attributes = Session::get('attribute');
 
@@ -17,14 +25,14 @@ class ProductAttribute extends Controller
     public function create(){
         // Session::flush();
         return view('admin.pages.attribute.create');
-        
+
 
     }
 
     public function store(Request $request)
     {
         $attribute_name = request('attribute_name');
-        $attribute_values = explode('|', request('attribute_value')); 
+        $attribute_values = explode('|', request('attribute_value'));
         $attribute_values = array_map('trim', $attribute_values);
 
         // Lấy danh sách thuộc tính trong session (nếu chưa có thì tạo mảng rỗng)
@@ -49,16 +57,16 @@ class ProductAttribute extends Controller
     {
         // Lấy danh sách thuộc tính từ session
         $attributes = session('attribute', []);
-    
+
         // Kiểm tra nếu tồn tại key trong session
         if (!array_key_exists($key, $attributes)) {
             return redirect()->back()->with('error', 'Không tìm thấy thuộc tính!');
         }
-    
+
         // Xóa thuộc tính khỏi session
         unset($attributes[$key]);
         session(['attribute' => $attributes]);
-    
+
         return redirect()->back()->with('message', 'Thuộc tính đã được xóa!');
     }
     public function edit($id)
@@ -68,6 +76,6 @@ class ProductAttribute extends Controller
         $attribute_name = $id;
         return view('admin.pages.attribute.edit', compact('attributeEdit', 'attribute_name'));
     }
-    
-    
+
+
 }

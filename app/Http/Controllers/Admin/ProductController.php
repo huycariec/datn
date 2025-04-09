@@ -17,6 +17,14 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:products_list')->only(['index']);
+        $this->middleware('permission:products_create')->only(['create', 'store']);
+        $this->middleware('permission:products_detail')->only(['show']);
+        $this->middleware('permission:products_update')->only(['edit', 'update']);
+        $this->middleware('permission:products_delete')->only(['destroy']);
+    }
     // public function index(){
     //     // Lấy sản phẩm với các biến thể và ảnh
     //     $products = Product::with('images', 'variants')->latest()->get();
@@ -25,48 +33,48 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $query = Product::query();
-    
+
         if ($request->id) {
             $query->where('id', $request->id);
         }
-    
+
         if ($request->name) {
             $query->where('name', 'like', '%' . $request->name . '%');
         }
-    
+
         if ($request->category_id) {
             $query->where('category_id', $request->category_id);
         }
-    
+
         if ($request->is_active != '') {
             $query->where('is_active', $request->is_active);
         }
-    
+
         if ($request->min_price) {
             $query->where('price', '>=', $request->min_price);
         }
-    
+
         if ($request->max_price) {
             $query->where('price', '<=', $request->max_price);
         }
-    
+
         if ($request->min_quantity) {
             $query->where('total_quantity', '>=', $request->min_quantity);
         }
-    
+
         if ($request->max_quantity) {
             $query->where('total_quantity', '<=', $request->max_quantity);
         }
-    
+
         $products = $query->with('images', 'variants')->latest()->paginate(10);
         $categories = Category::all();
-    
+
         return view('admin.pages.product.index', compact('products', 'categories'));
     }
-    
 
-    
-    
+
+
+
     public function create(){
         $categories = Category::all();
         return view('admin.pages.product.create', compact('categories'));
@@ -75,7 +83,7 @@ class ProductController extends Controller
     {
         $dataProduct=$request->all();
         $productName = $dataProduct['product_name'] ?? 'Sản phẩm chưa có tên';
-    
+
         // Tạo sản phẩm
         $product = Product::create([
             'name' => $productName, // Lấy tên từ dữ liệu đầu vào
@@ -85,7 +93,7 @@ class ProductController extends Controller
             'price' => $dataProduct['product_price'] ?? 0, // Nếu không có thì mặc định 0
             'view' => 0, // Mặc định là 0 thay vì 1
         ]);
-        
+
         // Nếu có ảnh tải lên
         if ($request->hasFile('product_image')) {
             // Lưu ảnh vào thư mục 'products' trong storage
@@ -95,14 +103,14 @@ class ProductController extends Controller
                 'url' => $imagePath
             ]);
         }
-    
+
         // // Xử lý biến thể nếu là "variable"
         if ($dataProduct['product_type'] === 'variable' && isset($dataProduct['variants'])) {
             foreach ($dataProduct['variants'] as $variant) {
                 // Lưu attributes và attribute_values trước
                 $attributeValues = [];
                 if (!empty($variant['attributes'])) {
-                    foreach ($variant['attributes'] as $attributeName => $value) {        
+                    foreach ($variant['attributes'] as $attributeName => $value) {
                         // Lưu attribute vào bảng `attributes`
                         $attribute = Attribute::firstOrCreate(['name' => $attributeName]);
 
@@ -144,7 +152,7 @@ class ProductController extends Controller
                             if (isset($variant['pricing']['image']) && $variant['pricing']['image'] instanceof \Illuminate\Http\UploadedFile) {
                                 // Lưu ảnh vào thư mục storage/app/public/products
                                 $imagePath = $variant['pricing']['image']->store('products', 'public');
-                    
+
                                 // Lưu đường dẫn vào database
                                 Images::create([
                                     'product_id' => $product->id,
@@ -153,12 +161,12 @@ class ProductController extends Controller
                                 ]);
                             }
                     }
-                    
+
                 }
             }
         }
 
-    
+
         return redirect()->back()->with('success', 'Sản phẩm đã được tạo thành công.');
     }
 
@@ -169,7 +177,7 @@ class ProductController extends Controller
         // Lấy danh sách tất cả danh mục và thương hiệu
         $categories = Category::all();
         // $brands = Brand::all();
-    
+
         return view('admin.pages.product.edit', compact('product', 'categories'));
     }
     public function update(Request $request, $id)
@@ -181,10 +189,10 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
             'product_image.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-    
+
         // Find the product by ID
         $product = Product::findOrFail($id);
-    
+
         // Update product details
         $product->name = $request->input('product_name');
         $product->short_description = $request->input('short_description');
@@ -192,13 +200,13 @@ class ProductController extends Controller
 
         $product->category_id = $request->input('category_id');
         $product->save();
-    
+
         // Handle image upload if present
         if ($request->hasFile('product_image')) {
             foreach ($request->file('product_image') as $index => $image) {
                 // Store the image
                 $path = $image->store('products', 'public');
-    
+
                 // Update existing image or create new one
                 $productImage = $product->images()->skip($index)->first();
                 if ($productImage) {
@@ -212,17 +220,17 @@ class ProductController extends Controller
                 }
             }
         }
-    
+
         return redirect()->route('admin.product.index')->with('success', 'Sản phẩm đã được cập nhật thành công!');
     }
-    
+
 
     public function delete($id)
     {
         $product = Product::findOrFail($id); // Tìm sản phẩm theo ID
         $product->is_active = 0; // Cập nhật trạng thái is_active thành 0
         $product->save(); // Lưu thay đổi
-    
+
         return redirect()->route('admin.product.index')->with('success', 'Sản phẩm đã được tắt thành công!');
     }
     public function toggleStatus(Request $request, $id)
@@ -234,5 +242,5 @@ class ProductController extends Controller
         return response()->json(['success' => true]);
     }
 
-    
+
 }

@@ -4,10 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Blog;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller; 
+use Illuminate\Routing\Controller;
 
 class BlogController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:posts_list')->only(['index']);
+        $this->middleware('permission:posts_create')->only(['create', 'store']);
+        $this->middleware('permission:posts_detail')->only(['show']);
+        $this->middleware('permission:posts_update')->only(['edit', 'update']);
+        $this->middleware('permission:posts_delete')->only(['destroy']);
+    }
     public function index()
     {
         $blogs = Blog::latest()->paginate(10);
