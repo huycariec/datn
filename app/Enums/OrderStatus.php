@@ -25,13 +25,18 @@ enum OrderStatus: string
         return match($this) {
             self::PENDING_CONFIRMATION => 'Chờ xác nhận',
             self::CONFIRMED => 'Đã xác nhận',
+            //  của admin, admin chỉ được xác nhận 3 trạng thái thêm giao cho ship, bỏ 3 trạng thái đang cbi, đã cbi xong, shipper đã lấy
             self::PREPARING => 'Đang chuẩn bị hàng',
             self::PREPARED => 'Đã chuẩn bị xong & chờ shipper lấy hàng',
             self::PICKED_UP => 'Shipper đã lấy hàng',
+
+            
             self::IN_TRANSIT => 'Shipper đang giao hàng',
             self::DELIVERED => 'Đơn hàng đã được giao cho người nhận',
-            self::RECEIVED => 'Đã nhận được hàng',
+            //shipper 2 trạng thái
+            self::RECEIVED => 'Hoàn thành',
             self::CANCELLED => 'Đã hủy',
+
             self::RETURNED => 'Trả hàng',
             self::REFUNDED => 'Đã hoàn tiền',
             self::NOT_RECEIVED => 'Không nhận được hàng',

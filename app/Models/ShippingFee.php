@@ -9,7 +9,7 @@ class ShippingFee extends Model
 {
     use HasFactory;
     protected $table = 'shipping_fees';
-    protected $fillable = ['province_id', 'district_id', 'fee', 'is_free'];
+    protected $fillable = ['province_id', 'district_id', 'ward_id', 'fee', 'is_free'];
 
     // Quan hệ với Province
     public function province()
@@ -21,5 +21,10 @@ class ShippingFee extends Model
     public function district()
     {
         return $this->belongsTo(District::class, 'district_id');
+    }
+
+    public function ward()
+    {
+        return $this->belongsTo(Ward::class, 'ward_id');
     }
 }
