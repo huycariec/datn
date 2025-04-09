@@ -148,6 +148,20 @@
                             </ul>
                         </li>
                         @endcanany
+                        <li class="sidebar-list">
+                            <a class="linear-icon-link sidebar-link sidebar-title" href="javascript:void(0)">
+                                <i class="ri-store-3-line"></i>
+                                <span>shipping Address</span>
+                            </a>
+                            <ul class="sidebar-submenu">
+                                <li>
+                                    <a href="{{route('admin.listShippingFees')}}">List Giá tiền theo tỉnh thành</a>
+                                </li>
+
+                                <li>
+                                    <a href="{{route('admin.addAddressForm')}}">Thêm mới</a></li>
+                            </ul>
+                        </li>
 
                         @canany(['posts_list', 'posts_create'])
                         <li class="sidebar-list">
