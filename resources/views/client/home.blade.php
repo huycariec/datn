@@ -47,6 +47,7 @@
                 <div class="col-12">
                     <div class="slider-animate">
                         <div>
+                            {{-- danh mục sản phẩm --}}
                             <div class="home-contain rounded-0 p-0">
                                 <img
                                     src="{{ isset($banners[1]->image) ? \Illuminate\Support\Facades\Storage::url($banners[1]->image) : "../assets/client/assets/images/fashion/home-banner/1.jpg" }}"
@@ -114,56 +115,66 @@
             <div class="row g-sm-4 g-3">
                 <div class="col-xxl-12 ratio_110">
                     <div class="slider-6 img-slider">
-                        @foreach($products as $product)
-                            <div>
-                                <div class="product-box-5 wow fadeInUp">
-                                    <div class="product-image">
-                                        <a href="{{ route('product.detail', $product->id) }}">
-                                                @foreach ($product->images as $image)
-                                                    <img src="{{Storage::url($image->url)}}"
+                        @foreach($discountProducts as $product)
+                        <div>
+                            <div class="product-box-5 wow fadeInUp">
+                                <div class="product-image">
+                                    <a href="{{ route('product.detail', $product->id) }}">
+                                        @if ($product->images->count())
+                                            <img src="{{ Storage::url($product->images->first()->url) }}"
                                                  class="img-fluid blur-up lazyload bg-img" alt="{{ $product->name }}">
-                                                @endforeach
-                                        </a>
-
-                                        <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                           data-bs-placement="top" title="Wishlist">
-                                            <i data-feather="bookmark"></i>
-                                        </a>
-
-                                        <ul class="product-option">
-                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                                <a href="{{ route('product.detail', $product->id) }}">
-                                                    <i data-feather="eye"></i>
-                                                </a>
-                                            </li>
-
-                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                                <a href="compare.html">
-                                                    <i data-feather="refresh-cw"></i>
-                                                </a>
-                                            </li>
-
-                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                                <a href="wishlist.html" class="notifi-wishlist">
-                                                    <i data-feather="heart"></i>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-
-                                    <div class="product-detail">
-                                        <a href="{{ route('product.detail', $product->id) }}">
-                                            <h5 class="name">{{ $product->name }}</h5>
-                                        </a>
-
-                                        <h5 class="sold text-content">
-                                            <span
-                                                class="theme-color price">${{ number_format($product->price, 2) }}</span>
-                                        </h5>
-                                    </div>
+                                        @endif
+                                    </a>
+                    
+                                    <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
+                                       data-bs-placement="top" title="Wishlist">
+                                        <i data-feather="bookmark"></i>
+                                    </a>
+                    
+                                    <ul class="product-option">
+                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
+                                            <a href="{{ route('product.detail', $product->id) }}">
+                                                <i data-feather="eye"></i>
+                                            </a>
+                                        </li>
+                    
+                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                            <a href="compare.html">
+                                                <i data-feather="refresh-cw"></i>
+                                            </a>
+                                        </li>
+                    
+                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
+                                            <a href="wishlist.html" class="notifi-wishlist">
+                                                <i data-feather="heart"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                    
+                                <div class="product-detail">
+                                    <a href="{{ route('product.detail', $product->id) }}">
+                                        <h5 class="name">{{ $product->name }}</h5>
+                                    </a>
+                    
+                                    <h5 class="sold text-content d-flex flex-column text-center">
+                                        @if(!empty($product->price_old) && $product->price_old > 0 && $product->price_old > $product->price)
+                                            <span class="old-price text-danger text-decoration-line-through mb-1">
+                                                {{ number_format($product->price_old, 0, ',', '.') }} đ
+                                            </span>
+                                        @endif
+                                    
+                    
+                                        <span class="theme-color price fw-bold fs-5">
+                                            {{ number_format($product->price, 0, ',', '.') }} đ
+                                        </span>
+                                    </h5>
+                    
                                 </div>
                             </div>
-                        @endforeach
+                        </div>
+                    @endforeach
+                    
                     </div>
                 </div>
             </div>
@@ -243,41 +254,41 @@
                                         <div class="top-selling-title">
                                             <h3>Bán chạy nhất</h3>
                                         </div>
-                                        {{--lấy ra 4 sản phẩm đổ vào vị trí này, foreach div.top-selling-contain --}}
-                                        <div class="top-selling-contain wow fadeInUp">
-                                            <a href="product-left-thumbnail.html" class="top-selling-image">
-                                                <img src="../assets/client/assets/images/fashion/product/1.jpg"
-                                                     class="img-fluid blur-up lazyload" alt="">
-                                            </a>
-
-                                            <div class="top-selling-detail">
-                                                <a href="product-left-thumbnail.html">
-                                                    <h5>Tuffets Whole Wheat Bread</h5>
+                                    
+                                        @foreach($bestSellingProducts->take(4) as $product)
+                                            <div class="top-selling-contain wow fadeInUp">
+                                                <a href="{{ route('product.detail', $product->id) }}" class="top-selling-image">
+                                                    @if($product->images->first())
+                                                        <img src="{{ Storage::url($product->images->first()->url) }}"
+                                                             class="img-fluid blur-up lazyload" alt="{{ $product->name }}">
+                                                    @else
+                                                        <img src="{{ asset('path/to/default.jpg') }}"
+                                                             class="img-fluid blur-up lazyload" alt="{{ $product->name }}">
+                                                    @endif
                                                 </a>
-                                                <div class="product-rating">
-                                                    <ul class="rating">
-                                                        <li>
-                                                            <i data-feather="star" class="fill"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i data-feather="star" class="fill"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i data-feather="star" class="fill"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i data-feather="star" class="fill"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i data-feather="star"></i>
-                                                        </li>
-                                                    </ul>
-                                                    <span>(34)</span>
+                                    
+                                                <div class="top-selling-detail">
+                                                    <a href="{{ route('product.detail', $product->id) }}">
+                                                        <h5>{{ $product->name }}</h5>
+                                                    </a>
+                                    
+                                                    <div class="product-rating">
+                                                        <ul class="rating">
+                                                            <li><i data-feather="star" class="fill"></i></li>
+                                                            <li><i data-feather="star" class="fill"></i></li>
+                                                            <li><i data-feather="star" class="fill"></i></li>
+                                                            <li><i data-feather="star" class="fill"></i></li>
+                                                            <li><i data-feather="star"></i></li>
+                                                        </ul>
+                                                        <span>(34)</span> {{-- tạm cứng, sau đổ rating thật sau --}}
+                                                    </div>
+                                    
+                                                    <h6>{{ number_format($product->price, 0, ',', '.') }} đ</h6>
                                                 </div>
-                                                <h6>$ 10.00</h6>
                                             </div>
-                                        </div>
+                                        @endforeach
                                     </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -410,287 +421,61 @@
             <div class="row g-sm-4 g-3 section-b-space">
                 <div class="col-xxl-12 ratio_110">
                     <div class="slider-6 img-slider">
-                        <div>
-                            <div class="product-box-5 wow fadeInUp">
-                                <div class="product-image">
-                                    <a href="product-left-thumbnail.html">
-                                        <img src="../assets/client/assets/images/fashion/product/7.jpg"
-                                             class="img-fluid blur-up lazyload bg-img" alt="">
-                                    </a>
+                        @foreach($newProducts as $newProduct)
+                            <div>
+                                <div class="product-box-5 wow fadeInUp">
+                                    <div class="product-image">
+                                    @foreach ($newProduct->images as $image)
+                                        <a href="{{route('product.detail',$newProduct->id)}}">
+                                            <img src="{{Storage::url($image->url)}}"
+                                                class="img-fluid blur-up lazyload bg-img" alt="{{$newProduct->name}}">
+                                        </a>
+                                    @endforeach
+                                        <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
+                                        data-bs-placement="top" title="Wishlist">
+                                            <i data-feather="bookmark"></i>
+                                        </a>
 
-                                    <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                       data-bs-placement="top" title="Wishlist">
-                                        <i data-feather="bookmark"></i>
-                                    </a>
+                                        <ul class="product-option">
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
+                                                <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
+                                                    <i data-feather="eye"></i>
+                                                </a>
+                                            </li>
 
-                                    <ul class="product-option">
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
-                                                <i data-feather="eye"></i>
-                                            </a>
-                                        </li>
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                                <a href="compare.html">
+                                                    <i data-feather="refresh-cw"></i>
+                                                </a>
+                                            </li>
 
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                            <a href="compare.html">
-                                                <i data-feather="refresh-cw"></i>
-                                            </a>
-                                        </li>
+                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
+                                                <a href="wishlist.html" class="notifi-wishlist">
+                                                    <i data-feather="heart"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
 
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                            <a href="wishlist.html" class="notifi-wishlist">
-                                                <i data-feather="heart"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
+                                    <div class="product-detail">
+                                        <a href="{{route('product.detail',$newProduct->id)}}">
+                                            <h5 class="name">{{$newProduct->name}}</h5>
+                                        </a>
 
-                                <div class="product-detail">
-                                    <a href="product-left-thumbnail.html">
-                                        <h5 class="name">Black Gown</h5>
-                                    </a>
-
-                                    <h5 class="sold text-content">
-                                        <span class="theme-color price">$26.69</span>
-                                        <del>28.56</del>
-                                    </h5>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="product-box-5 wow fadeInUp">
-                                <div class="product-image">
-                                    <a href="product-left-thumbnail.html">
-                                        <img src="../assets/client/assets/images/fashion/product/8.jpg"
-                                             class="img-fluid blur-up lazyload bg-img" alt="">
-                                    </a>
-
-                                    <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                       data-bs-placement="top" title="Wishlist">
-                                        <i data-feather="bookmark"></i>
-                                    </a>
-
-                                    <ul class="product-option">
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
-                                                <i data-feather="eye"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                            <a href="compare.html">
-                                                <i data-feather="refresh-cw"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                            <a href="wishlist.html" class="notifi-wishlist">
-                                                <i data-feather="heart"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <div class="product-detail">
-                                    <a href="product-left-thumbnail.html">
-                                        <h5 class="name">Black Gown</h5>
-                                    </a>
-
-                                    <h5 class="sold text-content">
-                                        <span class="theme-color price">$26.69</span>
-                                        <del>28.56</del>
-                                    </h5>
+                                        <h5 class="sold text-content">
+                                            <span class="theme-color price">{{ number_format($newProduct->price, 0, ',', '.') }} đ</span>
+                                            
+                                            @if($newProduct->price_old)
+                                                <del style="color: red;">{{ number_format($newProduct->price_old, 0, ',', '.') }} đ</del>
+                                            @endif
+                                        </h5>
+                                        
+                                        
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @endforeach
 
-                        <div>
-                            <div class="product-box-5 wow fadeInUp">
-                                <div class="product-image">
-                                    <a href="product-left-thumbnail.html">
-                                        <img src="../assets/client/assets/images/fashion/product/9.jpg"
-                                             class="img-fluid blur-up lazyload bg-img" alt="">
-                                    </a>
-
-                                    <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                       data-bs-placement="top" title="Wishlist">
-                                        <i data-feather="bookmark"></i>
-                                    </a>
-
-                                    <ul class="product-option">
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
-                                                <i data-feather="eye"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                            <a href="compare.html">
-                                                <i data-feather="refresh-cw"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                            <a href="wishlist.html" class="notifi-wishlist">
-                                                <i data-feather="heart"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <div class="product-detail">
-                                    <a href="product-left-thumbnail.html">
-                                        <h5 class="name">Black Gown</h5>
-                                    </a>
-
-                                    <h5 class="sold text-content">
-                                        <span class="theme-color price">$26.69</span>
-                                        <del>28.56</del>
-                                    </h5>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="product-box-5 wow fadeInUp">
-                                <div class="product-image">
-                                    <a href="product-left-thumbnail.html">
-                                        <img src="../assets/client/assets/images/fashion/product/10.jpg"
-                                             class="img-fluid blur-up lazyload bg-img" alt="">
-                                    </a>
-
-                                    <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                       data-bs-placement="top" title="Wishlist">
-                                        <i data-feather="bookmark"></i>
-                                    </a>
-
-                                    <ul class="product-option">
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
-                                                <i data-feather="eye"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                            <a href="compare.html">
-                                                <i data-feather="refresh-cw"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                            <a href="wishlist.html" class="notifi-wishlist">
-                                                <i data-feather="heart"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <div class="product-detail">
-                                    <a href="product-left-thumbnail.html">
-                                        <h5 class="name">Black Gown</h5>
-                                    </a>
-
-                                    <h5 class="sold text-content">
-                                        <span class="theme-color price">$26.69</span>
-                                        <del>28.56</del>
-                                    </h5>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="product-box-5 wow fadeInUp">
-                                <div class="product-image">
-                                    <a href="product-left-thumbnail.html">
-                                        <img src="../assets/client/assets/images/fashion/product/11.jpg"
-                                             class="img-fluid blur-up lazyload bg-img" alt="">
-                                    </a>
-
-                                    <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                       data-bs-placement="top" title="Wishlist">
-                                        <i data-feather="bookmark"></i>
-                                    </a>
-
-                                    <ul class="product-option">
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
-                                                <i data-feather="eye"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                            <a href="compare.html">
-                                                <i data-feather="refresh-cw"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                            <a href="wishlist.html" class="notifi-wishlist">
-                                                <i data-feather="heart"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <div class="product-detail">
-                                    <a href="product-left-thumbnail.html">
-                                        <h5 class="name">Black Gown</h5>
-                                    </a>
-
-                                    <h5 class="sold text-content">
-                                        <span class="theme-color price">$26.69</span>
-                                        <del>28.56</del>
-                                    </h5>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="product-box-5 wow fadeInUp">
-                                <div class="product-image">
-                                    <a href="product-left-thumbnail.html">
-                                        <img src="../assets/client/assets/images/fashion/product/12.jpg"
-                                             class="img-fluid blur-up lazyload bg-img" alt="">
-                                    </a>
-
-                                    <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                       data-bs-placement="top" title="Wishlist">
-                                        <i data-feather="bookmark"></i>
-                                    </a>
-
-                                    <ul class="product-option">
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
-                                                <i data-feather="eye"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                            <a href="compare.html">
-                                                <i data-feather="refresh-cw"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                            <a href="wishlist.html" class="notifi-wishlist">
-                                                <i data-feather="heart"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <div class="product-detail">
-                                    <a href="product-left-thumbnail.html">
-                                        <h5 class="name">Black Gown</h5>
-                                    </a>
-
-                                    <h5 class="sold text-content">
-                                        <span class="theme-color price">$26.69</span>
-                                        <del>28.56</del>
-                                    </h5>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -707,32 +492,35 @@
             <div class="row g-sm-4 g-3">
                 <div class="col-xxl-12 ratio_110">
                     <div class="slider-6 img-slider">
+                        @foreach($bestSellingProducts as $product)
                         <div>
                             <div class="product-box-5 wow fadeInUp">
                                 <div class="product-image">
-                                    <a href="product-left-thumbnail.html">
-                                        <img src="../assets/client/assets/images/fashion/product/1.jpg"
-                                             class="img-fluid blur-up lazyload bg-img" alt="">
+                                    @foreach ($product->images as $image)
+                                    <a href="{{ route('product.detail', $product->id) }}">
+                                        <img src="{{Storage::url($image->url)}}"
+                                             class="img-fluid blur-up lazyload bg-img" alt="{{ $product->name }}">
                                     </a>
-
+                                    @endforeach
+                    
                                     <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
                                        data-bs-placement="top" title="Wishlist">
                                         <i data-feather="bookmark"></i>
                                     </a>
-
+                    
                                     <ul class="product-option">
                                         <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
                                             <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
                                                 <i data-feather="eye"></i>
                                             </a>
                                         </li>
-
+                    
                                         <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
                                             <a href="compare.html">
                                                 <i data-feather="refresh-cw"></i>
                                             </a>
                                         </li>
-
+                    
                                         <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
                                             <a href="wishlist.html" class="notifi-wishlist">
                                                 <i data-feather="heart"></i>
@@ -740,254 +528,23 @@
                                         </li>
                                     </ul>
                                 </div>
-
+                    
                                 <div class="product-detail">
-                                    <a href="product-left-thumbnail.html">
-                                        <h5 class="name">Black Gown</h5>
+                                    <a href="{{ route('product.detail', $product->id) }}">
+                                        <h5 class="name">{{ $product->name }}</h5>
                                     </a>
-
+                    
                                     <h5 class="sold text-content">
-                                        <span class="theme-color price">$26.69</span>
-                                        <del>28.56</del>
+                                        <span class="theme-color price">{{ number_format($product->price, 0, ',', '.') }} đ</span>
+                                        @if($product->price_old)
+                                            <del style="color: red;">{{ number_format($product->price_old, 0, ',', '.') }} đ</del>
+                                        @endif
                                     </h5>
                                 </div>
                             </div>
                         </div>
-
-                        <div>
-                            <div class="product-box-5 wow fadeInUp">
-                                <div class="product-image">
-                                    <a href="product-left-thumbnail.html">
-                                        <img src="../assets/client/assets/images/fashion/product/2.jpg"
-                                             class="img-fluid blur-up lazyload bg-img" alt="">
-                                    </a>
-
-                                    <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                       data-bs-placement="top" title="Wishlist">
-                                        <i data-feather="bookmark"></i>
-                                    </a>
-
-                                    <ul class="product-option">
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
-                                                <i data-feather="eye"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                            <a href="compare.html">
-                                                <i data-feather="refresh-cw"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                            <a href="wishlist.html" class="notifi-wishlist">
-                                                <i data-feather="heart"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <div class="product-detail">
-                                    <a href="product-left-thumbnail.html">
-                                        <h5 class="name">Black Gown</h5>
-                                    </a>
-
-                                    <h5 class="sold text-content">
-                                        <span class="theme-color price">$26.69</span>
-                                        <del>28.56</del>
-                                    </h5>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="product-box-5 wow fadeInUp">
-                                <div class="product-image">
-                                    <a href="product-left-thumbnail.html">
-                                        <img src="../assets/client/assets/images/fashion/product/3.jpg"
-                                             class="img-fluid blur-up lazyload bg-img" alt="">
-                                    </a>
-
-                                    <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                       data-bs-placement="top" title="Wishlist">
-                                        <i data-feather="bookmark"></i>
-                                    </a>
-
-                                    <ul class="product-option">
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
-                                                <i data-feather="eye"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                            <a href="compare.html">
-                                                <i data-feather="refresh-cw"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                            <a href="wishlist.html" class="notifi-wishlist">
-                                                <i data-feather="heart"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <div class="product-detail">
-                                    <a href="product-left-thumbnail.html">
-                                        <h5 class="name">Black Gown</h5>
-                                    </a>
-
-                                    <h5 class="sold text-content">
-                                        <span class="theme-color price">$26.69</span>
-                                        <del>28.56</del>
-                                    </h5>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="product-box-5 wow fadeInUp">
-                                <div class="product-image">
-                                    <a href="product-left-thumbnail.html">
-                                        <img src="../assets/client/assets/images/fashion/product/4.jpg"
-                                             class="img-fluid blur-up lazyload bg-img" alt="">
-                                    </a>
-
-                                    <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                       data-bs-placement="top" title="Wishlist">
-                                        <i data-feather="bookmark"></i>
-                                    </a>
-
-                                    <ul class="product-option">
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
-                                                <i data-feather="eye"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                            <a href="compare.html">
-                                                <i data-feather="refresh-cw"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                            <a href="wishlist.html" class="notifi-wishlist">
-                                                <i data-feather="heart"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <div class="product-detail">
-                                    <a href="product-left-thumbnail.html">
-                                        <h5 class="name">Black Gown</h5>
-                                    </a>
-
-                                    <h5 class="sold text-content">
-                                        <span class="theme-color price">$26.69</span>
-                                        <del>28.56</del>
-                                    </h5>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="product-box-5 wow fadeInUp">
-                                <div class="product-image">
-                                    <a href="product-left-thumbnail.html">
-                                        <img src="../assets/client/assets/images/fashion/product/5.jpg"
-                                             class="img-fluid blur-up lazyload bg-img" alt="">
-                                    </a>
-
-                                    <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                       data-bs-placement="top" title="Wishlist">
-                                        <i data-feather="bookmark"></i>
-                                    </a>
-
-                                    <ul class="product-option">
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
-                                                <i data-feather="eye"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                            <a href="compare.html">
-                                                <i data-feather="refresh-cw"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                            <a href="wishlist.html" class="notifi-wishlist">
-                                                <i data-feather="heart"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <div class="product-detail">
-                                    <a href="product-left-thumbnail.html">
-                                        <h5 class="name">Black Gown</h5>
-                                    </a>
-
-                                    <h5 class="sold text-content">
-                                        <span class="theme-color price">$26.69</span>
-                                        <del>28.56</del>
-                                    </h5>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="product-box-5 wow fadeInUp">
-                                <div class="product-image">
-                                    <a href="product-left-thumbnail.html">
-                                        <img src="../assets/client/assets/images/fashion/product/6.jpg"
-                                             class="img-fluid blur-up lazyload bg-img" alt="">
-                                    </a>
-
-                                    <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                       data-bs-placement="top" title="Wishlist">
-                                        <i data-feather="bookmark"></i>
-                                    </a>
-
-                                    <ul class="product-option">
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
-                                                <i data-feather="eye"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                            <a href="compare.html">
-                                                <i data-feather="refresh-cw"></i>
-                                            </a>
-                                        </li>
-
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                            <a href="wishlist.html" class="notifi-wishlist">
-                                                <i data-feather="heart"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <div class="product-detail">
-                                    <a href="product-left-thumbnail.html">
-                                        <h5 class="name">Black Gown</h5>
-                                    </a>
-
-                                    <h5 class="sold text-content">
-                                        <span class="theme-color price">$26.69</span>
-                                        <del>28.56</del>
-                                    </h5>
-                                </div>
-                            </div>
-                        </div>
+                    @endforeach
+                    
                     </div>
                 </div>
             </div>
@@ -996,32 +553,32 @@
     <!-- Deal Section End -->
 
     <!-- Newsletter Section Start -->
-    {{--    <section class="newsletter-section section-b-space">--}}
-    {{--        <div class="container-fluid-lg">--}}
-    {{--            <div class="newsletter-box newsletter-box-2">--}}
-    {{--                <div class="newsletter-contain py-5">--}}
-    {{--                    <div class="container-fluid">--}}
-    {{--                        <div class="row">--}}
-    {{--                            <div class="col-xxl-4 col-lg-5 col-md-7 col-sm-9 offset-xxl-2 offset-md-1">--}}
-    {{--                                <div class="newsletter-detail">--}}
-    {{--                                    <h2>Join our newsletter and get...</h2>--}}
-    {{--                                    <h5>$20 discount for your first order</h5>--}}
-    {{--                                    <div class="input-box">--}}
-    {{--                                        <input type="email" class="form-control" id="exampleFormControlInput1"--}}
-    {{--                                               placeholder="Enter Your Email">--}}
-    {{--                                        <i class="fa-solid fa-envelope arrow"></i>--}}
-    {{--                                        <button class="sub-btn  btn-animation">--}}
-    {{--                                            <span class="d-sm-block d-none">Subscribe</span>--}}
-    {{--                                            <i class="fa-solid fa-arrow-right icon"></i>--}}
-    {{--                                        </button>--}}
-    {{--                                    </div>--}}
-    {{--                                </div>--}}
-    {{--                            </div>--}}
-    {{--                        </div>--}}
-    {{--                    </div>--}}
-    {{--                </div>--}}
-    {{--            </div>--}}
-    {{--        </div>--}}
-    {{--    </section>--}}
+       {{-- <section class="newsletter-section section-b-space">
+           <div class="container-fluid-lg">
+               <div class="newsletter-box newsletter-box-2">
+                   <div class="newsletter-contain py-5">
+                       <div class="container-fluid">
+                           <div class="row">
+                               <div class="col-xxl-4 col-lg-5 col-md-7 col-sm-9 offset-xxl-2 offset-md-1">
+                                   <div class="newsletter-detail">
+                                       <h2>Join our newsletter and get...</h2>
+                                       <h5>$20 discount for your first order</h5>
+                                       <div class="input-box">
+                                           <input type="email" class="form-control" id="exampleFormControlInput1"
+                                                  placeholder="Enter Your Email">
+                                           <i class="fa-solid fa-envelope arrow"></i>
+                                           <button class="sub-btn  btn-animation">
+                                               <span class="d-sm-block d-none">Subscribe</span>
+                                               <i class="fa-solid fa-arrow-right icon"></i>
+                                           </button>
+                                       </div>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </section> --}}
     <!-- Newsletter Section End -->
 @endsection

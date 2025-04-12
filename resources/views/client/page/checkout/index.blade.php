@@ -110,9 +110,7 @@
             <select id="voucher-select" class="form-select" name="discount_id">
                 <option value="" data-type="" data-value="0">-- Chọn Voucher --</option>
                 @foreach($vouchers as $voucher)
-                    <option value="{{ $voucher->id }}" 
-                            data-type="{{ $voucher->type }}" 
-                            data-value="{{ $voucher->computed_value }}">
+                    <option value="{{ $voucher->id }}" data-type="{{ $voucher->type }}" data-value="{{ $voucher->computed_value }}">
                         {{ $voucher->code }} - 
                         @if($voucher->type === 'percent')
                             Giảm {{ $voucher->value }}%

@@ -110,24 +110,28 @@ class CheckoutController extends Controller
             });
         }
 
-
         // Kiểm tra xem voucher là kiểu 'percent' (giảm giá phần trăm) hay 'fixed' (giảm giá cố định)
-        $vouchers = $vouchers->map(function ($voucher) use ($totalCart) {
+    $vouchers = $vouchers->map(function ($voucher) use ($totalCart) {
+        $voucher->computed_value = 0;
+
+        if ($voucher->type === 'percent') {
+            $voucher->display_type   = 'Giảm giá theo %';
+            $voucher->computed_value = floor(($totalCart * $voucher->value) / 100);
+        } elseif ($voucher->type === 'fixed') {
+            $voucher->display_type   = 'Giảm giá cố định';
+            $voucher->computed_value = $voucher->value;
+        } else {
+            $voucher->display_type   = 'Không xác định';
             $voucher->computed_value = 0;
+        }
 
-            if ($voucher->type === 'percent') {
-                $voucher->display_type   = 'Giảm giá theo %';
-                $voucher->computed_value = floor(($totalCart * $voucher->value) / 100);
-            } elseif ($voucher->type === 'fixed') {
-                $voucher->display_type   = 'Giảm giá cố định';
-                $voucher->computed_value = $voucher->value;
-            } else {
-                $voucher->display_type   = 'Không xác định';
-                $voucher->computed_value = 0;
-            }
+        // Kiểm tra và giới hạn max_discount_value nếu có
+        if (!empty($voucher->max_discount_value) && $voucher->computed_value > $voucher->max_discount_value) {
+            $voucher->computed_value = $voucher->max_discount_value;
+        }
 
-            return $voucher;
-        });
+        return $voucher;
+    });
 
         return view('client.page.checkout.index', compact('cartItems', 'provinces', 'user', 'userAddresses', 'userAddress', 'districts', 'wards','totalCart','vouchers'));
     }
@@ -188,6 +192,16 @@ class CheckoutController extends Controller
             if ($cartItems->isEmpty()) {
                 return back()->with('error', 'Không tìm thấy sản phẩm trong giỏ hàng!');
             }
+            
+            // Kiểm tra trạng thái active của sản phẩm
+            $inactiveProductNames = $cartItems->filter(function ($item) {
+                return optional($item->variant)->is_active == 0;
+            })->pluck('product.name')->toArray();
+
+            if (!empty($inactiveProductNames)) {
+                return back()->with('error', 'Sản phẩm "' . implode(', ', $inactiveProductNames) . '" đã ngừng bán, vui lòng kiểm tra lại giỏ hàng!');
+            }
+
     
             $totalProductPrice = $cartItems->sum(function($item) {
                 return ($item->variant->price ?? 0) * $item->quantity;
@@ -254,7 +268,7 @@ class CheckoutController extends Controller
     
             switch ($request->payment_method) {
                 case 'CASH':
-                    return redirect()->route('order.success')
+                    return redirect()->route('order')
                         ->with('success', 'Đơn hàng đã được đặt thành công! Thanh toán khi nhận hàng.');
     
                 case 'bank_transfer':

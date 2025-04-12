@@ -114,8 +114,10 @@
                                     <span class="theme-color price" id="product-price">{{ number_format($product->price, 0, ',', '.') }} vnđ</span>
 
                                 
-                                    @if(!empty($product->old) && $product->old > 0)
-                                        <del class="text-muted fs-6 ms-2">{{ number_format($product->old, 0, ',', '.') }} vnđ</del>
+                                    @if($product->price_old && $product->price_old > $product->price)
+                                        <span class="old-price text-danger text-decoration-line-through mb-1">
+                                            {{ number_format($product->price_old, 0, ',', '.') }} đ
+                                        </span>
                                     @endif
                                 </h3>
                             </div>

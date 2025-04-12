@@ -90,6 +90,8 @@ Route::get('/get-wards/{district_id}', [AddressController::class, 'getWards']);
 Route::put('/update-address/{id}', [AddressController::class, 'updateAddress'])->name('client.updateAddress');
 Route::delete('/delete/{id}', [AddressController::class, 'deleteAddress'])->name('client.deleteAddress');
 
+//kiều duy du tìm kiếm
+Route::get('/search', [HomeController::class, 'search'])->name('product.search');
 
 
 

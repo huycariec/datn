@@ -1,7 +1,7 @@
 @extends('app')
 
 @section('content')
-<!-- <div class="container">
+ <div class="container">
         <h2>Sản phẩm trong danh mục: {{ $category->name }}</h2>
 
         @if ($products->isEmpty())
@@ -12,9 +12,29 @@
                     <div class="col-md-4">
                         <div class="card mb-3">
                             <div class="card-body">
-                                <h5 class="card-title">{{ $product->name }}</h5>
-                                <p class="card-text">{{ $product->description }}</p>
-                                <p class="card-text"><strong>Giá:</strong> {{ number_format($product->price, 0, ',', '.') }} VNĐ</p>
+                                <div class="ratio ratio-4x3">
+                                    <img src="{{ optional($product->images->first())->url ? Storage::url($product->images->first()->url) : asset('images/no-image.png') }}"
+                                        class="card-img-top p-2"
+                                        alt="{{ $product->name }}"
+                                        style="object-fit: contain;">
+                                </div>
+                                <h5 class="card-title fw-bold mb-2 text-truncate" style="min-height: 40px;">
+                                    {{ $product->name }}
+                                </h5>
+                                {{-- Mô tả ngắn --}}
+                                <p class="text-muted small mb-2" style="min-height: 35px;">
+                                    {{ \Illuminate\Support\Str::limit(strip_tags($product->short_description), 50) }}
+                                </p>                        
+                                <p class="mb-2">
+                                    <span class="text-danger fw-bold fs-5 me-2">
+                                        {{ number_format($product->price, 0, ',', '.') }} đ
+                                    </span>
+                                    @if($product->price_old)
+                                        <span class="text-muted text-decoration-line-through small">
+                                            {{ number_format($product->price_old, 0, ',', '.') }} đ
+                                        </span>
+                                    @endif
+                                </p>
                                 <p class="card-text"><strong>Lượt xem:</strong> {{ $product->view }}</p>
                                 <a href="{{ route('product.detail', $product->id) }}" class="btn btn-primary">Xem chi tiết</a>
                             </div>
@@ -24,7 +44,7 @@
             </div>
         @endif
         <a href="{{ route('home') }}" class="btn btn-secondary">Quay lại trang chủ</a>
-    </div> -->
+    </div> 
 <!-- Breadcrumb Section Start -->
 <section class="breadcrumb-section pt-0">
     <div class="container-fluid-lg">
