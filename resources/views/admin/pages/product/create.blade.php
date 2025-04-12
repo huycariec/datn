@@ -296,9 +296,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-
-
-
     // Hiển thị danh sách thuộc tính
     function renderAttributeTable() {
         attributeTableBody.innerHTML = "";
@@ -340,7 +337,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-
     // Chỉnh sửa thuộc tính
     attributeTableBody.addEventListener("click", function (event) {
         if (event.target.closest(".btn-edit-attribute")) {
@@ -352,7 +348,6 @@ document.addEventListener("DOMContentLoaded", function () {
             generateVariantsBtn.click(); // Gọi hàm tạo biến thể tự động
         }
     });
-
 
     // Sinh biến thể tự động
     generateVariantsBtn.addEventListener("click", function (event) {
@@ -406,8 +401,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-
-
     // Xóa biến thể
     variantContainer.addEventListener("click", function (event) {
         if (event.target.classList.contains("btn-remove-variant")) {
@@ -435,7 +428,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return temp;
         }, [{}]);
     }
-
 
     function validateForm() {
         let isValid = true;
@@ -537,10 +529,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         return isValid;
     }
-
-
-
-
 
     // kiểm tra trước khi submit form
     function validateVariants() {

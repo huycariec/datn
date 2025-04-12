@@ -128,18 +128,24 @@ class CartController extends Controller
                 'cart_id' => $cart->id,
                 'quantity' => $cart->quantity,
                 'stock' => optional($variant)->stock,
+                'variant_sku'=>optional($variant)->sku,
                 'product_name' => optional($product)->name ?? 'Sản phẩm không tồn tại',
                 'variant_price' => number_format(optional($variant)->price ?? 0, 2, '.', ''),
                 'product_image' => optional($variant->images->first())->url
                                     ?? optional($product->images->first())->url
                                     ?? null,
                 'selected_attributes' => $selectedAttributes,
-                'all_attributes' => $allAttributes
+                'all_attributes' => $allAttributes,
+                'is_product_active' => optional($product)->is_active == 1,
+                'is_variant_active' => optional($variant)->is_active == 1,
+                
             ];
         })->values()->toArray();
         // dd($cartItems);
     
-        return view('client.page.cart.index', compact('cartItems'));
+        $cartSkus = collect($cartItems)->pluck('variant_sku')->toArray();
+
+        return view('client.page.cart.index', compact('cartItems','cartSkus'));
     }
     
 

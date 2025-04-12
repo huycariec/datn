@@ -25,11 +25,6 @@ class ProductController extends Controller
         $this->middleware('permission:products_update')->only(['edit', 'update']);
         $this->middleware('permission:products_delete')->only(['destroy']);
     }
-    // public function index(){
-    //     // Lấy sản phẩm với các biến thể và ảnh
-    //     $products = Product::with('images', 'variants')->latest()->get();
-    //     return view('admin.pages.product.index', compact('products'));
-    // }
     public function index(Request $request)
     {
         $query = Product::query();
@@ -241,6 +236,4 @@ class ProductController extends Controller
 
         return response()->json(['success' => true]);
     }
-
-
 }
