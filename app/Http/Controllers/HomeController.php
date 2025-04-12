@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\OrderStatus;
-use App\Models\Banner;
-use App\Models\Order;
 use App\Models\Page;
-use App\Models\ProductVariant;
+use App\Models\Order;
+use App\Models\Banner;
 use App\Models\Review;
-use Illuminate\Http\Request;
-use App\Models\Category;
 use App\Models\Product;
+use App\Models\Category;
 use App\Models\Wishlist;
+use App\Enums\OrderStatus;
+use Illuminate\Http\Request;
+use App\Models\ProductVariant;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
@@ -19,7 +20,13 @@ class HomeController extends Controller
     public function index()
     {
         $categories = Category::all();
-        $products = Product::where('is_active', 1)->get();
+        $discountProducts = Product::where('is_active', 1)
+        ->where('price_old', '>', 0) // Chỉ lấy sp có price_old > 0
+        ->orderByDesc('price_old')
+        ->limit(8)
+        ->get();
+    
+    
 
         $banners = Banner::orderBy('position')
             ->get()
@@ -27,7 +34,30 @@ class HomeController extends Controller
 
         $wishlistItems = Wishlist::where('user_id', Auth::id())->pluck('product_id')->toArray();
 
-        return view('client.home', compact('categories', 'products', 'wishlistItems', 'banners'));
+        $newProducts = Product::where('is_active', 1)
+        ->orderBy('created_at', 'desc')
+        ->take(8)
+        ->get();
+
+        $bestSellingProducts = Product::select('products.*', DB::raw('SUM(order_details.quantity) as total_sold'))
+        ->join('order_details', 'products.id', '=', 'order_details.product_id')
+        ->join('orders', 'order_details.order_id', '=', 'orders.id') // join thêm orders
+        ->where('orders.status', 'received') // chỉ lấy đơn đã received
+        ->groupBy(
+            'products.id',
+            'products.name',
+            'products.price',
+            'products.price_old',
+            'products.is_active',
+            'products.created_at',
+            'products.updated_at'
+        )
+        ->orderByDesc('total_sold')
+        ->take(8)
+        ->get();
+    
+
+        return view('client.home', compact('categories', 'discountProducts', 'wishlistItems', 'banners','newProducts','bestSellingProducts'));
     }
 
     public function productsByCategory($categoryId)
@@ -281,5 +311,36 @@ class HomeController extends Controller
     {
         return view('client.error');
     }
+    public function search(Request $request)
+    {
+        $keyword = $request->input('keyword');
+        $sort = $request->input('sort');
+    
+        $products = Product::query()
+            ->where('is_active', 1)  // Chỉ lấy sản phẩm đang active
+            ->when($keyword, function ($query) use ($keyword) {
+                $query->where(function ($q) use ($keyword) {
+                    $q->where('name', 'like', '%' . $keyword . '%')
+                      ->orWhere('short_description', 'like', '%' . $keyword . '%')
+                      ->orWhere('price', 'like', '%' . $keyword . '%')
+                      ->orWhereHas('category', function ($q2) use ($keyword) {
+                          $q2->where('name', 'like', '%' . $keyword . '%');
+                      });
+                });
+            });
+    
+        if ($sort == 'asc') {
+            $products->orderBy('price', 'asc');
+        } elseif ($sort == 'desc') {
+            $products->orderBy('price', 'desc');
+        }
+    
+        $products = $products->paginate(12);
+    
+        return view('client.page.search', compact('products', 'keyword', 'sort'));
+    }
+    
+    
+
 
 }

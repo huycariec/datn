@@ -128,7 +128,28 @@
                                  alt="">
                         </a>
 
+
                         <div class="header-nav-middle">
+
+                            {{-- SEARCH FORM --}}
+                            <div class="d-flex justify-content-center mt-4 mb-4">
+                                <form action="{{ route('product.search') }}" method="GET" class="d-flex w-75">
+                                    @csrf
+                                    <input class="form-control me-2" type="search" name="keyword" placeholder="Nhập tên, mô tả, danh mục..."
+                                           value="{{ request('keyword') }}" required>
+                            
+                                    <select name="sort" class="form-select me-2" style="max-width:150px;">
+                                        <option value="">Sắp xếp</option>
+                                        <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Giá tăng dần</option>
+                                        <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Giá giảm dần</option>
+                                    </select>
+                            
+                                    <button class="btn btn-danger" type="submit">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            
                             <div class="main-nav navbar navbar-expand-xl navbar-light navbar-sticky">
                                 <div class="offcanvas offcanvas-collapse order-xl-2" id="primaryMenu">
                                     <div class="offcanvas-header navbar-shadow">
@@ -136,6 +157,7 @@
                                         <button class="btn-close lead" type="button"
                                                 data-bs-dismiss="offcanvas"></button>
                                     </div>
+                                    
                                     <div class="offcanvas-body">
                                         <ul class="navbar-nav">
                                             <li class="nav-item dropdown dropdown-mega">
