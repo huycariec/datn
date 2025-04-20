@@ -386,23 +386,23 @@
     <!-- Location Modal End -->
 
     <!-- Cookie Bar Box Start -->
-    <div class="cookie-bar-box">
-        <div class="cookie-box">
-            <div class="cookie-image">
-                <img src="../assets/images/cookie-bar.png" class="blur-up lazyload" alt="">
-                <h2>Chấp nhận cookies!</h2>
-            </div>
+{{--    <div class="cookie-bar-box">--}}
+{{--        <div class="cookie-box">--}}
+{{--            <div class="cookie-image">--}}
+{{--                <img src="../assets/images/cookie-bar.png" class="blur-up lazyload" alt="">--}}
+{{--                <h2>Chấp nhận cookies!</h2>--}}
+{{--            </div>--}}
 
-            <div class="cookie-contain">
-                <h5 class="text-content">Chúng tôi cần cookie để xem lịch sử duyệt web của bạn!</h5>
-            </div>
-        </div>
+{{--            <div class="cookie-contain">--}}
+{{--                <h5 class="text-content">Chúng tôi cần cookie để xem lịch sử duyệt web của bạn!</h5>--}}
+{{--            </div>--}}
+{{--        </div>--}}
 
-        <div class="button-group">
-            <button class="btn privacy-button">Chính sách</button>
-            <button class="btn ok-button">Đồng ý</button>
-        </div>
-    </div>
+{{--        <div class="button-group">--}}
+{{--            <button class="btn privacy-button">Chính sách</button>--}}
+{{--            <button class="btn ok-button">Đồng ý</button>--}}
+{{--        </div>--}}
+{{--    </div>--}}
     <!-- Cookie Bar Box End -->
 
     <!-- Deal Box Modal Start -->

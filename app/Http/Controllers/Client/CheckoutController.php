@@ -167,32 +167,32 @@ class CheckoutController extends Controller
     public function placeOrder(Request $request)
     {
         DB::beginTransaction();
-    
+
         try {
             $user = auth()->user();
-    
+
             $defaultAddress = $user->addresses->first();
             $provinceId = $defaultAddress?->province_id ?? $request->province_id;
             $districtId = $defaultAddress?->district_id ?? $request->district_id;
             $wardId = $defaultAddress?->ward_id ?? $request->ward_id;
-    
+
             if (!$provinceId || !$districtId || !$wardId) {
                 return back()->with('error', 'Không tìm thấy địa chỉ hợp lệ!');
             }
-    
+
             if (!$request->has('cart_items')) {
                 return back()->with('error', 'Không có sản phẩm nào được chọn trong giỏ hàng!');
             }
-    
+
             $selectedCartIds = array_keys($request->cart_items);
             $cartItems = Cart::where('user_id', $user->id)
                              ->whereIn('id', $selectedCartIds)
                              ->get();
-    
+
             if ($cartItems->isEmpty()) {
                 return back()->with('error', 'Không tìm thấy sản phẩm trong giỏ hàng!');
             }
-            
+
             // Kiểm tra trạng thái active của sản phẩm
             $inactiveProductNames = $cartItems->filter(function ($item) {
                 return optional($item->variant)->is_active == 0;
@@ -202,25 +202,25 @@ class CheckoutController extends Controller
                 return back()->with('error', 'Sản phẩm "' . implode(', ', $inactiveProductNames) . '" đã ngừng bán, vui lòng kiểm tra lại giỏ hàng!');
             }
 
-    
+
             $totalProductPrice = $cartItems->sum(function($item) {
                 return ($item->variant->price ?? 0) * $item->quantity;
             });
-    
+
             $shippingFee = (float) ($request->shipping_fee ?? 0);
             $discountValue = 0;
-    
+
             if ($request->filled('discount_id')) {
                 $voucher = Discount::find($request->discount_id);
                 if ($voucher) {
-                    $discountValue = $voucher->type == 'percent' 
-                        ? $totalProductPrice * $voucher->value / 100 
+                    $discountValue = $voucher->type == 'percent'
+                        ? $totalProductPrice * $voucher->value / 100
                         : $voucher->value;
                 }
             }
-    
+
             $finalTotal = max(0, $totalProductPrice - $discountValue + $shippingFee);
-    
+
             $order = Order::create([
                 'user_id'         => $user->id,
                 'shipper_id'      => 1,
@@ -234,7 +234,7 @@ class CheckoutController extends Controller
                 'total_amount'    => $finalTotal,
                 'status'          => OrderStatus::PENDING_CONFIRMATION->value
             ]);
-    
+
             foreach ($cartItems as $cartItem) {
                 OrderDetail::create([
                     'order_id'           => $order->id,
@@ -242,10 +242,10 @@ class CheckoutController extends Controller
                     'product_variant_id' => $cartItem->product_variant_id,
                     'quantity'           => $cartItem->quantity,
                 ]);
-    
+
                 $cartItem->variant->decrement('stock', $cartItem->quantity);
             }
-    
+
             if ($discountValue > 0) {
                 OrderDiscount::create([
                     'order_id'        => $order->id,
@@ -253,9 +253,9 @@ class CheckoutController extends Controller
                     'discount_value'  => $discountValue,
                 ]);
             }
-    
+
             Cart::whereIn('id', $selectedCartIds)->delete();
-    
+
             // Ghi log Payment
             PaymentLog::create([
                 'order_id' => $order->id,
@@ -263,45 +263,61 @@ class CheckoutController extends Controller
                 'method'   => $request->payment_method,
                 'status'   => PaymentStatus::PENDING, // ban đầu chưa thanh toán
             ]);
-    
+
             DB::commit();
-    
+
             switch ($request->payment_method) {
                 case 'CASH':
                     return redirect()->route('order')
                         ->with('success', 'Đơn hàng đã được đặt thành công! Thanh toán khi nhận hàng.');
-    
+
                 case 'bank_transfer':
                     return redirect()->route('order.bank_transfer')
                         ->with('success', 'Vui lòng chuyển khoản theo thông tin hiển thị.');
-    
+
                 case 'momo':
                     return redirect()->route('order.momo')
                         ->with('success', 'Vui lòng thanh toán qua ví Momo.');
-    
+
                 case 'VNPAY':
                     $vnp_Url = $this->buildVnpayUrl($order, $finalTotal);
                     return redirect($vnp_Url);
-    
+
                 default:
                     return redirect()->route('cart.index')
                         ->with('error', 'Phương thức thanh toán không hợp lệ!');
             }
-    
+
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error('Place Order Error: ' . $e->getMessage());
             return back()->with('error', 'Đã có lỗi xảy ra, vui lòng thử lại sau!');
         }
     }
-    
+
+    public function generateVnpayUrl(Request $request)
+    {
+        $orderId = $request->input('order_id');
+        $finalTotal = $request->input('total_price');
+
+        $order = Order::findOrFail($orderId);
+
+        if ($order->payment->method == \App\Enums\PaymentMethod::VNPAY &&
+            in_array($order->payment->status, [\App\Enums\PaymentStatus::PENDING, \App\Enums\PaymentStatus::FAILED])) {
+            $vnpayUrl = $this->buildVnpayUrl($order, $finalTotal);
+            return redirect($vnpayUrl);
+        }
+
+        return redirect()->back()->with('error', 'Không thể tạo URL thanh toán');
+    }
+
     private function buildVnpayUrl($order, $finalTotal)
     {
         $vnp_Url        = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
         $vnp_Returnurl  = route('vnpay.return');
         $vnp_TmnCode    = "0BQGSJLL";
         $vnp_HashSecret = "YYDH932FZ19XBC6F79BXIG833K2UO7ON";
-    
+
         $inputData = [
             "vnp_Version"    => "2.1.0",
             "vnp_TmnCode"    => $vnp_TmnCode,
@@ -316,19 +332,19 @@ class CheckoutController extends Controller
             "vnp_ReturnUrl"  => $vnp_Returnurl,
             "vnp_TxnRef"     => $order->id
         ];
-    
+
         ksort($inputData);
         $query = urldecode(http_build_query($inputData));
-    
+
         $hashdata = collect($inputData)
             ->map(fn($v, $k) => urlencode($k) . "=" . urlencode($v))
             ->implode('&');
-    
+
         $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret);
-    
+
         return "{$vnp_Url}?{$query}&vnp_SecureHash={$vnpSecureHash}";
     }
-    
+
 
 
 

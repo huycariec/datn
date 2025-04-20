@@ -24,7 +24,7 @@
                                 {{-- Mô tả ngắn --}}
                                 <p class="text-muted small mb-2" style="min-height: 35px;">
                                     {{ \Illuminate\Support\Str::limit(strip_tags($product->short_description), 50) }}
-                                </p>                        
+                                </p>
                                 <p class="mb-2">
                                     <span class="text-danger fw-bold fs-5 me-2">
                                         {{ number_format($product->price, 0, ',', '.') }} đ
@@ -44,7 +44,7 @@
             </div>
         @endif
         <a href="{{ route('home') }}" class="btn btn-secondary">Quay lại trang chủ</a>
-    </div> 
+    </div>
 <!-- Breadcrumb Section Start -->
 <section class="breadcrumb-section pt-0">
     <div class="container-fluid-lg">
@@ -887,15 +887,15 @@
 
                 <div
     class="row g-sm-4 g-3 row-cols-xxl-4 row-cols-xl-3 row-cols-lg-2 row-cols-md-3 row-cols-2 product-list-section">
-    
-    @if ($products->isNotEmpty()) 
+
+    @if ($products->isNotEmpty())
         @foreach ($products as $product)
             <div class="col-md-4">
                 <div class="product-box-3 h-100 wow fadeInUp">
                     <div class="product-header">
                         <div class="product-image">
                             <a href="{{ route('product.detail', $product->id) }}">
-                                <img src="{{ asset('storage/' . $product->image) }}" class="img-fluid" alt="{{ $product->name }}">
+                                <img src="{{ \Illuminate\Support\Facades\Storage::url($product->images->first()->url) }}" class="img-fluid" alt="{{ $product->name }}">
                             </a>
 
                             <ul class="product-option">
@@ -920,7 +920,7 @@
                                 <h5 class="name">{{ $product->name }}</h5>
                             </a>
                             <p class="text-content mt-1 mb-2 product-content">{{ $product->description }}</p>
-                            
+
                             <h6 class="unit">{{ $product->unit ?? '1 item' }}</h6>
                             <h5 class="price">
                                 <span class="theme-color">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>

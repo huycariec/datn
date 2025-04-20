@@ -157,8 +157,8 @@
                                                     @endif
                                                 </td>
                                                 <td>{{ $detail->quantity }}</td>
-                                                <td>{{ number_format($detail->price, 0, ',', '.') }} VNĐ</td>
-                                                <td>{{ number_format($detail->quantity * $detail->price, 0, ',', '.') }}
+                                                <td>{{ number_format($detail->unit_price, 0, ',', '.') }} VNĐ</td>
+                                                <td>{{ number_format($detail->quantity * $detail->unit_price, 0, ',', '.') }}
                                                     VNĐ
                                                 </td>
                                             </tr>
@@ -237,7 +237,7 @@
                                     <div class="col-md-6">
                                         <div class="d-flex justify-content-between mb-2">
                                             <span>Tổng tiền sản phẩm:</span>
-                                            <span>{{ number_format($order->orderDetails->sum(fn($detail) => $detail->quantity * $detail->product->price), 0, ',', '.') }} VND</span>
+                                            <span>{{ number_format($order->orderDetails->sum(fn($detail) => $detail->quantity * $detail->unit_price), 0, ',', '.') }} VND</span>
                                         </div>
                                         <div class="d-flex justify-content-between mb-2">
                                             <span>Phí vận chuyển:</span>
