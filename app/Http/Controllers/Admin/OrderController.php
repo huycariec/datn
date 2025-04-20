@@ -74,6 +74,7 @@ class OrderController extends Controller
     {
         try {
             $order = Order::findOrFail($id);
+//            dd($order->orderDetails);
             if (!$order) {
                 return view('admin.pages.orders.list')->with('error', 'Đơn hàng không tồn tại !');
             }

@@ -122,8 +122,8 @@
                                                     @endif
                                                 </td>
                                                 <td>{{ $detail->quantity }}</td>
-                                                <td>{{ number_format($detail->price, 0, ',', '.') }} VNĐ</td>
-                                                <td>{{ number_format($detail->quantity * $detail->price, 0, ',', '.') }}
+                                                <td>{{ number_format($detail->unit_price, 0, ',', '.') }} VNĐ</td>
+                                                <td>{{ number_format($detail->quantity * $detail->unit_price, 0, ',', '.') }}
                                                     VNĐ
                                                 </td>
                                                 @if(in_array($order->status, [
@@ -200,7 +200,7 @@
                                     <div class="col-md-6">
                                         <div class="d-flex justify-content-between mb-2">
                                             <span>Tổng tiền sản phẩm:</span>
-                                            <span>{{ number_format($order->orderDetails->sum(fn($detail) => $detail->quantity * $detail->price), 0, ',', '.') }} VNĐ</span>
+                                            <span>{{ number_format($order->orderDetails->sum(fn($detail) => $detail->quantity * $detail->unit_price), 0, ',', '.') }} VNĐ</span>
                                         </div>
                                         <div class="d-flex justify-content-between mb-2">
                                             <span>Phí vận chuyển:</span>
@@ -236,6 +236,19 @@
                                        style="border-radius: 20px; padding: 10px 20px;"
                                        onclick="confirm('Bạn muốn trả đơn hàng này?') && alert('Chức năng trả hàng đang phát triển.')">Trả
                                         đơn</a>
+                                @endif
+                                @if($order->payment->method == \App\Enums\PaymentMethod::VNPAY &&
+                                            in_array($order->payment->status, [\App\Enums\PaymentStatus::PENDING, \App\Enums\PaymentStatus::FAILED]))
+                                    <form action="{{ route('vnpay.generate') }}" method="POST"
+                                          style="display: inline;">
+                                        @csrf
+                                        <input type="hidden" name="order_id" value="{{ $order->id }}">
+                                        <input type="hidden" name="total_price"
+                                               value="{{ $order->total_amount }}">
+                                        <button style="border-radius: 20px; padding: 10px 20px;" type="submit" class="btn btn-outline-primary btn-sm fw-bold">
+                                            Tiếp tục thanh toán
+                                        </button>
+                                    </form>
                                 @endif
                                 <a href="{{ route('order') }}" class="btn btn-outline-primary fw-bold"
                                    style="border-radius: 20px; padding: 10px 20px;">Quay lại</a>

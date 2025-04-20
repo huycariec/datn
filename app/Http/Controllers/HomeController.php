@@ -18,15 +18,15 @@ use Illuminate\Support\Facades\Auth;
 class HomeController extends Controller
 {
     public function index()
-    {
+{
         $categories = Category::all();
         $discountProducts = Product::where('is_active', 1)
         ->where('price_old', '>', 0) // Chỉ lấy sp có price_old > 0
         ->orderByDesc('price_old')
         ->limit(8)
         ->get();
-    
-    
+
+
 
         $banners = Banner::orderBy('position')
             ->get()
@@ -39,7 +39,7 @@ class HomeController extends Controller
         ->take(8)
         ->get();
 
-        $bestSellingProducts = Product::select('products.*', DB::raw('SUM(order_details.quantity) as total_sold'))
+        $bestSellingProducts = Product::select('products.name', 'products.id', 'products.price', DB::raw('SUM(order_details.quantity) as total_sold'))
         ->join('order_details', 'products.id', '=', 'order_details.product_id')
         ->join('orders', 'order_details.order_id', '=', 'orders.id') // join thêm orders
         ->where('orders.status', 'received') // chỉ lấy đơn đã received
@@ -55,7 +55,7 @@ class HomeController extends Controller
         ->orderByDesc('total_sold')
         ->take(8)
         ->get();
-    
+
 
         return view('client.home', compact('categories', 'discountProducts', 'wishlistItems', 'banners','newProducts','bestSellingProducts'));
     }
@@ -73,6 +73,8 @@ class HomeController extends Controller
         $product = Product::with([
             'variants.variantAttributes.attributeValue.attribute'
         ])->find($id);
+        $product->view += 1;
+        $product->save();
 
         $attributesGrouped = [];
         foreach ($product->variants as $variant) {
@@ -315,7 +317,7 @@ class HomeController extends Controller
     {
         $keyword = $request->input('keyword');
         $sort = $request->input('sort');
-    
+
         $products = Product::query()
             ->where('is_active', 1)  // Chỉ lấy sản phẩm đang active
             ->when($keyword, function ($query) use ($keyword) {
@@ -328,19 +330,19 @@ class HomeController extends Controller
                       });
                 });
             });
-    
+
         if ($sort == 'asc') {
             $products->orderBy('price', 'asc');
         } elseif ($sort == 'desc') {
             $products->orderBy('price', 'desc');
         }
-    
+
         $products = $products->paginate(12);
-    
+
         return view('client.page.search', compact('products', 'keyword', 'sort'));
     }
-    
-    
+
+
 
 
 }
