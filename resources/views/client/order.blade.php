@@ -38,10 +38,9 @@
                                             <path d="M1 0a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h4.083q.088-.517.258-1H3a2 2 0 0 0-2-2V3a2 2 0 0 0 2-2h10a2 2 0 0 0 2 2v3.528c.38.34.717.728 1 1.154V1a1 1 0 0 0-1-1z"/>
                                             <path d="M9.998 5.083 10 5a2 2 0 1 0-3.132 1.65 6 6 0 0 1 3.13-1.567"/>
                                         </svg>:
-                                        {!! $order->payment->status->getBadgeLabel() !!}
+                                        <span class="badge bg-primary">Thanh toán khi nhận hàng</span>
                                     @endif
                                 </div>
-                        </div>
                             </div>
 
                             <!-- Body đơn hàng -->
@@ -69,12 +68,11 @@
                                             @if($order->orderDetails->isNotEmpty())
                                                 @php
                                                     $productNames = $order->orderDetails->take(2)->pluck('product.name')->implode(', ');
-                                                                                                $remainingCount = $order->orderDetails->count() - 2;
+                                                    $remainingCount = $order->orderDetails->count() - 2;
                                                 @endphp
                                                 <span class="fw-bold text-dark">{{ $productNames }}</span>
                                                 @if($remainingCount > 0)
-                                                    <span
-                                                        class="text-muted"> + {{ $remainingCount }} sản phẩm khác</span>
+                                                    <span class="text-muted"> + {{ $remainingCount }} sản phẩm khác</span>
                                                 @endif
                                             @else
                                                 <span class="fw-bold text-dark">Sản phẩm không xác định</span>
@@ -85,7 +83,7 @@
                                                 class="bi bi-calendar3 me-2"></i>{{ $order->created_at->format('d/m/Y H:i') }}
                                         </p>
                                         <p class="mb-0 text-muted"><i
-                                                class="bi bi-credit-card me-2"></i>{!! $order->payment_method->getBadgeLabel() !!}
+                                                class="bi bi-credit-card me-2"></i>{!! $order->payment->method->getBadgeLabel() !!}
                                         </p>
                                     </div>
 
@@ -95,7 +93,6 @@
                                                 class="text-danger fw-bold">{{ number_format($order->total_amount, 0, ',', '.') }} VNĐ</span>
                                         </p>
                                         <div class="d-flex gap-2 justify-content-md-end">
-
                                             @if($order->payment->method == \App\Enums\PaymentMethod::VNPAY &&
                                                 in_array($order->payment->status, [\App\Enums\PaymentStatus::PENDING, \App\Enums\PaymentStatus::FAILED]))
                                                 <form action="{{ route('vnpay.generate') }}" method="POST"
@@ -141,19 +138,14 @@
                                                     $canReturn = \Carbon\Carbon::now()->diffInDays($order->updated_at) <= 7;
                                                 @endphp
                                                 @if($canReturn)
-                                                    <form action="{{ route('update-status') }}" method="POST"
-                                                          style="display: inline;">
-                                                        @csrf
-                                                        <input type="hidden" name="order_id" value="{{ $order->id }}">
-                                                        <input type="hidden" name="status"
-                                                               value="{{ \App\Enums\OrderStatus::RETURNED }}">
-                                                        <button type="submit"
-                                                                class="btn btn-outline-danger btn-sm fw-bold"
-                                                                style="border-radius: 20px; padding: 6px 15px;"
-                                                                onclick="return confirm('Bạn có chắc muốn trả đơn hàng này?')">
-                                                            Trả hàng
-                                                        </button>
-                                                    </form>
+                                                    <button type="button"
+                                                            class="btn btn-outline-danger btn-sm fw-bold return-order-btn"
+                                                            style="border-radius: 20px; padding: 6px 15px;"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#returnOrderModal"
+                                                            data-order-id="{{ $order->id }}">
+                                                        Trả hàng
+                                                    </button>
                                                 @else
                                                     <span
                                                         class="badge bg-secondary">Đã quá 7 ngày, không thể trả hàng</span>
@@ -175,19 +167,19 @@
                                                     </button>
                                                 </form>
 
-                                                <form action="{{ route('update-status') }}" method="POST"
-                                                      style="display: inline;">
-                                                    @csrf
-                                                    <input type="hidden" name="order_id" value="{{ $order->id }}">
-                                                    <input type="hidden" name="status"
-                                                           value="{{ \App\Enums\OrderStatus::NOT_RECEIVED }}">
-                                                    <button type="submit"
-                                                            class="btn btn-outline-danger btn-sm fw-bold"
-                                                            style="border-radius: 20px; padding: 6px 15px;"
-                                                            onclick="return confirm('Bạn có chắc chưa nhận được hàng?')">
-                                                        Không nhận được hàng
-                                                    </button>
-                                                </form>
+{{--                                                <form action="{{ route('update-status') }}" method="POST"--}}
+{{--                                                      style="display: inline;">--}}
+{{--                                                    @csrf--}}
+{{--                                                    <input type="hidden" name="order_id" value="{{ $order->id }}">--}}
+{{--                                                    <input type="hidden" name="status"--}}
+{{--                                                           value="{{ \App\Enums\OrderStatus::NOT_RECEIVED }}">--}}
+{{--                                                    <button type="submit"--}}
+{{--                                                            class="btn btn-outline-danger btn-sm fw-bold"--}}
+{{--                                                            style="border-radius: 20px; padding: 6px 15px;"--}}
+{{--                                                            onclick="return confirm('Bạn có chắc chưa nhận được hàng?')">--}}
+{{--                                                        Không nhận được hàng--}}
+{{--                                                    </button>--}}
+{{--                                                </form>--}}
                                             @endif
                                         </div>
                                         @if($order->status === \App\Enums\OrderStatus::NOT_RECEIVED)
@@ -211,15 +203,76 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal Lý do trả hàng -->
+        <div class="modal fade" id="returnOrderModal" tabindex="-1" aria-labelledby="returnOrderModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="returnOrderModalLabel">Lý do trả hàng</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="returnOrderForm" action="{{ route('update-status') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="order_id" id="returnOrderId">
+                            <input type="hidden" name="status" value="{{ \App\Enums\OrderStatus::RETURNED }}">
+                            <div class="mb-3">
+                                <label for="returnReason" class="form-label">Vui lòng nhập lý do trả hàng:</label>
+                                <textarea class="form-control" id="returnReason" name="reason" rows="4" required></textarea>
+                            </div>
+                            <div class="text-end">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                <button type="submit" class="btn btn-danger" id="submitReturnBtn">Gửi yêu cầu</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <script>
+        // Hiệu ứng hover cho card
         document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('mouseover', () => {
                 card.style.boxShadow = '0 8px 20px rgba(0,0,0,0.1)';
             });
             card.addEventListener('mouseout', () => {
                 card.style.boxShadow = '0 4px 10px rgba(0,0,0,0.05)';
+            });
+        });
+
+        // Xử lý modal trả hàng
+        document.querySelectorAll('.return-order-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const orderId = button.getAttribute('data-order-id');
+                document.getElementById('returnOrderId').value = orderId;
+            });
+        });
+
+        // Xử lý submit form trả hàng qua AJAX (giữ nguyên jQuery AJAX)
+        document.getElementById('returnOrderForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const submitButton = document.getElementById('submitReturnBtn');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Đang gửi...';
+
+            $.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: $(this).serialize(),
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                dataType: 'json',
+                complete: function () {
+                    alert('Gửi yêu cầu hoàn hàng thành công !')
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Gửi yêu cầu';
+                    document.getElementById('returnOrderModal').querySelector('.btn-close').click();
+                    location.reload();
+                }
             });
         });
     </script>

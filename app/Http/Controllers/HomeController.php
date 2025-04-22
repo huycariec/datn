@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderRecieved;
+use App\Mail\OrderReturned;
 use App\Models\Page;
 use App\Models\Order;
 use App\Models\Banner;
@@ -14,6 +16,7 @@ use Illuminate\Http\Request;
 use App\Models\ProductVariant;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class HomeController extends Controller
 {
@@ -240,7 +243,7 @@ class HomeController extends Controller
         try {
             $request->validate([
                 'order_id' => 'required|exists:orders,id',
-                'status' => 'required|in:' . implode(',', array_column(OrderStatus::cases(), 'value'))
+                'status' => 'required|in:' . implode(',', array_column(OrderStatus::cases(), 'value')),
             ]);
 
             $order = Order::findOrFail($request->order_id);
@@ -262,7 +265,19 @@ class HomeController extends Controller
             }
 
             $order->status = $request->status;
+            if ($request->reason) {
+                $order->reason = $request->reason;
+            }
             $order->save();
+            if ($request->status == OrderStatus::RECEIVED->value)
+            {
+                Mail::to(env('MAIL_ADMIN_EMAIL') ?? 'lequyhieu1024@gmail.com')->send(new OrderRecieved($order));
+            }
+
+            if ($request->status == OrderStatus::RETURNED->value)
+            {
+                Mail::to(env('MAIL_ADMIN_EMAIL') ?? 'lequyhieu1024@gmail.com')->send(new OrderReturned($order, $request->reason));
+            }
 
             return redirect()->back()->with('success', 'Cập nhật trạng thái thành công');
 

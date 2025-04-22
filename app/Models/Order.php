@@ -20,7 +20,8 @@ class Order extends Model
         'shipping_fee',
         'province_id',
         'district_id',
-        'ward_id'
+        'ward_id',
+        'reason',
     ];
 
     protected $casts = [
