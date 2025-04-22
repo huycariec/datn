@@ -16,6 +16,7 @@ enum OrderStatus: string
     case RETURNED = 'returned';
     case REFUNDED = 'refunded';
     case NOT_RECEIVED = 'not_received';
+    case RETURNED_ACCEPT = 'returned_accept';
 
     /**
      * Get the display name for the status
@@ -30,7 +31,7 @@ enum OrderStatus: string
             self::PREPARED => 'Đã chuẩn bị xong & chờ shipper lấy hàng',
             self::PICKED_UP => 'Shipper đã lấy hàng',
 
-            
+
             self::IN_TRANSIT => 'Shipper đang giao hàng',
             self::DELIVERED => 'Đơn hàng đã được giao cho người nhận',
             //shipper 2 trạng thái
@@ -40,6 +41,7 @@ enum OrderStatus: string
             self::RETURNED => 'Trả hàng',
             self::REFUNDED => 'Đã hoàn tiền',
             self::NOT_RECEIVED => 'Không nhận được hàng',
+            self::RETURNED_ACCEPT => 'Chấp nhận hoàn hàng',
         };
     }
 
@@ -61,6 +63,7 @@ enum OrderStatus: string
             self::RETURNED => '<span class="badge bg-primary">' . $this->label() . '</span>',
             self::REFUNDED => '<span class="badge bg-dark">' . $this->label() . '</span>',
             self::NOT_RECEIVED => '<span class="badge bg-danger">' . $this->label() . '</span>',
+            self::RETURNED_ACCEPT => '<span class="badge bg-success">' . $this->label() . '</span>',
         };
     }
 

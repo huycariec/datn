@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
+use App\Mail\OrderConfirmed;
+use App\Mail\OrderReturnAccept;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
@@ -124,7 +127,8 @@ class OrderController extends Controller
             'in_transit' => ['in_transit', 'delivered'],
             'delivered' => ['delivered'],
             'received' => ['received'],
-            'returned' => ['returned', 'refunded'],
+            'returned' => ['returned', 'returned_accept', 'received'],
+            'returned_accept' => ['returned_accept', 'refunded'],
             'cancelled' => [],
             'refunded' => []
         ];
@@ -142,6 +146,23 @@ class OrderController extends Controller
         $order->update(['status' => $newStatus]);
 
         session()->flash('success', 'Cập nhật trạng thái đơn hàng thành công');
+
+        if ($newStatus == OrderStatus::CONFIRMED->value) {
+            try {
+                Mail::to($order->user->email)->send(new OrderConfirmed($order));
+            } catch (\Exception $e) {
+                \Log::error('Lỗi khi gửi email xác nhận đơn hàng: ' . $e->getMessage());
+                session()->flash('error', 'Đã xảy ra lỗi khi gửi email xác nhận');
+            }
+        }
+
+        if ($newStatus == OrderStatus::RECEIVED->value || $newStatus == OrderStatus::RETURNED_ACCEPT->value) {
+            try {
+                Mail::to($order->user->email)->send(new OrderReturnAccept($order));
+            } catch (\Exception $e) {
+                session()->flash('error', 'Đã xảy ra lỗi khi gửi email');
+            }
+        }
 
         return response()->json([
             'success' => true,

@@ -222,30 +222,66 @@
                             <!-- Hành động -->
                             <div class="text-end d-flex justify-content-end gap-3">
                                 @if($order->status === \App\Enums\OrderStatus::PENDING_CONFIRMATION)
-                                    <a href="#" class="btn btn-danger fw-bold"
-                                       style="border-radius: 20px; padding: 10px 20px;">Hủy đơn</a>
+                                    <form action="{{ route('update-status') }}" method="POST" style="display: inline;">
+                                        @csrf
+                                        <input type="hidden" name="order_id" value="{{ $order->id }}">
+                                        <input type="hidden" name="status"
+                                               value="{{ \App\Enums\OrderStatus::CANCELLED }}">
+                                        <button type="submit" class="btn btn-danger fw-bold"
+                                                style="border-radius: 20px; padding: 10px 20px;"
+                                                onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
+                                            Hủy đơn
+                                        </button>
+                                    </form>
                                 @endif
                                 @if($order->status === \App\Enums\OrderStatus::DELIVERED)
-                                    <a href="#" class="btn btn-success fw-bold"
-                                       style="border-radius: 20px; padding: 10px 20px;"
-                                       onclick="confirm('Xác nhận đã nhận hàng?') && alert('Đã xác nhận! Chức năng đang phát triển.')">Xác
-                                        nhận đơn hàng</a>
+                                    <form action="{{ route('update-status') }}" method="POST" style="display: inline;">
+                                        @csrf
+                                        <input type="hidden" name="order_id" value="{{ $order->id }}">
+                                        <input type="hidden" name="status"
+                                               value="{{ \App\Enums\OrderStatus::RECEIVED }}">
+                                        <button type="submit" class="btn btn-success fw-bold"
+                                                style="border-radius: 20px; padding: 10px 20px;"
+                                                onclick="return confirm('Bạn có chắc đã nhận được hàng?')">
+                                            Xác nhận đã nhận hàng
+                                        </button>
+                                    </form>
+{{--                                    <form action="{{ route('update-status') }}" method="POST" style="display: inline;">--}}
+{{--                                        @csrf--}}
+{{--                                        <input type="hidden" name="order_id" value="{{ $order->id }}">--}}
+{{--                                        <input type="hidden" name="status"--}}
+{{--                                               value="{{ \App\Enums\OrderStatus::NOT_RECEIVED }}">--}}
+{{--                                        <button type="submit" class="btn btn-danger fw-bold"--}}
+{{--                                                style="border-radius: 20px; padding: 10px 20px;"--}}
+{{--                                                onclick="return confirm('Bạn có chắc chưa nhận được hàng?')">--}}
+{{--                                            Không nhận được hàng--}}
+{{--                                        </button>--}}
+{{--                                    </form>--}}
                                 @endif
                                 @if($order->status === \App\Enums\OrderStatus::RECEIVED)
-                                    <a href="#" class="btn btn-warning fw-bold"
-                                       style="border-radius: 20px; padding: 10px 20px;"
-                                       onclick="confirm('Bạn muốn trả đơn hàng này?') && alert('Chức năng trả hàng đang phát triển.')">Trả
-                                        đơn</a>
+                                    @php
+                                        $canReturn = \Carbon\Carbon::now()->diffInDays($order->updated_at) <= 7;
+                                    @endphp
+                                    @if($canReturn)
+                                        <button type="button" class="btn btn-warning fw-bold return-order-btn"
+                                                style="border-radius: 20px; padding: 10px 20px;"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#returnOrderModal"
+                                                data-order-id="{{ $order->id }}">
+                                            Trả đơn
+                                        </button>
+                                    @endif
                                 @endif
                                 @if($order->payment->method == \App\Enums\PaymentMethod::VNPAY &&
-                                            in_array($order->payment->status, [\App\Enums\PaymentStatus::PENDING, \App\Enums\PaymentStatus::FAILED]))
+                                    in_array($order->payment->status, [\App\Enums\PaymentStatus::PENDING, \App\Enums\PaymentStatus::FAILED]))
                                     <form action="{{ route('vnpay.generate') }}" method="POST"
                                           style="display: inline;">
                                         @csrf
                                         <input type="hidden" name="order_id" value="{{ $order->id }}">
                                         <input type="hidden" name="total_price"
                                                value="{{ $order->total_amount }}">
-                                        <button style="border-radius: 20px; padding: 10px 20px;" type="submit" class="btn btn-outline-primary btn-sm fw-bold">
+                                        <button style="border-radius: 20px; padding: 10px 20px;" type="submit"
+                                                class="btn btn-outline-primary btn-sm fw-bold">
                                             Tiếp tục thanh toán
                                         </button>
                                     </form>
@@ -259,6 +295,8 @@
             </div>
         </div>
     </section>
+
+    <!-- Modal Đánh giá -->
     <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -286,7 +324,8 @@
                             <div class="invalid-feedback">Vui lòng chọn số sao đánh giá.</div>
                         </div>
                         <div class="mb-3">
-                            <label for="content" class="form-label">Nội dung đánh giá <span class="text-danger">*</span></label>
+                            <label for="content" class="form-label">Nội dung đánh giá <span
+                                    class="text-danger">*</span></label>
                             <textarea class="form-control" name="content" id="content" rows="3" required></textarea>
                             <div class="invalid-feedback">Vui lòng nhập nội dung đánh giá.</div>
                         </div>
@@ -305,9 +344,38 @@
         </div>
     </div>
 
+    <!-- Modal Trả hàng -->
+    <div class="modal fade" id="returnOrderModal" tabindex="-1" aria-labelledby="returnOrderModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="returnOrderModalLabel">Lý do trả hàng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="returnOrderForm" action="{{ route('update-status') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="order_id" id="returnOrderId">
+                        <input type="hidden" name="status" value="{{ \App\Enums\OrderStatus::RETURNED }}">
+                        <div class="mb-3">
+                            <label for="returnReason" class="form-label">Vui lòng nhập lý do trả hàng:</label>
+                            <textarea class="form-control" id="returnReason" name="reason" rows="4"
+                                      required></textarea>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-danger" id="submitReturnBtn">Gửi yêu cầu</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Điền dữ liệu vào modal
+            // Điền dữ liệu vào modal đánh giá
             var reviewModal = document.getElementById('reviewModal');
             reviewModal.addEventListener('show.bs.modal', function (event) {
                 var button = event.relatedTarget;
@@ -321,15 +389,15 @@
                 modal.querySelector('#order_id').value = orderId;
             });
 
-            // Validate form
-            var form = document.getElementById('reviewForm');
-            form.addEventListener('submit', function (event) {
+            // Validate form đánh giá
+            var reviewForm = document.getElementById('reviewForm');
+            reviewForm.addEventListener('submit', function (event) {
                 var rating = document.getElementById('rating').value;
                 var content = document.getElementById('content').value.trim();
                 var image = document.getElementById('image').files.length;
 
                 // Reset trạng thái invalid
-                form.querySelectorAll('.form-control, .form-select').forEach(function (element) {
+                reviewForm.querySelectorAll('.form-control, .form-select').forEach(function (element) {
                     element.classList.remove('is-invalid');
                 });
 
@@ -359,7 +427,43 @@
                     event.stopPropagation();
                 }
 
-                form.classList.add('was-validated');
+                reviewForm.classList.add('was-validated');
+            });
+
+            // Xử lý modal trả hàng
+            document.querySelectorAll('.return-order-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const orderId = button.getAttribute('data-order-id');
+                    console.log(orderId);
+                    console.log('hjehehe');
+                    document.getElementById('returnOrderId').value = orderId;
+                });
+            });
+
+            // Xử lý submit form trả hàng qua AJAX
+            document.getElementById('returnOrderForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const submitButton = document.getElementById('submitReturnBtn');
+                submitButton.disabled = true;
+                submitButton.textContent = 'Đang gửi...';
+                console.log($(this).serialize());
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    dataType: 'json',
+                    complete: function () {
+                        alert('Gửi yêu cầu hoàn hàng thành công !')
+                        submitButton.disabled = false;
+                        submitButton.textContent = 'Gửi yêu cầu';
+                        document.getElementById('returnOrderModal').querySelector('.btn-close').click();
+                        location.reload();
+                    }
+                });
             });
         });
     </script>
