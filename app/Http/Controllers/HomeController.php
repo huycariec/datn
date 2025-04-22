@@ -42,25 +42,7 @@ class HomeController extends Controller
         ->take(8)
         ->get();
 
-        $bestSellingProducts = Product::select('products.name', 'products.id', 'products.price', DB::raw('SUM(order_details.quantity) as total_sold'))
-        ->join('order_details', 'products.id', '=', 'order_details.product_id')
-        ->join('orders', 'order_details.order_id', '=', 'orders.id') // join thêm orders
-        ->where('orders.status', 'received') // chỉ lấy đơn đã received
-        ->groupBy(
-            'products.id',
-            'products.name',
-            'products.price',
-            'products.price_old',
-            'products.is_active',
-            'products.created_at',
-            'products.updated_at'
-        )
-        ->orderByDesc('total_sold')
-        ->take(8)
-        ->get();
-
-
-        return view('client.home', compact('categories', 'discountProducts', 'wishlistItems', 'banners','newProducts','bestSellingProducts'));
+        return view('client.home', compact('categories', 'discountProducts', 'wishlistItems', 'banners','newProducts'));
     }
 
     public function productsByCategory($categoryId)
