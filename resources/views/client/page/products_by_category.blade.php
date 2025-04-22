@@ -1,51 +1,6 @@
 @extends('app')
 
 @section('content')
- <div class="container">
-        <h2>Sản phẩm trong danh mục: {{ $category->name }}</h2>
-
-        @if ($products->isEmpty())
-            <p>Không có sản phẩm nào trong danh mục này.</p>
-        @else
-            <div class="row">
-                @foreach ($products as $product)
-                    <div class="col-md-4">
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <div class="ratio ratio-4x3">
-                                    <img src="{{ optional($product->images->first())->url ? Storage::url($product->images->first()->url) : asset('images/no-image.png') }}"
-                                        class="card-img-top p-2"
-                                        alt="{{ $product->name }}"
-                                        style="object-fit: contain;">
-                                </div>
-                                <h5 class="card-title fw-bold mb-2 text-truncate" style="min-height: 40px;">
-                                    {{ $product->name }}
-                                </h5>
-                                {{-- Mô tả ngắn --}}
-                                <p class="text-muted small mb-2" style="min-height: 35px;">
-                                    {{ \Illuminate\Support\Str::limit(strip_tags($product->short_description), 50) }}
-                                </p>                        
-                                <p class="mb-2">
-                                    <span class="text-danger fw-bold fs-5 me-2">
-                                        {{ number_format($product->price, 0, ',', '.') }} đ
-                                    </span>
-                                    @if($product->price_old)
-                                        <span class="text-muted text-decoration-line-through small">
-                                            {{ number_format($product->price_old, 0, ',', '.') }} đ
-                                        </span>
-                                    @endif
-                                </p>
-                                <p class="card-text"><strong>Lượt xem:</strong> {{ $product->view }}</p>
-                                <a href="{{ route('product.detail', $product->id) }}" class="btn btn-primary">Xem chi tiết</a>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        @endif
-        <a href="{{ route('home') }}" class="btn btn-secondary">Quay lại trang chủ</a>
-    </div> 
-<!-- Breadcrumb Section Start -->
 <section class="breadcrumb-section pt-0">
     <div class="container-fluid-lg">
         <div class="row">
@@ -77,7 +32,7 @@
                 <div class="slider-1 slider-animate product-wrapper no-arrow">
                     <div>
                         <div class="banner-contain-2 hover-effect">
-                            <img src="../assets/images/shop/1.jpg" class="bg-img rounded-3 blur-up lazyload" alt="">
+                            <img src="https://images.squarespace-cdn.com/content/v1/52c0509ae4b0330e4569351f/1715852225410-5B8IAIPQWOX7Q4GTWUPR/banner+Miu+Miu+Upcycled+2024_+Ana+Elisa+Brito.jpg?format=2500w" class="bg-img rounded-3 blur-up lazyload" alt="">
                             <div
                                 class="banner-detail p-center-right position-relative shop-banner ms-auto banner-small">
                                 <div>
@@ -886,56 +841,44 @@
                 </div>
 
                 <div
-    class="row g-sm-4 g-3 row-cols-xxl-4 row-cols-xl-3 row-cols-lg-2 row-cols-md-3 row-cols-2 product-list-section">
-    
-    @if ($products->isNotEmpty()) 
-        @foreach ($products as $product)
-            <div class="col-md-4">
-                <div class="product-box-3 h-100 wow fadeInUp">
-                    <div class="product-header">
-                        <div class="product-image">
-                            <a href="{{ route('product.detail', $product->id) }}">
-                                <img src="{{ asset('storage/' . $product->image) }}" class="img-fluid" alt="{{ $product->name }}">
-                            </a>
+                    class="row g-sm-4 g-3 row-cols-xxl-4 row-cols-xl-3 row-cols-lg-2 row-cols-md-3 row-cols-2 product-list-section">
 
-                            <ul class="product-option">
-                                <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                    <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
-                                        <i class="fa-solid fa-eye"></i>
+                    @if ($products->isNotEmpty())
+                    @foreach ($products as $product)
+                    <div class="col-md-4">
+                        <div class="product-box-3 h-100 wow fadeInUp">
+                            <div class="product-header">
+                                <div class="product-image">
+                                    <a href="{{ route('product.detail', $product->id) }}">
+                                        <img src="{{ optional($product->images->first())->url ? Storage::url($product->images->first()->url) : asset('images/no-image.png') }}"
+                                            class="card-img-top p-2"
+                                            alt="{{ $product->name }}"
+                                            style="object-fit: contain;"> </a>
+                                </div>
+                            </div>
+                            <div class="product-footer">
+                                <div class="product-detail">
+                                    <span class="span-name">{{ $product->category->name ?? 'Danh mục khác' }}</span>
+                                    <a href="{{ route('product.detail', $product->id) }}">
+                                        <h5 class="name">{{ $product->name }}</h5>
                                     </a>
-                                </li>
+                                    <p class="text-content mt-1 mb-2 product-content">{{ $product->description }}</p>
 
-                                <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                    <a href="javascript:void(0)" class="notifi-wishlist" onclick="addToWishlist({{ $product->id }})">
-                                        <i class="fa-solid fa-heart"></i>
-                                    </a>
-                                </li>
-                            </ul>
+                                    <h6 class="unit">{{ $product->unit ?? '1 item' }}</h6>
+                                    <h5 class="price">
+                                        <span class="theme-color">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
+                                    </h5>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="product-footer">
-                        <div class="product-detail">
-                            <span class="span-name">{{ $product->category->name ?? 'Danh mục khác' }}</span>
-                            <a href="{{ route('product.detail', $product->id) }}">
-                                <h5 class="name">{{ $product->name }}</h5>
-                            </a>
-                            <p class="text-content mt-1 mb-2 product-content">{{ $product->description }}</p>
-                            
-                            <h6 class="unit">{{ $product->unit ?? '1 item' }}</h6>
-                            <h5 class="price">
-                                <span class="theme-color">{{ number_format($product->price, 0, ',', '.') }} VNĐ</span>
-                            </h5>
-                        </div>
+                    @endforeach
+                    @else
+                    <div class="d-flex flex-column align-items-center justify-content-center text-center" style="min-height: 300px;">
+                        <img src="https://cdn-icons-png.flaticon.com/512/7486/7486754.png" alt="No products" width="150">
+                        <p class="text-muted mt-3">Không có sản phẩm nào trong danh mục này.</p>
                     </div>
+                    @endif
+
                 </div>
-            </div>
-        @endforeach
-        @else
-    <div class="d-flex flex-column align-items-center justify-content-center text-center" style="min-height: 300px;">
-        <img src="https://cdn-icons-png.flaticon.com/512/7486/7486754.png" alt="No products" width="150">
-        <p class="text-muted mt-3">Không có sản phẩm nào trong danh mục này.</p>
-    </div>
-@endif
-
-</div>
-@endsection
+                @endsection
