@@ -102,15 +102,22 @@
                                         <div class="mb-3">
                                             <span class="text-dark">
                                                 Tỉnh/TP:
-                                                <span class="fw-bold">{{ $order->userAddress ? $order->userAddress->province->name : 'Chưa có thông tin' }}</span>,
+                                                <span class="fw-bold">
+                                                    {{ $order->province_id ? \App\Models\Province::find($order->province_id)?->name : 'Chưa có thông tin' }}
+                                                </span>,
                                                 Quận/Huyện:
-                                                <span class="fw-bold">{{ $order->userAddress ? $order->userAddress->district->name : '' }}</span>,
+                                                <span class="fw-bold">
+                                                    {{ $order->district_id ? \App\Models\District::find($order->district_id)?->name : '' }}
+                                                </span>,
                                                 Xã/Phường:
-                                                <span class="fw-bold">{{ $order->userAddress ? $order->userAddress->ward->name : '' }}</span>
+                                                <span class="fw-bold">
+                                                    {{ $order->ward_id ? \App\Models\Ward::find($order->ward_id)?->name : '' }}
+                                                </span>
                                             </span>
+                                            
                                         </div>
                                         <div class="mb-3">
-                                            Địa chỉ chi tiết: <span class="text-dark fw-bold">{{ $order->userAddress->address_detail ?? "" }}</span>
+                                            Địa chỉ chi tiết: <span class="text-dark fw-bold">{{ $order->address_detail ?? "" }}</span>
                                         </div>
                                     </div>
                                 </div>

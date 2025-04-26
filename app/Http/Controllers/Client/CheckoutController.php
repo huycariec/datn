@@ -111,27 +111,27 @@ class CheckoutController extends Controller
         }
 
         // Kiểm tra xem voucher là kiểu 'percent' (giảm giá phần trăm) hay 'fixed' (giảm giá cố định)
-    $vouchers = $vouchers->map(function ($voucher) use ($totalCart) {
-        $voucher->computed_value = 0;
-
-        if ($voucher->type === 'percent') {
-            $voucher->display_type   = 'Giảm giá theo %';
-            $voucher->computed_value = floor(($totalCart * $voucher->value) / 100);
-        } elseif ($voucher->type === 'fixed') {
-            $voucher->display_type   = 'Giảm giá cố định';
-            $voucher->computed_value = $voucher->value;
-        } else {
-            $voucher->display_type   = 'Không xác định';
+        $vouchers = $vouchers->map(function ($voucher) use ($totalCart) {
             $voucher->computed_value = 0;
-        }
 
-        // Kiểm tra và giới hạn max_discount_value nếu có
-        if (!empty($voucher->max_discount_value) && $voucher->computed_value > $voucher->max_discount_value) {
-            $voucher->computed_value = $voucher->max_discount_value;
-        }
+            if ($voucher->type === 'percent') {
+                $voucher->display_type   = 'Giảm giá theo %';
+                $voucher->computed_value = floor(($totalCart * $voucher->value) / 100);
+            } elseif ($voucher->type === 'fixed') {
+                $voucher->display_type   = 'Giảm giá cố định';
+                $voucher->computed_value = $voucher->value;
+            } else {
+                $voucher->display_type   = 'Không xác định';
+                $voucher->computed_value = 0;
+            }
 
-        return $voucher;
-    });
+            // Kiểm tra và giới hạn max_discount_value nếu có
+            if (!empty($voucher->max_discount_value) && $voucher->computed_value > $voucher->max_discount_value) {
+                $voucher->computed_value = $voucher->max_discount_value;
+            }
+
+            return $voucher;
+        });
 
         return view('client.page.checkout.index', compact('cartItems', 'provinces', 'user', 'userAddresses', 'userAddress', 'districts', 'wards','totalCart','vouchers'));
     }
@@ -171,10 +171,29 @@ class CheckoutController extends Controller
         try {
             $user = auth()->user();
 
-            $defaultAddress = $user->addresses->first();
-            $provinceId = $defaultAddress?->province_id ?? $request->province_id;
-            $districtId = $defaultAddress?->district_id ?? $request->district_id;
-            $wardId = $defaultAddress?->ward_id ?? $request->ward_id;
+            if ($request->filled('user_address_id')) {
+                $selectedAddress = $user->addresses->where('id', $request->user_address_id)->firstOrFail();
+            
+                $provinceId = $selectedAddress->province_id;
+                $districtId = $selectedAddress->district_id;
+                $wardId = $selectedAddress->ward_id;
+                $address_detail = $selectedAddress-> address_detail;
+            } else {
+
+                $provinceId = $request->new_province_id;
+                $districtId = $request->new_district_id;
+                $wardId = $request->new_ward_id;
+                $address_detail = $request-> new_address_detail;
+
+                UserAddress::create([
+                    'user_id' => $user->id,  // Thêm user_id vào bảng user_addresses
+                    'address_detail' => $address_detail,
+                    'province_id' => $provinceId,
+                    'district_id' => $districtId,
+                    'ward_id' => $wardId,
+                ]);
+            }
+            
 
             if (!$provinceId || !$districtId || !$wardId) {
                 return back()->with('error', 'Không tìm thấy địa chỉ hợp lệ!');
@@ -202,14 +221,14 @@ class CheckoutController extends Controller
                 return back()->with('error', 'Sản phẩm "' . implode(', ', $inactiveProductNames) . '" đã ngừng bán, vui lòng kiểm tra lại giỏ hàng!');
             }
 
-
             $totalProductPrice = $cartItems->sum(function($item) {
                 return ($item->variant->price ?? 0) * $item->quantity;
             });
-
+            
             $shippingFee = (float) ($request->shipping_fee ?? 0);
             $discountValue = 0;
-
+            
+            // Xử lý voucher giảm giá nếu có
             if ($request->filled('discount_id')) {
                 $voucher = Discount::find($request->discount_id);
                 if ($voucher) {
@@ -218,33 +237,50 @@ class CheckoutController extends Controller
                         : $voucher->value;
                 }
             }
-
+            
             $finalTotal = max(0, $totalProductPrice - $discountValue + $shippingFee);
-
+            
+            // Tạo đơn hàng
             $order = Order::create([
                 'user_id'         => $user->id,
                 'shipper_id'      => 1,
-                'address_detail'  => $request->address_detail,
                 'province_id'     => $provinceId,
                 'district_id'     => $districtId,
                 'ward_id'         => $wardId,
+                'address_detail'  => $address_detail,
                 'payment_method'  => $request->payment_method,
                 'shipping_fee'    => $shippingFee,
                 'shipping_status' => 'pending',
                 'total_amount'    => $finalTotal,
                 'status'          => OrderStatus::PENDING_CONFIRMATION->value
             ]);
-
+            
             foreach ($cartItems as $cartItem) {
+                // Lấy số lượng tồn kho của variant sản phẩm
+                $stock = $cartItem->variant->stock;
+            
+                // Kiểm tra nếu số lượng tồn kho không đủ
+                if ($stock < $cartItem->quantity) {
+                    // Nếu số lượng trong kho không đủ, sửa lại số lượng đặt mua và thông báo cho người dùng
+                    $cartItem->quantity = $stock; // Cập nhật số lượng đặt mua theo số lượng tồn kho
+            
+                    // Gửi thông báo về việc giảm số lượng sản phẩm trong đơn hàng
+                    return back()->with('error', 'Sản phẩm ' . $cartItem->product->name . ' không đủ trong kho. Số lượng đã được giảm xuống ' . $stock . ' sản phẩm.');
+                }
+            
+                // Tạo chi tiết đơn hàng
                 OrderDetail::create([
                     'order_id'           => $order->id,
                     'product_id'         => $cartItem->product_id,
                     'product_variant_id' => $cartItem->product_variant_id,
+                    'unit_price'         => \App\Models\ProductVariant::find($cartItem->product_variant_id)?->price,
                     'quantity'           => $cartItem->quantity,
                 ]);
-
+            
+                // Giảm số lượng tồn kho của variant
                 $cartItem->variant->decrement('stock', $cartItem->quantity);
             }
+            
 
             if ($discountValue > 0) {
                 OrderDiscount::create([

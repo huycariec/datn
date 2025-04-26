@@ -75,17 +75,26 @@
                             <div class="mb-4">
                                 <h6 class="text-primary border-bottom pb-2 mb-3 fw-bold"><i
                                         class="bi bi-geo-alt me-2"></i>Địa chỉ giao hàng</h6>
-                                @if($order->userAddress)
-                                    <p class="text-dark">
-                                        <strong>Tỉnh/TP:</strong> {{ $order->userAddress->province->name }},
-                                        <strong>Quận/Huyện:</strong> {{ $order->userAddress->district->name }},
-                                        <strong>Xã/Phường:</strong> {{ $order->userAddress->ward->name }}
-                                    </p>
-                                    <p class="text-dark"><strong>Địa chỉ chi
-                                            tiết:</strong> {{ $order->userAddress->address_detail }}</p>
-                                @else
-                                    <p class="text-muted">Chưa có thông tin địa chỉ.</p>
-                                @endif
+                                        <div class="mb-3">
+                                            <span class="text-dark">
+                                                Tỉnh/TP:
+                                                <span class="fw-bold">
+                                                    {{ $order->province_id ? \App\Models\Province::find($order->province_id)?->name : 'Chưa có thông tin' }}
+                                                </span>,
+                                                Quận/Huyện:
+                                                <span class="fw-bold">
+                                                    {{ $order->district_id ? \App\Models\District::find($order->district_id)?->name : '' }}
+                                                </span>,
+                                                Xã/Phường:
+                                                <span class="fw-bold">
+                                                    {{ $order->ward_id ? \App\Models\Ward::find($order->ward_id)?->name : '' }}
+                                                </span>
+                                            </span>
+                                            
+                                        </div>
+                                        <div class="mb-3">
+                                            Địa chỉ chi tiết: <span class="text-dark fw-bold">{{ $order->address_detail ?? "" }}</span>
+                                        </div>
                             </div>
 
                             <div class="mb-4">
