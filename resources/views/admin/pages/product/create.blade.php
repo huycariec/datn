@@ -116,7 +116,7 @@
                                 </div>
                         </div>
                     </div>
-                    <div class="card" >
+                    {{-- <div class="card" >
                         <div class="card-body">
                             <div class="card-header-2">
                                 <h5>Chọn loại sản phẩm</h5>
@@ -136,7 +136,15 @@
                                 </label>
                             </div>
                         </div>
+                    </div> --}}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="product_type" id="variableProduct" value="variable" checked>
+                        <label class="form-check-label" for="variableProduct">
+                            Sản phẩm biến thể
+                        </label>
                     </div>
+                    
+
                     <div class="card" id="attributeSection">
                         <div class="card-body">
                             <div class="card-header-2">
@@ -215,7 +223,7 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     let attributes = {}; // Lưu thuộc tính đã tạo
-    const simpleProductRadio = document.querySelector("#simpleProduct");
+   // const simpleProductRadio = document.querySelector("#simpleProduct");
     const variableProductRadio = document.querySelector("#variableProduct");
     const attributeSection = document.querySelector("#attributeSection");
     const attributeTableSection = document.querySelector("#attributeTableSection");
@@ -230,19 +238,25 @@ document.addEventListener("DOMContentLoaded", function () {
     let editingAttribute = null;
 
     // Ẩn/hiện các phần liên quan đến biến thể
-    function toggleSections() {
-        if (variableProductRadio.checked) {
-            attributeSection.style.display = "block";
-            attributeTableSection.style.display = "block";
-            productInventoryCard.style.display = "block";
-        } else {
-            attributeSection.style.display = "none";
-            attributeTableSection.style.display = "none";
-            productInventoryCard.style.display = "none";
-        }
-    }
+    // function toggleSections() {
+    //     if (variableProductRadio.checked) {
+    //         attributeSection.style.display = "block";
+    //         attributeTableSection.style.display = "block";
+    //         productInventoryCard.style.display = "block";
+    //     } else {
+    //         attributeSection.style.display = "none";
+    //         attributeTableSection.style.display = "none";
+    //         productInventoryCard.style.display = "none";
+    //     }
+    // }
 
-    simpleProductRadio.addEventListener("change", toggleSections);
+    function toggleSections() {
+    attributeSection.style.display = "block";
+    attributeTableSection.style.display = "block";
+    productInventoryCard.style.display = "block";
+}
+
+    // simpleProductRadio.addEventListener("change", toggleSections);
     variableProductRadio.addEventListener("change", toggleSections);
     toggleSections(); // Thiết lập trạng thái ban đầu
 

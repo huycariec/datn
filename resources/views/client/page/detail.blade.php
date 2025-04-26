@@ -1,4 +1,16 @@
 @extends('app')
+@section('css')
+<style>
+    .product-info-box {
+    transition: all 0.2s ease-in-out;
+    }
+    .product-info-box:hover {
+        box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.05);
+    }
+
+
+</style>
+@endsection
 @section('content')
 
     {{-- Thông báo --}}
@@ -101,96 +113,137 @@
                             </div>
                         </div>
 
-
+                        
                         <div class="col-xl-6 wow fadeInUp" data-wow-delay="0.1s">
-                            <div class="mb-4">
-                                <span class="badge bg-danger fs-5 px-3 py-2 mb-3 fw-bold text-uppercase shadow-sm">
-                                    Sale 30%
-                                </span>
-                            
-                                <h2 class="fw-bold mb-2">{{ $product->name }}</h2>
-                            
-                                <h3 class="text-primary fw-bold mb-0">
-                                    <span class="theme-color price" id="product-price">{{ number_format($product->price, 0, ',', '.') }} vnđ</span>
+                            <div class="right-box-contain">
+                                <h6 class="offer-top">30% Off</h6>
+                                <h2 class="name">{{ $product->name }}</h2>
+                                <div class="price-rating">
+                                    {{-- giá sản phẩm--}}
+                                    <h3 class="theme-color price"><span class="text-primary fw-bold fs-4" id="product-price">{{ number_format($product->price, 0, ',', '.') }} vnđ</span>   
+                                        <del class="text-content">
+                                            @if($product->price_old && $product->price_old > $product->price)
+                                                <span class="text-muted text-decoration-line-through fs-6">
+                                                    {{ number_format($product->price_old, 0, ',', '.') }} đ
+                                                </span>
+                                            @endif</del>    
 
-                                
-                                    @if($product->price_old && $product->price_old > $product->price)
-                                        <span class="old-price text-danger text-decoration-line-through mb-1">
-                                            {{ number_format($product->price_old, 0, ',', '.') }} đ
-                                        </span>
-                                    @endif
-                                </h3>
-                            </div>
-                            
-                            
-                            @foreach($attributesGrouped as $attributeName => $attributeValues)
-                                <div class="product-package">
-                                    <div class="product-title">
-                                        <h4>{{ strtoupper($attributeName) }}</h4>
-                                    </div>
-                                    <div class="btn-group flex-wrap" role="group">
-                                        @foreach($attributeValues as $index => $attribute)
-                                            <input type="radio"
-                                                   class="btn-check"
-                                                   name="{{ $attributeName }}"
-                                                   id="attr-{{ $attributeName }}-{{ $index }}"
-                                                   autocomplete="off"
-                                                   value="{{ $attribute['value'] }}"
-                                                   data-attribute-name="{{ $attributeName }}">
-                                            <label class="btn btn-outline-primary fw-bold"
-                                                   for="attr-{{ $attributeName }}-{{ $index }}">
-                                                {{ $attribute['value'] }} {{-- Hiển thị giá trị (Vàng, Xanh, S, M, ...) --}}
-                                            </label>
-                                        @endforeach
+                                    <div class="product-rating custom-rate">
+                                        <ul class="rating">
+                                            <li>
+                                                <i data-feather="star" class="fill"></i>
+                                            </li>
+                                            <li>
+                                                <i data-feather="star" class="fill"></i>
+                                            </li>
+                                            <li>
+                                                <i data-feather="star" class="fill"></i>
+                                            </li>
+                                            <li>
+                                                <i data-feather="star" class="fill"></i>
+                                            </li>
+                                            <li>
+                                                <i data-feather="star"></i>
+                                            </li>
+                                        </ul>
+                                        <span class="review">23 Customer Review</span>
                                     </div>
                                 </div>
-                            @endforeach
-                            <p id="error-message" style="color: red; display: none;"></p>
+                                <!-- Mô tả ngắn -->
+                                <div class="product-contain">
+                                    <p>                                
+                                        @if(!empty($product->short_description))
+                                            <p class="text-muted fs-6 mb-0">
+                                                {!! $product->short_description !!}
+                                            </p>
+                                        @endif
+                                    </p>
+                                </div>
+
+                                {{-- biến thể sản phẩm  --}}
+
+                                <div class="product-package">
+                                    @foreach($attributesGrouped as $attributeName => $attributeValues)
+                                    <div class="product-package">
+                                        <div class="product-title">
+                                            <h4>{{ strtoupper($attributeName) }}</h4>
+                                        </div>
+                                        <div class="btn-group flex-wrap" role="group">
+                                            @foreach($attributeValues as $index => $attribute)
+                                                <input type="radio"
+                                                       class="btn-check"
+                                                       name="{{ $attributeName }}"
+                                                       id="attr-{{ $attributeName }}-{{ $index }}"
+                                                       autocomplete="off"
+                                                       value="{{ $attribute['value'] }}"
+                                                       data-attribute-name="{{ $attributeName }}">
+                                                <label class="btn btn-outline-primary fw-bold"
+                                                       for="attr-{{ $attributeName }}-{{ $index }}">
+                                                    {{ $attribute['value'] }} {{-- Hiển thị giá trị (Vàng, Xanh, S, M, ...) --}}
+                                                </label>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endforeach
+                                <p id="error-message" style="color: red; display: none;"></p>
+                                </div>
 
 
-                            <form id="form-add-to-cart" action="{{route('cart.store')}}" method="post">
-                                @csrf
-                                <input type="hidden" name="product_id" value="{{$product->id}}">
+
+
                                 <div class="note-box product-package">
-                                    <div class="cart_qty qty-box product-qty">
-                                        <div class="input-group">
-                                            <button type="button" class="qty-left-minus" data-type="minus"
-                                            data-field=""><i class="fa fa-minus"></i>
-                                            </button>
-                                            <input class="form-control input-number qty-input" type="number"name="quantity" value="1" id="quantity-input">
-                                            <button type="button" class="qty-right-plus" data-type="plus" data-field="">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
+                                    <form id="form-add-to-cart" action="{{route('cart.store')}}" method="post">
+                                        @csrf
+                                        <input type="hidden" name="product_id" value="{{$product->id}}">
+                                        <div class="note-box product-package">
+                                            <div class="cart_qty qty-box product-qty">
+                                                <div class="input-group">
+                                                    <button type="button" class="qty-left-minus" data-type="minus"
+                                                    data-field=""><i class="fa fa-minus"></i>
+                                                    </button>
+                                                    <input class="form-control input-number qty-input" type="number"name="quantity" value="1" id="quantity-input">
+                                                    <button type="button" class="qty-right-plus" data-type="plus" data-field="">
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
+        
+        
+                                                </div>
 
-
+        
+                                            </div>
+                                            <input type="hidden" name="sku" id="selected-sku-input" value="">
+                                            <button id="btnAddToCart" class="btn btn-md bg-dark cart-button text-white w-100">Thêm Vào Giỏ Hàng</button>
                                         </div>
                                         <small id="quantity-error" class="text-danger" style="display: none;">⚠️ Số lượng không hợp lệ!</small>
 
-                                    </div>
-                                    <input type="hidden" name="sku" id="selected-sku-input" value="">
-                                    <button id="btnAddToCart" class="btn btn-md bg-dark cart-button text-white w-100">Thêm Vào Giỏ Hàng</button>
+                                    </form>
                                 </div>
-                            </form>
-                            <div class="buy-box">
-                                <div class="buy-box">
-                                    @php
-                                        $wishlistItems = Auth::check()
-                                            ? \App\Models\Wishlist::where('user_id', Auth::id())->pluck('product_id')->toArray()
-                                            : [];
-                                    @endphp
 
-                                    @if(in_array($product->id, $wishlistItems))
-                                        <button class="btn btn-secondary" disabled>❤️ Đã yêu thích</button>
-                                    @else
-                                        <form action="{{ route('wishlist.add', $product->id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="btn btn-outline-danger">❤️ Thêm vào Yêu Thích
-                                            </button>
-                                        </form>
-                                    @endif
+                                <div class="buy-box">
+                                        @php
+                                            $wishlistItems = Auth::check()
+                                                ? \App\Models\Wishlist::where('user_id', Auth::id())->pluck('product_id')->toArray()
+                                                : [];
+                                        @endphp
+    
+                                        @if(in_array($product->id, $wishlistItems))
+                                            <button class="btn btn-secondary" disabled>❤️ Đã yêu thích</button>
+                                        @else
+                                            <form action="{{ route('wishlist.add', $product->id) }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="btn btn-outline-danger">❤️ Thêm vào Yêu Thích
+                                                </button>
+                                            </form>
+                                        @endif
+                                  
+
                                 </div>
-                                <a href="compare.html"><i
-                                        data-feather="eye"></i><span>Lượt xem: {{ $product->view }}</span></a>
+
+                                <a href="compare.html" class="d-flex align-items-center my-3">
+                                    <i data-feather="eye" class="me-2"></i>
+                                    <span>Lượt xem: {{ $product->view }}</span>
+                                  </a>
+                                  
                                 <div class="pickup-box">
                                     <div class="product-info">
                                         <ul class="product-info-list product-info-list-2">
@@ -203,50 +256,149 @@
                                         </ul>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="payment-option">
-                                <div class="product-title">
-                                    <h4>Đảm bảo thanh toán an toàn</h4>
+
+                                <div class="payment-option">
+                                    <div class="product-title">
+                                        <h4>Đảm bảo thanh toán</h4>
+                                    </div>
+                                    <ul>
+                                        <li>
+                                            <a href="javascript:void(0)">
+                                                <img src="https://vinadesign.vn/uploads/images/2023/05/vnpay-logo-vinadesign-25-12-57-55.jpg"
+                                                alt="VNPay Logo" width="50" height="50">
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </div>
-                                <ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-xxl-3 col-xl-4 col-lg-5 d-none d-lg-block wow fadeInUp">
+                    <div class="right-sidebar-box">
+                        <!-- Trending Product -->
+                        <div class="pt-25">
+                            <div class="category-menu">
+                                <h3>Sản Phẩm mới nhất</h3>
+
+                                <ul class="product-list product-right-sidebar border-0 p-0">
+                                    {{-- <li>
+                                        <div class="offer-product">
+                                            <a href="product-left-thumbnail.html" class="offer-image">
+                                                <img src="../assets/images/vegetable/product/23.png"
+                                                    class="img-fluid blur-up lazyload" alt="">
+                                            </a>
+
+                                            <div class="offer-detail">
+                                                <div>
+                                                    <a href="product-left-thumbnail.html">
+                                                        <h6 class="name">Meatigo Premium Goat Curry</h6>
+                                                    </a>
+                                                    <span>450 G</span>
+                                                    <h6 class="price theme-color">$ 70.00</h6>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li> --}}
+                                    @foreach($newProducts as $product)
                                     <li>
-                                        <a href="javascript:void(0)">
-                                            <img
-                                                src="https://themes.pixelstrap.com/fastkart/assets/images/product/payment/1.svg"
-                                                class="blur-up lazyload" alt="">
-                                        </a>
+                                        <div class="offer-product">
+                                            <a href="{{route('product.detail', $product->id)}}" class="offer-image">
+                                                <img src="{{  Storage::url($product->firstImage->url) ?? asset('assets/images/default.png') }}"
+                                                     class="img-fluid blur-up lazyload" alt="{{ $product->name }}">
+                                            </a>
+                                            <div class="offer-detail">
+                                                <div>
+                                                    <a href="{{route('product.detail', $product->id)}}">
+                                                        <h6 class="name">{{ $product->name }}</h6>
+                                                    </a>
+                                                    <span>{{ $product->weight ?? 'Đang cập nhật' }}</span>
+                                                    <h6 class="price theme-color">{{ (int)$product->price, 2 }}vnđ</h6>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </li>
+                                @endforeach
+                                
+                                    {{-- <li>
+                                        <div class="offer-product">
+                                            <a href="product-left-thumbnail.html" class="offer-image">
+                                                <img src="../assets/images/vegetable/product/24.png"
+                                                    class="blur-up lazyload" alt="">
+                                            </a>
+
+                                            <div class="offer-detail">
+                                                <div>
+                                                    <a href="product-left-thumbnail.html">
+                                                        <h6 class="name">Dates Medjoul Premium Imported</h6>
+                                                    </a>
+                                                    <span>450 G</span>
+                                                    <h6 class="price theme-color">$ 40.00</h6>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+
                                     <li>
-                                        <a href="javascript:void(0)">
-                                            <img
-                                                src="https://themes.pixelstrap.com/fastkart/assets/images/product/payment/2.svg"
-                                                class="blur-up lazyload" alt="">
-                                        </a>
+                                        <div class="offer-product">
+                                            <a href="product-left-thumbnail.html" class="offer-image">
+                                                <img src="../assets/images/vegetable/product/25.png"
+                                                    class="blur-up lazyload" alt="">
+                                            </a>
+
+                                            <div class="offer-detail">
+                                                <div>
+                                                    <a href="product-left-thumbnail.html">
+                                                        <h6 class="name">Good Life Walnut Kernels</h6>
+                                                    </a>
+                                                    <span>200 G</span>
+                                                    <h6 class="price theme-color">$ 52.00</h6>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </li>
-                                    <li>
-                                        <a href="javascript:void(0)">
-                                            <img
-                                                src="https://themes.pixelstrap.com/fastkart/assets/images/product/payment/3.svg"
-                                                class="blur-up lazyload" alt="">
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)">
-                                            <img
-                                                src="https://themes.pixelstrap.com/fastkart/assets/images/product/payment/4.svg"
-                                                class="blur-up lazyload" alt="">
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)">
-                                            <img
-                                                src="https://themes.pixelstrap.com/fastkart/assets/images/product/payment/5.svg"
-                                                class="blur-up lazyload" alt="">
-                                        </a>
-                                    </li>
+
+                                    <li class="mb-0">
+                                        <div class="offer-product">
+                                            <a href="product-left-thumbnail.html" class="offer-image">
+                                                <img src="../assets/images/vegetable/product/26.png"
+                                                    class="blur-up lazyload" alt="">
+                                            </a>
+
+                                            <div class="offer-detail">
+                                                <div>
+                                                    <a href="product-left-thumbnail.html">
+                                                        <h6 class="name">Apple Red Premium Imported</h6>
+                                                    </a>
+                                                    <span>1 KG</span>
+                                                    <h6 class="price theme-color">$ 80.00</h6>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li> --}}
                                 </ul>
                             </div>
                         </div>
+
+                        <!-- Banner Section -->
+                        {{-- <div class="ratio_156 pt-25">
+                            <div class="home-contain">
+                                <img src="../assets/images/vegetable/banner/8.jpg" class="bg-img blur-up lazyload"
+                                    alt="">
+                                <div class="home-detail p-top-left home-p-medium">
+                                    <div>
+                                        <h6 class="text-yellow home-banner">Seafood</h6>
+                                        <h3 class="text-uppercase fw-normal"><span
+                                                class="theme-color fw-bold">Freshes</span> Products</h3>
+                                        <h3 class="fw-light">every hour</h3>
+                                        <button onclick="location.href = 'shop-left-sidebar.html';"
+                                            class="btn btn-animation btn-md fw-bold mend-auto">Shop Now <i
+                                                class="fa-solid fa-arrow-right icon"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>
@@ -378,95 +530,101 @@
             <div class="row">
                 <div class="col-12">
                     <div class="slider-6_1 product-wrapper">
+                        @foreach($relatedProducts as $product)
+
                         <div>
-                            <div class="product-box-3 wow fadeInUp" data-wow-delay="0.3s">
-                                <div class="product-header">
-                                    <div class="product-image">
-                                        <a href="product-left-thumbnail.html">
-                                            <img src="../assets/client/assets/images/cake/product/7.png"
-                                                 class="img-fluid" alt="">
-                                        </a>
+                                <div class="product-box-3 wow fadeInUp" data-wow-delay="0.3s">
+                                    <div class="product-header">
+                                        <div class="product-image">
+                                            @foreach($product->images as $image)
 
-                                        <ul class="product-option">
-                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                                <a href="javascript:void(0)" data-bs-toggle="modal"
-                                                   data-bs-target="#view">
-                                                    <i data-feather="eye"></i>
-                                                </a>
-                                            </li>
+                                            <a href="{{route('product.detail', $product->id)}}">
+                                                <img src="{{ Storage::url($image->url) }}"
+                                                    class="img-fluid" alt="">
+                                            </a>
+                                            @endforeach
 
-                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                                <a href="compare.html">
-                                                    <i data-feather="refresh-cw"></i>
-                                                </a>
-                                            </li>
+                                            <ul class="product-option">
+                                                <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
+                                                    <a href="javascript:void(0)" data-bs-toggle="modal"
+                                                    data-bs-target="#view">
+                                                        <i data-feather="eye"></i>
+                                                    </a>
+                                                </li>
 
-                                            <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                                <a href="wishlist.html" class="notifi-wishlist">
-                                                    <i data-feather="heart"></i>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
+                                                <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                                    <a href="compare.html">
+                                                        <i data-feather="refresh-cw"></i>
+                                                    </a>
+                                                </li>
 
-                                <div class="product-footer">
-                                    <div class="product-detail">
-                                        <span class="span-name">Vegetable</span>
-                                        <a href="product-left-thumbnail.html">
-                                            <h5 class="name">Fresh Bread and Pastry Flour 200 g</h5>
-                                        </a>
-                                        <div class="product-rating mt-2">
-                                            <ul class="rating">
-                                                <li>
-                                                    <i data-feather="star" class="fill"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star" class="fill"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star" class="fill"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star"></i>
-                                                </li>
-                                                <li>
-                                                    <i data-feather="star"></i>
+                                                <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
+                                                    <a href="wishlist.html" class="notifi-wishlist">
+                                                        <i data-feather="heart"></i>
+                                                    </a>
                                                 </li>
                                             </ul>
-                                            <span>(3.8)</span>
                                         </div>
+                                    </div>
 
-                                        <h6 class="unit">1 Kg</h6>
+                                    <div class="product-footer">
+                                        <div class="product-detail">
+                                            <span class="span-name"> danh mục: {{ $product->category->name}}</span>
 
-                                        <h5 class="price"><span class="theme-color">$12.68</span>
-                                            <del>$14.69</del>
-                                        </h5>
-                                        <div class="add-to-cart-box bg-white">
-                                            <button class="btn btn-add-cart addcart-button">Add
-                                                <span class="add-icon bg-light-gray">
-                                                    <i class="fa-solid fa-plus"></i>
-                                                </span>
-                                            </button>
-                                            <div class="cart_qty qty-box">
-                                                <div class="input-group bg-white">
-                                                    <button type="button" class="qty-left-minus bg-gray"
-                                                            data-type="minus" data-field="">
-                                                        <i class="fa fa-minus"></i>
-                                                    </button>
-                                                    <input class="form-control input-number qty-input" type="text"
-                                                           name="quantity" value="0">
-                                                    <button type="button" class="qty-right-plus bg-gray"
-                                                            data-type="plus" data-field="">
-                                                        <i class="fa fa-plus"></i>
-                                                    </button>
+                                            <a href="product-left-thumbnail.html">
+                                                <h5 class="name">{{ $product->name}}</h5>
+                                            </a>
+                                            <div class="product-rating mt-2">
+                                                <ul class="rating">
+                                                    <li>
+                                                        <i data-feather="star" class="fill"></i>
+                                                    </li>
+                                                    <li>
+                                                        <i data-feather="star" class="fill"></i>
+                                                    </li>
+                                                    <li>
+                                                        <i data-feather="star" class="fill"></i>
+                                                    </li>
+                                                    <li>
+                                                        <i data-feather="star"></i>
+                                                    </li>
+                                                    <li>
+                                                        <i data-feather="star"></i>
+                                                    </li>
+                                                </ul>
+                                                <span>(3.8)</span>
+                                            </div>
+
+                                            <h6 class="unit">1 Kg</h6>
+
+                                            <h5 class="price"><span class="theme-color">{{(int)$product->price}}</span>
+                                                <del>{{(int)$product->price_old}}</del>
+                                            </h5>
+                                            <div class="add-to-cart-box bg-white">
+                                                <a href="{{route('product.detail', $product->id)}}">
+                                                <button class="btn btn-add-cart addcart-button"> Xem Chi Tiết</button>
+                                                </a>
+                                                <div class="cart_qty qty-box">
+                                                    <div class="input-group bg-white">
+                                                        <button type="button" class="qty-left-minus bg-gray"
+                                                                data-type="minus" data-field="">
+                                                            <i class="fa fa-minus"></i>
+                                                        </button>
+                                                        <input class="form-control input-number qty-input" type="text"
+                                                            name="quantity" value="0">
+                                                        <button type="button" class="qty-right-plus bg-gray"
+                                                                data-type="plus" data-field="">
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                         </div>
+                        @endforeach
+
                     </div>
                 </div>
             </div>
@@ -484,7 +642,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const productVariants = {!! $resultJson !!};
 
     const errorMessage = document.getElementById("error-message");
-    const priceElement = document.querySelector(".theme-color.price");
+    const priceElement = document.getElementById("product-price");
     const stockElement = document.getElementById("product-stock");
     const quantityInput = document.getElementById("quantity-input");
     const skuInput = document.getElementById("selected-sku-input");

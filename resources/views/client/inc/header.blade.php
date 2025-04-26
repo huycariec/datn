@@ -29,6 +29,7 @@
                 <div class="col-xxl-6 col-lg-9 d-lg-block d-none">
                     <div class="header-offer">
                         <div class="notification-slider">
+
                             <div>
                                 <div class="timer-notification">
                                     <h6><strong class="me-1">LINGOAN xin chào bạn!</strong>Đến với chúng tôi để nhận ưu
@@ -117,6 +118,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="navbar-top">
+                        <h1>LINGOAN</h1>
                         <button class="navbar-toggler d-xl-none d-inline navbar-menu-button" type="button"
                                 data-bs-toggle="offcanvas" data-bs-target="#primaryMenu">
                                 <span class="navbar-toggler-icon">
@@ -296,7 +298,7 @@
 
                                                 <!-- Tổng giá tiền -->
                                                 <div class="price-box">
-                                                    <h5>Total :</h5>
+                                                    <h5>tổng tiền :</h5>
                                                     <h4 class="theme-color fw-bold">
                                                         {{ number_format($cart_items->sum(fn($item) => $item['variant_price'] * $item['quantity']), 0, ',', '.') }}₫
                                                     </h4>
@@ -304,8 +306,7 @@
 
                                                 <!-- Nút hành động -->
                                                 <div class="button-group">
-                                                    <a href="{{route('cart.index')}}" class="btn btn-sm cart-button">View Cart</a>
-                                                    <a href="#" class="btn btn-sm cart-button theme-bg-color text-white">Checkout</a>
+                                                    <a href="{{route('cart.index')}}" class="btn btn-sm cart-button">xem giỏ hàng</a>
                                                 </div>
                                             </div>
                                         </div>
