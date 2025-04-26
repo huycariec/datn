@@ -22,6 +22,7 @@ class Order extends Model
         'district_id',
         'ward_id',
         'reason',
+        'address_detail'
     ];
 
     protected $casts = [
