@@ -125,25 +125,25 @@
                                                  class="img-fluid blur-up lazyload bg-img" alt="{{ $product->name }}">
                                         @endif
                                     </a>
-                    
+
                                     <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
                                        data-bs-placement="top" title="Wishlist">
                                         <i data-feather="bookmark"></i>
                                     </a>
-                    
+
                                     <ul class="product-option">
                                         <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
                                             <a href="{{ route('product.detail', $product->id) }}">
                                                 <i data-feather="eye"></i>
                                             </a>
                                         </li>
-                    
+
                                         <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
                                             <a href="compare.html">
                                                 <i data-feather="refresh-cw"></i>
                                             </a>
                                         </li>
-                    
+
                                         <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
                                             <a href="wishlist.html" class="notifi-wishlist">
                                                 <i data-feather="heart"></i>
@@ -151,30 +151,30 @@
                                         </li>
                                     </ul>
                                 </div>
-                    
+
                                 <div class="product-detail">
                                     <a href="{{ route('product.detail', $product->id) }}">
                                         <h5 class="name">{{ $product->name }}</h5>
                                     </a>
-                    
+
                                     <h5 class="sold text-content d-flex flex-column text-center">
                                         @if(!empty($product->price_old) && $product->price_old > 0 && $product->price_old > $product->price)
                                             <span class="old-price text-danger text-decoration-line-through mb-1">
                                                 {{ number_format($product->price_old, 0, ',', '.') }} đ
                                             </span>
                                         @endif
-                                    
-                    
+
+
                                         <span class="theme-color price fw-bold fs-5">
                                             {{ number_format($product->price, 0, ',', '.') }} đ
                                         </span>
                                     </h5>
-                    
+
                                 </div>
                             </div>
                         </div>
                     @endforeach
-                    
+
                     </div>
                 </div>
             </div>
@@ -254,7 +254,7 @@
                                         <div class="top-selling-title">
                                             <h3>Bán chạy nhất</h3>
                                         </div>
-                                    
+
                                         @foreach($bestSellingProducts->take(4) as $product)
                                             <div class="top-selling-contain wow fadeInUp">
                                                 <a href="{{ route('product.detail', $product->id) }}" class="top-selling-image">
@@ -266,12 +266,12 @@
                                                              class="img-fluid blur-up lazyload" alt="{{ $product->name }}">
                                                     @endif
                                                 </a>
-                                    
+
                                                 <div class="top-selling-detail">
                                                     <a href="{{ route('product.detail', $product->id) }}">
                                                         <h5>{{ $product->name }}</h5>
                                                     </a>
-                                    
+
                                                     <div class="product-rating">
                                                         <ul class="rating">
                                                             <li><i data-feather="star" class="fill"></i></li>
@@ -282,13 +282,13 @@
                                                         </ul>
                                                         <span>(34)</span> {{-- tạm cứng, sau đổ rating thật sau --}}
                                                     </div>
-                                    
+
                                                     <h6>{{ number_format($product->price, 0, ',', '.') }} đ</h6>
                                                 </div>
                                             </div>
                                         @endforeach
                                     </div>
-                                    
+
                                 </div>
                             </div>
                         </div>
@@ -298,42 +298,41 @@
                                 <div class="col-12">
                                     <div class="top-selling-box">
                                         <div class="top-selling-title">
-                                            <h3>Xu hướng gần đây</h3>
+                                            <h3>Lượt Xem Nhiều Nhất</h3>
                                         </div>
                                         {{--lấy ra 4 sản phẩm đổ vào vị trí này, foreach div.top-selling-contain --}}
-                                        <div class="top-selling-contain wow fadeInUp">
-                                            <a href="product-left-thumbnail.html" class="top-selling-image">
-                                                <img src="../assets/client/assets/images/fashion/product/5.jpg"
-                                                     class="img-fluid blur-up lazyload" alt="">
-                                            </a>
-
-                                            <div class="top-selling-detail">
-                                                <a href="product-left-thumbnail.html">
-                                                    <h5>Good Life Refined Sunflower Oil</h5>
+                                        @foreach($mostViewedProducts->take(4) as $product)
+                                            <div class="top-selling-contain wow fadeInUp">
+                                                <a href="{{ route('product.detail', $product->id) }}" class="top-selling-image">
+                                                    @if($product->images->first())
+                                                        <img src="{{ Storage::url($product->images->first()->url) }}"
+                                                             class="img-fluid blur-up lazyload" alt="{{ $product->name }}">
+                                                    @else
+                                                        <img src="{{ asset('path/to/default.jpg') }}"
+                                                             class="img-fluid blur-up lazyload" alt="{{ $product->name }}">
+                                                    @endif
                                                 </a>
-                                                <div class="product-rating">
-                                                    <ul class="rating">
-                                                        <li>
-                                                            <i data-feather="star" class="fill"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i data-feather="star" class="fill"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i data-feather="star" class="fill"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i data-feather="star" class="fill"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i data-feather="star"></i>
-                                                        </li>
-                                                    </ul>
-                                                    <span>(34)</span>
+
+                                                <div class="top-selling-detail">
+                                                    <a href="{{ route('product.detail', $product->id) }}">
+                                                        <h5>{{ $product->name }}</h5>
+                                                    </a>
+
+                                                    <div class="product-rating">
+                                                        <ul class="rating">
+                                                            <li><i data-feather="star" class="fill"></i></li>
+                                                            <li><i data-feather="star" class="fill"></i></li>
+                                                            <li><i data-feather="star" class="fill"></i></li>
+                                                            <li><i data-feather="star" class="fill"></i></li>
+                                                            <li><i data-feather="star"></i></li>
+                                                        </ul>
+                                                        <span>(34)</span> {{-- tạm cứng, sau đổ rating thật sau --}}
+                                                    </div>
+
+                                                    <h6>{{ number_format($product->price, 0, ',', '.') }} đ</h6>
                                                 </div>
-                                                <h6>$ 10.00</h6>
                                             </div>
-                                        </div>
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>
@@ -349,39 +348,38 @@
 
                                         {{--lấy ra 4 sản phẩm đổ vào vị trí này, foreach div.top-selling-contain --}}
 
-                                        <div class="top-selling-contain wow fadeInUp">
-                                            <a href="product-left-thumbnail.html" class="top-selling-image">
-                                                <img src="../assets/client/assets/images/fashion/product/9.jpg"
-                                                     class="img-fluid blur-up lazyload" alt="">
-                                            </a>
-
-                                            <div class="top-selling-detail">
-                                                <a href="product-left-thumbnail.html">
-                                                    <h5>Tuffets Britannia Cheezza</h5>
+                                        @foreach($newProducts->take(4) as $product)
+                                            <div class="top-selling-contain wow fadeInUp">
+                                                <a href="{{ route('product.detail', $product->id) }}" class="top-selling-image">
+                                                    @if($product->images->first())
+                                                        <img src="{{ Storage::url($product->images->first()->url) }}"
+                                                             class="img-fluid blur-up lazyload" alt="{{ $product->name }}">
+                                                    @else
+                                                        <img src="{{ asset('path/to/default.jpg') }}"
+                                                             class="img-fluid blur-up lazyload" alt="{{ $product->name }}">
+                                                    @endif
                                                 </a>
-                                                <div class="product-rating">
-                                                    <ul class="rating">
-                                                        <li>
-                                                            <i data-feather="star" class="fill"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i data-feather="star" class="fill"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i data-feather="star" class="fill"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i data-feather="star" class="fill"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i data-feather="star"></i>
-                                                        </li>
-                                                    </ul>
-                                                    <span>(34)</span>
+
+                                                <div class="top-selling-detail">
+                                                    <a href="{{ route('product.detail', $product->id) }}">
+                                                        <h5>{{ $product->name }}</h5>
+                                                    </a>
+
+                                                    <div class="product-rating">
+                                                        <ul class="rating">
+                                                            <li><i data-feather="star" class="fill"></i></li>
+                                                            <li><i data-feather="star" class="fill"></i></li>
+                                                            <li><i data-feather="star" class="fill"></i></li>
+                                                            <li><i data-feather="star" class="fill"></i></li>
+                                                            <li><i data-feather="star"></i></li>
+                                                        </ul>
+                                                        <span>(34)</span> {{-- tạm cứng, sau đổ rating thật sau --}}
+                                                    </div>
+
+                                                    <h6>{{ number_format($product->price, 0, ',', '.') }} đ</h6>
                                                 </div>
-                                                <h6>$ 10.00</h6>
                                             </div>
-                                        </div>
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>
@@ -464,13 +462,13 @@
 
                                         <h5 class="sold text-content">
                                             <span class="theme-color price">{{ number_format($newProduct->price, 0, ',', '.') }} đ</span>
-                                            
+
                                             @if($newProduct->price_old)
                                                 <del style="color: red;">{{ number_format($newProduct->price_old, 0, ',', '.') }} đ</del>
                                             @endif
                                         </h5>
-                                        
-                                        
+
+
                                     </div>
                                 </div>
                             </div>
@@ -502,25 +500,25 @@
                                              class="img-fluid blur-up lazyload bg-img" alt="{{ $product->name }}">
                                     </a>
                                     @endforeach
-                    
+
                                     <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
                                        data-bs-placement="top" title="Wishlist">
                                         <i data-feather="bookmark"></i>
                                     </a>
-                    
+
                                     <ul class="product-option">
                                         <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
                                             <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
                                                 <i data-feather="eye"></i>
                                             </a>
                                         </li>
-                    
+
                                         <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
                                             <a href="compare.html">
                                                 <i data-feather="refresh-cw"></i>
                                             </a>
                                         </li>
-                    
+
                                         <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
                                             <a href="wishlist.html" class="notifi-wishlist">
                                                 <i data-feather="heart"></i>
@@ -528,12 +526,12 @@
                                         </li>
                                     </ul>
                                 </div>
-                    
+
                                 <div class="product-detail">
                                     <a href="{{ route('product.detail', $product->id) }}">
                                         <h5 class="name">{{ $product->name }}</h5>
                                     </a>
-                    
+
                                     <h5 class="sold text-content">
                                         <span class="theme-color price">{{ number_format($product->price, 0, ',', '.') }} đ</span>
                                         @if($product->price_old)
@@ -544,7 +542,7 @@
                             </div>
                         </div>
                     @endforeach
-                    
+
                     </div>
                 </div>
             </div>

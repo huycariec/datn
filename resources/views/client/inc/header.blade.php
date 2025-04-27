@@ -29,6 +29,7 @@
                 <div class="col-xxl-6 col-lg-9 d-lg-block d-none">
                     <div class="header-offer">
                         <div class="notification-slider">
+
                             <div>
                                 <div class="timer-notification">
                                     <h6><strong class="me-1">LINGOAN xin chào bạn!</strong>Đến với chúng tôi để nhận ưu
@@ -117,6 +118,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="navbar-top">
+                        <h1>LINGOAN</h1>
                         <button class="navbar-toggler d-xl-none d-inline navbar-menu-button" type="button"
                                 data-bs-toggle="offcanvas" data-bs-target="#primaryMenu">
                                 <span class="navbar-toggler-icon">
@@ -137,19 +139,19 @@
                                     @csrf
                                     <input class="form-control me-2" type="search" name="keyword" placeholder="Nhập tên, mô tả, danh mục..."
                                            value="{{ request('keyword') }}" required>
-                            
+
                                     <select name="sort" class="form-select me-2" style="max-width:150px;">
                                         <option value="">Sắp xếp</option>
                                         <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Giá tăng dần</option>
                                         <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Giá giảm dần</option>
                                     </select>
-                            
+
                                     <button class="btn btn-danger" type="submit">
                                         <i class="fa fa-search"></i>
                                     </button>
                                 </form>
                             </div>
-                            
+
                             <div class="main-nav navbar navbar-expand-xl navbar-light navbar-sticky">
                                 <div class="offcanvas offcanvas-collapse order-xl-2" id="primaryMenu">
                                     <div class="offcanvas-header navbar-shadow">
@@ -157,7 +159,7 @@
                                         <button class="btn-close lead" type="button"
                                                 data-bs-dismiss="offcanvas"></button>
                                     </div>
-                                    
+
                                     <div class="offcanvas-body">
                                         <ul class="navbar-nav">
                                             <li class="nav-item dropdown dropdown-mega">
@@ -253,7 +255,7 @@
                                         </div>
                                     </li>
                                     <li class="right-side">
-                                        <a href="wishlist.html" class="btn p-0 position-relative header-wishlist">
+                                        <a href="{{ route('wishlist.index') }}" class="btn p-0 position-relative header-wishlist">
                                             <i data-feather="bookmark"></i>
                                         </a>
                                     </li>
@@ -296,7 +298,7 @@
 
                                                 <!-- Tổng giá tiền -->
                                                 <div class="price-box">
-                                                    <h5>Total :</h5>
+                                                    <h5>tổng tiền :</h5>
                                                     <h4 class="theme-color fw-bold">
                                                         {{ number_format($cart_items->sum(fn($item) => $item['variant_price'] * $item['quantity']), 0, ',', '.') }}₫
                                                     </h4>
@@ -304,8 +306,7 @@
 
                                                 <!-- Nút hành động -->
                                                 <div class="button-group">
-                                                    <a href="{{route('cart.index')}}" class="btn btn-sm cart-button">View Cart</a>
-                                                    <a href="#" class="btn btn-sm cart-button theme-bg-color text-white">Checkout</a>
+                                                    <a href="{{route('cart.index')}}" class="btn btn-sm cart-button">xem giỏ hàng</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -340,6 +341,12 @@
                                                     <a href="{{ route('order') }}">Đơn hàng của tôi
                                                     </a>
                                                 </li>
+                                                @if(auth()->user()->role == 'admin')
+                                                    <li class="product-box-contain">
+                                                        <a href="{{ route('admin.dashboard') }}">Trang quản trị
+                                                        </a>
+                                                    </li>
+                                                @endif
                                                 <li class="product-box-contain">
                                                     <i></i>
                                                     <a href="{{ route('logout') }}"

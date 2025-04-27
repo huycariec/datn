@@ -117,6 +117,8 @@ Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.in
 // Xử lý đặt hàng
 Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.placeOrder');
 
+Route::post('/generate-vnpay-url', [CheckoutController::class, 'generateVnpayUrl'])->name('vnpay.generate');
+
 Route::post('/order/vnpay', [VNPayController::class, 'createPayment'])->name('order.vnpay');
 Route::get('/vnpay-return', [VNPayController::class, 'vnpayReturn'])->name('vnpay.return');
 // Kiều Duy Du 26/3/2025 địa chỉ

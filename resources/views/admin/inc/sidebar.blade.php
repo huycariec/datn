@@ -5,9 +5,10 @@
         <div id="sidebarEffect"></div>
         <div>
             <div class="logo-wrapper logo-wrapper-center">
-                <a href="index.html" data-bs-original-title="" title="">
-                    <img class="img-fluid for-white" src="/assets/images/logo/full-white.png" alt="logo">
-                </a>
+                {{-- <a href="index.html" data-bs-original-title="" title="">
+                    <img class="img-fluid for-white" src="/assets/images/logo/lingoan.png" alt="logo">
+                </a> --}}
+                <h2 style="color: white">LINGOAN</h2>
                 <div class="back-btn">
                     <i class="fa fa-angle-left"></i>
                 </div>

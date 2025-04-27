@@ -76,31 +76,31 @@
                                             <td>{!! $order->payment_method->getBadgeLabel() !!}</td>
                                             <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
                                             <td>
-{{--                                                @can('orders_update')--}}
-                                                    <ul class="d-flex list-unstyled">
-                                                        @if(!in_array($order->status->value, [\App\Enums\OrderStatus::REFUNDED->value, \App\Enums\OrderStatus::CANCELLED->value, \App\Enums\OrderStatus::RECEIVED->value, \App\Enums\OrderStatus::DELIVERED->value, \App\Enums\OrderStatus::NOT_RECEIVED->value]))
-                                                            <li class="me-2">
-                                                                <a href="#" class="edit-order" data-id="{{ $order->id }}"
-                                                                   data-status="{{ $order->status }}"
-                                                                   data-bs-toggle="modal" data-bs-target="#editOrderModal">
-                                                                    <i class="ri-pencil-line"></i>
-                                                                </a>
-                                                            </li>
-                                                        @endif
-                                                        @if($order->status->value == \App\Enums\OrderStatus::NOT_RECEIVED->value)
-                                                            <li class="me-2">
-                                                                <a href="tel:{{ $order->user->profile->phone }}">
-                                                                    <i class="ri-phone-line"></i>
-                                                                </a>
-                                                            </li>
-                                                        @endif
-                                                        <li>
-                                                            <a href="{{ route('orders.show', $order) }}">
-                                                                <i class="ri-eye-line"></i>
+                                                <ul class="d-flex list-unstyled">
+                                                    @if(!in_array($order->status->value, [\App\Enums\OrderStatus::REFUNDED->value, \App\Enums\OrderStatus::CANCELLED->value, \App\Enums\OrderStatus::RECEIVED->value, \App\Enums\OrderStatus::DELIVERED->value, \App\Enums\OrderStatus::NOT_RECEIVED->value]))
+                                                        <li class="me-2">
+                                                            <a href="#" class="edit-order" data-id="{{ $order->id }}"
+                                                               data-status="{{ $order->status }}"
+                                                               data-return-reason="{{ $order->return_reason ?? '' }}"
+                                                               data-bs-toggle="modal"
+                                                               data-bs-target="#{{ $order->status == \App\Enums\OrderStatus::RETURNED ? 'approveReturnModal' : 'editOrderModal' }}">
+                                                                <i class="ri-pencil-line"></i>
                                                             </a>
                                                         </li>
-                                                    </ul>
-{{--                                                @endcan--}}
+                                                    @endif
+                                                    @if($order->status->value == \App\Enums\OrderStatus::NOT_RECEIVED->value)
+                                                        <li class="me-2">
+                                                            <a href="tel:{{ $order->user->profile->phone }}">
+                                                                <i class="ri-phone-line"></i>
+                                                            </a>
+                                                        </li>
+                                                    @endif
+                                                    <li>
+                                                        <a href="{{ route('orders.show', $order) }}">
+                                                            <i class="ri-eye-line"></i>
+                                                        </a>
+                                                    </li>
+                                                </ul>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -121,6 +121,7 @@
             </div>
         </div>
 
+        <!-- Modal Cập nhật trạng thái -->
         <div class="modal fade" id="editOrderModal" tabindex="-1" aria-labelledby="editOrderModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -133,8 +134,7 @@
                             <input type="hidden" name="order_id" id="order_id">
                             <div class="mb-3">
                                 <label for="status" class="form-label">Trạng thái</label>
-                                <select name="status" id="status" class="form-select">
-                                </select>
+                                <select name="status" id="status" class="form-select"></select>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -145,61 +145,114 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal Phê duyệt trả hàng -->
+        <div class="modal fade" id="approveReturnModal" tabindex="-1" aria-labelledby="approveReturnModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="approveReturnModalLabel">Phê duyệt yêu cầu trả hàng</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="approveOrderId">
+                        <div class="mb-3">
+                            <label class="form-label">Lý do trả hàng:</label>
+                            <p id="returnReason" class="text-muted"></p>
+                        </div>
+                        <p>Bạn có muốn phê duyệt yêu cầu trả hàng này?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="button" id="rejectReturnBtn" class="btn btn-danger">Không phê duyệt</button>
+                        <button type="button" id="approveReturnBtn" class="btn btn-success">Phê duyệt</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
-        $(document).ready(function () {
+        document.addEventListener('DOMContentLoaded', function () {
             const statusTransitions = {
                 'pending_confirmation': ['pending_confirmation', 'confirmed', 'cancelled'],
                 'confirmed': ['confirmed', 'preparing', 'cancelled'],
                 'preparing': ['preparing', 'prepared', 'cancelled'],
-                'prepared': ['picked_up'],
+                'prepared': ['prepared', 'picked_up'],
                 'picked_up': ['picked_up', 'in_transit'],
                 'in_transit': ['in_transit', 'delivered'],
                 'delivered': ['delivered'],
                 'received': ['received'],
-                'returned': ['returned', 'refunded'],
+                'returned': ['returned', 'returned_accept', 'received'],
+                'returned_accept': ['returned_accept', 'refunded'],
                 'cancelled': [],
                 'refunded': []
             };
 
             const allStatuses = @json(\App\Enums\OrderStatus::toArray());
 
-            $('.edit-order').on('click', function (e) {
-                e.preventDefault();
-                var orderId = $(this).data('id');
-                var currentStatus = $(this).data('status');
+            // Xử lý nút chỉnh sửa trạng thái
+            document.querySelectorAll('.edit-order').forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const orderId = this.getAttribute('data-id');
+                    const currentStatus = this.getAttribute('data-status');
+                    const returnReason = this.getAttribute('data-return-reason');
 
-                $('#order_id').val(orderId);
+                    if (currentStatus === 'returned') {
+                        // Hiển thị modal phê duyệt trả hàng
+                        document.getElementById('approveOrderId').value = orderId;
+                        document.getElementById('returnReason').textContent = returnReason || 'Không có lý do được cung cấp';
+                        const approveModal = new bootstrap.Modal(document.getElementById('approveReturnModal'));
+                        approveModal.show();
+                    } else {
+                        // Hiển thị modal cập nhật trạng thái thông thường
+                        document.getElementById('order_id').value = orderId;
+                        const statusSelect = document.getElementById('status');
+                        statusSelect.innerHTML = '';
 
-                $('#status').empty();
+                        const availableStatuses = statusTransitions[currentStatus] || [];
 
-                var availableStatuses = statusTransitions[currentStatus] || [];
+                        availableStatuses.forEach(statusValue => {
+                            const status = allStatuses.find(s => s.value === statusValue);
+                            if (status) {
+                                const option = document.createElement('option');
+                                option.value = status.value;
+                                option.textContent = status.label;
+                                if (status.value === currentStatus) {
+                                    option.selected = true;
+                                }
+                                statusSelect.appendChild(option);
+                            }
+                        });
 
-                availableStatuses.forEach(function(statusValue) {
-                    var status = allStatuses.find(s => s.value === statusValue);
-                    if (status) {
-                        $('#status').append(
-                            `<option value="${status.value}" ${status.value === currentStatus ? 'selected' : ''}>
-                                ${status.label}
-                            </option>`
-                        );
+                        if (availableStatuses.length === 0) {
+                            const option = document.createElement('option');
+                            option.value = currentStatus;
+                            option.textContent = 'Không thể thay đổi';
+                            option.selected = true;
+                            option.disabled = true;
+                            statusSelect.appendChild(option);
+                            document.getElementById('updateBtn').disabled = true;
+                        } else {
+                            document.getElementById('updateBtn').disabled = false;
+                        }
+
+                        const editModal = new bootstrap.Modal(document.getElementById('editOrderModal'));
+                        editModal.show();
                     }
                 });
-
-                if (availableStatuses.length === 0) {
-                    $('#status').append(`<option value="${currentStatus}" selected disabled>Không thể thay đổi</option>`);
-                    $('#updateBtn').prop('disabled', true);
-                } else {
-                    $('#updateBtn').prop('disabled', false);
-                }
             });
 
-            $('#updateBtn').on('click', function (e) {
-                e.preventDefault();
-                var orderId = $('#order_id').val();
-                var status = $('#status').val();
+            // Xử lý cập nhật trạng thái thông thường
+            let isSubmit = false;
+            document.getElementById('updateBtn').addEventListener('click', function () {
+                if (isSubmit) return;
+                isSubmit = true;
+
+                const orderId = document.getElementById('order_id').value;
+                const status = document.getElementById('status').value;
 
                 $.ajax({
                     url: '{{ route("orders.update", "__ID__") }}'.replace('__ID__', orderId),
@@ -217,9 +270,60 @@
                     },
                     error: function () {
                         alert('Đã có lỗi xảy ra khi cập nhật trạng thái.');
+                    },
+                    complete: function () {
+                        isSubmit = false;
+                        const editModal = bootstrap.Modal.getInstance(document.getElementById('editOrderModal'));
+                        editModal.hide();
                     }
                 });
             });
+
+            // Xử lý phê duyệt trả hàng
+            document.getElementById('approveReturnBtn').addEventListener('click', function () {
+                if (isSubmit) return;
+                isSubmit = true;
+
+                const orderId = document.getElementById('approveOrderId').value;
+                updateOrderStatus(orderId, 'returned_accept', 'Phê duyệt trả hàng thành công!');
+            });
+
+            // Xử lý không phê duyệt trả hàng
+            document.getElementById('rejectReturnBtn').addEventListener('click', function () {
+                if (isSubmit) return;
+                isSubmit = true;
+
+                const orderId = document.getElementById('approveOrderId').value;
+                updateOrderStatus(orderId, 'received', 'Đã từ chối yêu cầu trả hàng.');
+            });
+
+            // Hàm gửi AJAX cập nhật trạng thái
+            function updateOrderStatus(orderId, status, successMessage) {
+                $.ajax({
+                    url: '{{ route("orders.update", "__ID__") }}'.replace('__ID__', orderId),
+                    method: 'PUT',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        status: status
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            alert(successMessage);
+                            location.reload();
+                        } else {
+                            alert('Có lỗi xảy ra: ' + response.message);
+                        }
+                    },
+                    error: function () {
+                        alert('Đã có lỗi xảy ra khi cập nhật trạng thái.');
+                    },
+                    complete: function () {
+                        isSubmit = false;
+                        const approveModal = bootstrap.Modal.getInstance(document.getElementById('approveReturnModal'));
+                        approveModal.hide();
+                    }
+                });
+            }
         });
     </script>
 @endsection

@@ -129,6 +129,7 @@ class CartController extends Controller
                 'quantity' => $cart->quantity,
                 'stock' => optional($variant)->stock,
                 'variant_sku'=>optional($variant)->sku,
+                'product_id'=>optional($product)->id,
                 'product_name' => optional($product)->name ?? 'Sản phẩm không tồn tại',
                 'variant_price' => number_format(optional($variant)->price ?? 0, 2, '.', ''),
                 'product_image' => optional($variant->images->first())->url

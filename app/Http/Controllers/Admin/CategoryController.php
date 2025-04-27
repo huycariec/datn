@@ -122,18 +122,10 @@ class CategoryController extends Controller
     public function destroy(string $id)
     {
         $category = Category::findOrFail($id);
-        $hash = Product::where('category_id', $id)->exists();
-        if (!$hash) {
-            $category->delete();
-            $catefories = Category::all();
-            foreach ($catefories as $x) {
-                if ($x->parent_id == $id) {
-                    $x->delete();
-                }
-            }
-            return redirect()->route('categories.index')->with('success', 'Xoá danh mục thành công !');
-        } else {
-            return redirect()->route('admin.categories.index')->with('error', 'Vui lòng chuyển các sản phẩm sang danh mục khác để tiền hành xoá danh mục này.');
+        if ($category->products()->count() > 0) {
+            return redirect()->route('categories.index')->with('error', 'Vui lòng chuyển các sản phẩm sang danh mục khác để tiền hành xoá danh mục này.');
         }
+        $category->delete();
+        return redirect()->route('categories.index')->with('success', 'Xoá danh mục thành công !');
     }
 }

@@ -56,8 +56,10 @@
     <div class="container-fluid-lg">
         <div class="row g-sm-5 g-3">
             <div class="col-xxl-9">
+
+
                 <div class="cart-table">
-                    <div class="table-responsive">
+                    <div class="table-responsive-xl">
                         @if (session('success'))
                             <div id="alert-message" class="alert alert-success">
                                 {{ session('success') }}
@@ -69,16 +71,18 @@
                                 {{ session('error') }}
                             </div>
                         @endif
-                        <table class="table">
+                        <table class="table table-bordered align-middle text-center">
+                            <thead class="table-dark">
                                 <tr>
                                     <th><input type="checkbox" id="selectAll"></th>
-                                    <th>Ảnh</th>
                                     <th>Sản phẩm</th>
                                     <th>Giá</th>
                                     <th>Số lượng</th>
                                     <th>Tổng</th>
                                     <th>Hành động</th>
                                 </tr>
+                            </thead>
+                            <tbody>
                             @if (empty($cartItems))
 
                                 <tr>
@@ -106,12 +110,12 @@
                                     
                         
                                     <!-- Sản phẩm -->
-                                    <td>
-                                        <a href="{{route('product.detail',$item['product_id']) }})}}" class="me-3" class="product-image">
-                                            <img src="{{ Storage::url($item['product_image']) }}" class="img-fluid blur-up lazyload" alt=""alt="{{ $item['product_name'] }}">
-                                        </a>
-                                    </td>
                                     <td class="text-start d-flex align-items-center">
+                                        <a href="#" class="me-3">
+                                            <img src="{{ Storage::url($item['product_image']) }}" class="img-thumbnail" 
+                                                 style="width: 100px; height: 100px; object-fit: cover;" 
+                                                 alt="{{ $item['product_name'] }}">
+                                        </a>
                                         <div>
                                             <div>
                                                 <strong class="d-block text-primary fs-5">{{ $item['product_name'] }}</strong>
@@ -159,7 +163,7 @@
                                         @foreach($attributeValues as $attrKey => $values)
                                             <div style="margin-top: 10px;">
                                                 <strong>{{ ucfirst($attrKey) }}:</strong>
-                                                <div class="options {{ $attrKey }}-options" data-key="{{ $attrKey }}">
+                                                <div class="options {{ $attrKey }}-options">
                                                     @foreach($values as $value)
                                                         <button 
                                                             data-key="{{ $attrKey }}" 
@@ -242,6 +246,7 @@
                                 </tr>
                                 @endforeach
                             @endif
+                            </tbody>
                         </table>  
                     </div>
                 </div>
@@ -668,7 +673,7 @@ if (existSkus.includes(matchedSKU)) {
         popup.querySelector('input[name="sku"]').value = matchedSKU;
         errorEl.textContent = ''; // Clear lỗi
         return { success: true, sku: matchedSKU, selected };
-}
+    }
 
 
 setTimeout(function () {

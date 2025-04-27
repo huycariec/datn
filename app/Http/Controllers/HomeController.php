@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderRecieved;
+use App\Mail\OrderReturned;
 use App\Models\Page;
 use App\Models\Order;
 use App\Models\Banner;
@@ -14,6 +16,7 @@ use Illuminate\Http\Request;
 use App\Models\ProductVariant;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class HomeController extends Controller
 {
@@ -25,8 +28,8 @@ class HomeController extends Controller
         ->orderByDesc('price_old')
         ->limit(8)
         ->get();
-    
-    
+
+
 
         $banners = Banner::orderBy('position')
             ->get()
@@ -39,25 +42,24 @@ class HomeController extends Controller
         ->take(8)
         ->get();
 
-        $bestSellingProducts = Product::select('products.*', DB::raw('SUM(order_details.quantity) as total_sold'))
+        $bestSellingProducts = Product::with('firstImage')
+        ->select('products.*', DB::raw('SUM(order_details.quantity) as total_sold'))
         ->join('order_details', 'products.id', '=', 'order_details.product_id')
-        ->join('orders', 'order_details.order_id', '=', 'orders.id') // join thêm orders
-        ->where('orders.status', 'received') // chỉ lấy đơn đã received
-        ->groupBy(
-            'products.id',
-            'products.name',
-            'products.price',
-            'products.price_old',
-            'products.is_active',
-            'products.created_at',
-            'products.updated_at'
-        )
+        ->join('orders', 'orders.id', '=', 'order_details.order_id')
+        ->where('orders.status', 'received') // chỉ đơn đã nhận
+        ->where('products.is_active', 1)     // sản phẩm đang hoạt động
+        ->groupBy('products.id')
         ->orderByDesc('total_sold')
-        ->take(8)
         ->get();
-    
+        // dd($bestSellingProducts);
+        $mostViewedProducts = Product::with('firstImage')
+        ->where('is_active', 1)
+        ->orderByDesc('view')
+        ->get();
 
-        return view('client.home', compact('categories', 'discountProducts', 'wishlistItems', 'banners','newProducts','bestSellingProducts'));
+
+
+        return view('client.home', compact('categories', 'discountProducts', 'wishlistItems', 'banners','newProducts','bestSellingProducts','mostViewedProducts'));
     }
 
     public function productsByCategory($categoryId)
@@ -70,9 +72,21 @@ class HomeController extends Controller
 
     public function showProductDetail($id)
     {
+        $newProducts = Product::with('firstImage')->where('is_active', 1)
+        ->orderBy('created_at', 'desc')
+        ->take(8)
+        ->get();
+
         $product = Product::with([
             'variants.variantAttributes.attributeValue.attribute'
         ])->find($id);
+        // Lấy sản phẩm cùng category (ngoại trừ chính sản phẩm hiện tại)
+        $relatedProducts = Product::where('category_id', $product->category_id)
+        ->where('id', '!=', $product->id)
+        ->limit(8)
+        ->get();
+        $product->view += 1;
+        $product->save();
 
         $attributesGrouped = [];
         foreach ($product->variants as $variant) {
@@ -150,7 +164,7 @@ class HomeController extends Controller
 
         $totalReviews = $reviews->count();
 
-        return view('client.page.detail', compact('product', 'attributesGrouped', 'resultJson', 'reviews', 'averageRating', 'ratingStats', 'totalReviews', 'variants'));
+        return view('client.page.detail', compact('product','relatedProducts', 'attributesGrouped', 'resultJson', 'reviews', 'averageRating', 'ratingStats', 'totalReviews', 'variants','newProducts'));
     }
 
     public function addToWishlist($productId)
@@ -238,7 +252,7 @@ class HomeController extends Controller
         try {
             $request->validate([
                 'order_id' => 'required|exists:orders,id',
-                'status' => 'required|in:' . implode(',', array_column(OrderStatus::cases(), 'value'))
+                'status' => 'required|in:' . implode(',', array_column(OrderStatus::cases(), 'value')),
             ]);
 
             $order = Order::findOrFail($request->order_id);
@@ -260,7 +274,19 @@ class HomeController extends Controller
             }
 
             $order->status = $request->status;
+            if ($request->reason) {
+                $order->reason = $request->reason;
+            }
             $order->save();
+            if ($request->status == OrderStatus::RECEIVED->value)
+            {
+                Mail::to(env('MAIL_ADMIN_EMAIL') ?? 'lequyhieu1024@gmail.com')->send(new OrderRecieved($order));
+            }
+
+            if ($request->status == OrderStatus::RETURNED->value)
+            {
+                Mail::to(env('MAIL_ADMIN_EMAIL') ?? 'lequyhieu1024@gmail.com')->send(new OrderReturned($order, $request->reason));
+            }
 
             return redirect()->back()->with('success', 'Cập nhật trạng thái thành công');
 
@@ -315,7 +341,7 @@ class HomeController extends Controller
     {
         $keyword = $request->input('keyword');
         $sort = $request->input('sort');
-    
+
         $products = Product::query()
             ->where('is_active', 1)  // Chỉ lấy sản phẩm đang active
             ->when($keyword, function ($query) use ($keyword) {
@@ -328,19 +354,19 @@ class HomeController extends Controller
                       });
                 });
             });
-    
+
         if ($sort == 'asc') {
             $products->orderBy('price', 'asc');
         } elseif ($sort == 'desc') {
             $products->orderBy('price', 'desc');
         }
-    
+
         $products = $products->paginate(12);
-    
+
         return view('client.page.search', compact('products', 'keyword', 'sort'));
     }
-    
-    
+
+
 
 
 }

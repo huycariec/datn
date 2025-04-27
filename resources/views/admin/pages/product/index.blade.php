@@ -69,7 +69,7 @@
                                         <div class="title-header option-title">
                                             <h5>Danh sách sản phẩm</h5>
                                         </div>
-                                    
+
                                         <a href="{{ route('admin.product.create') }}" class="btn btn-primary">
                                             <i class="fas fa-plus me-1"></i> Thêm Mới Sản Phẩm
                                         </a>
@@ -80,11 +80,11 @@
                                                 <div class="col-md-2">
                                                     <input type="text" name="id" class="form-control" placeholder="ID Sản phẩm" value="{{ request('id') }}">
                                                 </div>
-                                    
+
                                                 <div class="col-md-2">
                                                     <input type="text" name="name" class="form-control" placeholder="Tên Sản phẩm" value="{{ request('name') }}">
                                                 </div>
-                                    
+
                                                 <div class="col-md-2">
                                                     <select name="category_id" class="form-select">
                                                         <option value="">Tất cả danh mục</option>
@@ -95,7 +95,7 @@
                                                         @endforeach
                                                     </select>
                                                 </div>
-                                    
+
                                                 <div class="col-md-2">
                                                     <select name="is_active" class="form-select">
                                                         <option value="">Tất cả trạng thái</option>
@@ -103,23 +103,23 @@
                                                         <option value="0" {{ request('is_active') == '0' ? 'selected' : '' }}>Ẩn</option>
                                                     </select>
                                                 </div>
-                                    
+
                                                 <div class="col-md-2">
                                                     <input type="number" name="min_price" class="form-control" placeholder="Giá tối thiểu" value="{{ request('min_price') }}" min="0">
                                                 </div>
-                                    
+
                                                 <div class="col-md-2">
                                                     <input type="number" name="max_price" class="form-control" placeholder="Giá tối đa" value="{{ request('max_price') }}" min="0">
                                                 </div>
-                                    
+
                                                 <div class="col-md-2">
                                                     <input type="number" name="min_quantity" class="form-control" placeholder="SL tối thiểu" value="{{ request('min_quantity') }}" min="0">
                                                 </div>
-                                    
+
                                                 <div class="col-md-2">
                                                     <input type="number" name="max_quantity" class="form-control" placeholder="SL tối đa" value="{{ request('max_quantity') }}" min="0">
                                                 </div>
-                                    
+
                                                 <div class="col-md-2 d-flex gap-2">
                                                     <button type="submit" class="btn btn-primary w-100">
                                                         <i class="fas fa-search me-1"></i> Lọc
@@ -130,7 +130,7 @@
                                                 </div>
                                             </div>
                                         </form>
-                                    </div>                                    
+                                    </div>
                                     <div class="card mt-4">
                                         <div class="table-responsive">
                                             <table class="table all-package theme-table table-product" id="table_id">
@@ -148,7 +148,7 @@
                                                 </thead>
 
                                                 <tbody>
-                                                    @foreach($products as $product) 
+                                                    @foreach($products as $product)
                                                     <tr>
                                                         <td>{{$product->id}}</td>
                                                         <td>
@@ -187,13 +187,13 @@
                                                                 <li>
                                                                     <form action="{{ route('admin.product.delete', $product->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn tắt sản phẩm này không?')">
                                                                         @csrf
-                                                                        @method('POST') 
+                                                                        @method('POST')
                                                                         <button type="submit" class="btn btn-link p-0 border-0 text-danger">
                                                                             <i class="ri-delete-bin-line"></i>
                                                                         </button>
                                                                     </form>
                                                                 </li>
-                                                                
+
                                                             </ul>
                                                         </td>
                                                     </tr>
@@ -213,7 +213,7 @@
 @section('js-custom')
 <script>
     const toggleStatusUrl = "{{ route('admin.toggleStatus', ['id' => 'temp_id']) }}";
-    
+
     document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll('.toggle-status').forEach(item => {
             item.addEventListener('change', function () {
