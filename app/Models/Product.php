@@ -32,10 +32,15 @@ class Product extends Model
     public function getTotalQuantityAttribute()
     {
         // Tính tổng số lượng của tất cả biến thể của sản phẩm
-        return $this->variants->sum('stock');
+        return $this->variants->where('is_active', 1)->sum('stock');
     }
     public function reviews()
     {
         return $this->hasMany(Review::class);
     }
+    public function firstImage()
+    {
+        return $this->hasOne(Images::class)->orderBy('created_at', 'asc');
+    }
+
 }
