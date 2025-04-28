@@ -15,6 +15,9 @@ enum OrderStatus: string
     case CANCELLED = 'cancelled';
     case RETURNED = 'returned';
     case REFUNDED = 'refunded';
+    case NOT_RECEIVED = 'not_received';
+    case RETURNED_ACCEPT = 'returned_accept';
+    case PENDING_CANCELLATION = 'pending_cancellation';
 
     /**
      * Get the display name for the status
@@ -24,15 +27,23 @@ enum OrderStatus: string
         return match($this) {
             self::PENDING_CONFIRMATION => 'Chờ xác nhận',
             self::CONFIRMED => 'Đã xác nhận',
+            //  của admin, admin chỉ được xác nhận 3 trạng thái thêm giao cho ship, bỏ 3 trạng thái đang cbi, đã cbi xong, shipper đã lấy
             self::PREPARING => 'Đang chuẩn bị hàng',
-            self::PREPARED => 'Đã chuẩn bị xong & chờ lấy hàng',
-            self::PICKED_UP => 'Đã lấy hàng',
-            self::IN_TRANSIT => 'Đang giao hàng',
-            self::DELIVERED => 'Đã giao hàng',
-            self::RECEIVED => 'Đã nhận được hàng',
+            self::PREPARED => 'Đã chuẩn bị xong & chờ shipper lấy hàng',
+            self::PICKED_UP => 'Shipper đã lấy hàng',
+
+
+            self::IN_TRANSIT => 'Shipper đang giao hàng',
+            self::DELIVERED => 'Đơn hàng đã được giao cho người nhận',
+            //shipper 2 trạng thái
+            self::RECEIVED => 'Hoàn thành',
             self::CANCELLED => 'Đã hủy',
+
             self::RETURNED => 'Trả hàng',
             self::REFUNDED => 'Đã hoàn tiền',
+            self::NOT_RECEIVED => 'Không nhận được hàng',
+            self::RETURNED_ACCEPT => 'Chấp nhận hoàn hàng',
+            self::PENDING_CANCELLATION => 'Chờ xác nhận hủy đơn',
         };
     }
 
@@ -53,6 +64,9 @@ enum OrderStatus: string
             self::CANCELLED => '<span class="badge bg-danger">' . $this->label() . '</span>',
             self::RETURNED => '<span class="badge bg-primary">' . $this->label() . '</span>',
             self::REFUNDED => '<span class="badge bg-dark">' . $this->label() . '</span>',
+            self::NOT_RECEIVED => '<span class="badge bg-danger">' . $this->label() . '</span>',
+            self::RETURNED_ACCEPT => '<span class="badge bg-success">' . $this->label() . '</span>',
+            self::PENDING_CANCELLATION => '<span class="badge bg-warning">' . $this->label() . '</span>',
         };
     }
 

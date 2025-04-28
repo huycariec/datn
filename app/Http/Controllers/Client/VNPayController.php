@@ -36,8 +36,8 @@ class VNPayController extends Controller
         ]);
     
         if ($vnp_ResponseCode == "00") {
-            dd('thanh toán thành công');
-            return redirect()->route('order.success')->with('success', 'Thanh toán thành công!');
+            // dd('thanh toán thành công');
+            return redirect()->route('order')->with('success', 'Thanh toán thành công!');
         } else {
             return redirect()->route('order.failed')->with('error', 'Thanh toán thất bại, vui lòng thử lại!');
         }

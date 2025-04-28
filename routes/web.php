@@ -21,6 +21,8 @@ use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Client\CheckoutController;
 use App\Http\Controllers\Admin\ProductVariantController;
+use App\Http\Controllers\Admin\ShippingController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -37,7 +39,7 @@ use App\Http\Controllers\Admin\ProductVariantController;
 // });
 // Khanh Linh 10/2/2024
 //dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+//Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/error', [HomeController::class, 'error'])->name('error');
 
@@ -88,22 +90,24 @@ Route::get('/get-wards/{district_id}', [AddressController::class, 'getWards']);
 Route::put('/update-address/{id}', [AddressController::class, 'updateAddress'])->name('client.updateAddress');
 Route::delete('/delete/{id}', [AddressController::class, 'deleteAddress'])->name('client.deleteAddress');
 
+//kiều duy du tìm kiếm
+Route::get('/search', [HomeController::class, 'search'])->name('product.search');
 
 
 
 
 // kiều duy du 14/2/2025 Attribute
-Route::get('/admin-attribute-index',[ProductAttribute::class,'index'])->name('admin.attribute.index');
-Route::get('/admin-attribute-create',[ProductAttribute::class,'create'])->name('admin.attribute.create');
-Route::post('/admin-attribute-store',[ProductAttribute::class,'store'])->name('admin.attribute.store');
+Route::get('/admin-attribute-index', [ProductAttribute::class, 'index'])->name('admin.attribute.index');
+Route::get('/admin-attribute-create', [ProductAttribute::class, 'create'])->name('admin.attribute.create');
+Route::post('/admin-attribute-store', [ProductAttribute::class, 'store'])->name('admin.attribute.store');
 Route::delete('/admin-attributes-destroy/{key}', [ProductAttribute::class, 'destroy']);
-Route::get('/admin-attribute-edit/{id}',[ProductAttribute::class,'edit'])->name('admin.attribute.edit');
+Route::get('/admin-attribute-edit/{id}', [ProductAttribute::class, 'edit'])->name('admin.attribute.edit');
 
 
 
 // Kiều Duy du 12/3/2025 cart
-Route::post('cart-store',[CartController::class,'store'])->name('cart.store')->middleware('auth');
-Route::get('cart-index',[CartController::class,'index'])->name('cart.index')->middleware('auth');
+Route::post('cart-store', [CartController::class, 'store'])->name('cart.store')->middleware('auth');
+Route::get('cart-index', [CartController::class, 'index'])->name('cart.index')->middleware('auth');
 Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity'])->name('cart.updateQuantity');
 Route::post('/cart/updateVariant', [CartController::class, 'updateVariant'])->name('cart.updateVariant');
 Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
@@ -113,6 +117,8 @@ Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.in
 // Xử lý đặt hàng
 Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.placeOrder');
 
+Route::post('/generate-vnpay-url', [CheckoutController::class, 'generateVnpayUrl'])->name('vnpay.generate');
+
 Route::post('/order/vnpay', [VNPayController::class, 'createPayment'])->name('order.vnpay');
 Route::get('/vnpay-return', [VNPayController::class, 'vnpayReturn'])->name('vnpay.return');
 // Kiều Duy Du 26/3/2025 địa chỉ
@@ -121,9 +127,16 @@ Route::get('/checkout/get-wards/{district_id}', [CheckoutController::class, 'get
 Route::get('/checkout/get-shipping-fee/{district_id}', [CheckoutController::class, 'getShippingFee']);
 Route::post('/checkout/save-address', [CheckoutController::class, 'saveAddress']);
 
+Route::get('/order', [HomeController::class, 'Order'])->name('order');
+Route::get('/order/{id}', [HomeController::class, 'OrderDetail'])->name('order.detail');
+
+Route::post('/update-status', [HomeController::class, 'updateStatusOrder'])->name('update-status');
+
+Route::post('/review', [HomeController::class, 'addReview'])->name('review.store');
+
 //Route::group(['prefix' => 'admin', 'name' => 'admin.', 'middleware' => 'checkAdmin'], function () {
 Route::group(['prefix' => 'admin', 'name' => 'admin.'], function () {
-    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
     Route::resource("discounts", DiscountController::class);
     Route::resource("roles", RoleController::class);
@@ -143,24 +156,37 @@ Route::group(['prefix' => 'admin', 'name' => 'admin.'], function () {
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
 
-        //kiều duy du 13/2/2025 product
-    Route::get('/product/index',[ProductController::class,'index'])->name('admin.product.index');
-    Route::get('/product/create',[ProductController::class,'create'])->name('admin.product.create');
-    Route::post('/product/store',[ProductController::class,'store'])->name('admin.product.store');
-    Route::get('/product/edit/{id}',[ProductController::class,'edit'])->name('admin.product.edit');
-    Route::post('/product/delete/{id}',[ProductController::class,'delete'])->name('admin.product.delete');
+    //kiều duy du 13/2/2025 product
+    Route::get('/product/index', [ProductController::class, 'index'])->name('admin.product.index');
+    Route::get('/product/create', [ProductController::class, 'create'])->name('admin.product.create');
+    Route::post('/product/store', [ProductController::class, 'store'])->name('admin.product.store');
+    Route::get('/product/edit/{id}', [ProductController::class, 'edit'])->name('admin.product.edit');
+    Route::post('/product/delete/{id}', [ProductController::class, 'delete'])->name('admin.product.delete');
     Route::post('/products/{id}/toggle-status', [ProductController::class, 'toggleStatus'])->name('admin.toggleStatus');
     Route::put('/products/{id}', [ProductController::class, 'update'])->name('admin.product.update');
 
 
     //kiều duy du 21/2/2025 variant
-    Route::get('/variant/index/{id}',[ProductVariantController::class,'index'])->name('admin.variant.index');
-    Route::post('/variant/store',[ProductVariantController::class,'store'])->name('admin.variant.store');
+    Route::get('/variant/index/{id}', [ProductVariantController::class, 'index'])->name('admin.variant.index');
+    Route::post('/variant/store', [ProductVariantController::class, 'store'])->name('admin.variant.store');
     Route::put('/variant/status/{id}', [ProductVariantController::class, 'updateStatus']);
     Route::get('/variants/{id}/edit', [ProductVariantController::class, 'edit'])->name('product.variant.edit');
     Route::post('/variant/update-status', [ProductVariantController::class, 'updateStatus'])->name('variant.updateStatus');
     Route::put('/admin/variants/{id}', [ProductVariantController::class, 'update'])->name('variant.update');
 
 
-});
 
+
+    Route::get('admin/address/add', [ShippingController::class, 'addAddressForm'])->name('admin.addAddressForm');
+    Route::post('admin/address/add', [ShippingController::class, 'addAddress'])->name('admin.add.addAddressForm');
+    Route::get('admin/address/list', [ShippingController::class, 'listShippingFees'])->name('admin.listShippingFees');
+    Route::get('admin/address/edit/{id}', [ShippingController::class, 'editAddressForm'])->name('admin.editAddressForm');
+    Route::delete('/admin/delete-address/{id}', [ShippingController::class, 'destroy'])->name('admin.deleteAddress');
+
+
+
+    Route::post('admin/address/edit/{id}', [ShippingController::class, 'updateAddress'])->name('admin.updateAddress');
+    // API cho AJAX dynamic dropdown
+Route::get('/api/get-districts/{province_id}', [ShippingController::class, 'getDistricts']);
+Route::get('/api/get-wards/{district_id}', [ShippingController::class, 'getWards']);
+});

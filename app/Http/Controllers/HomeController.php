@@ -2,22 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Banner;
+use App\Mail\OrderCancelled;
+use App\Mail\OrderRecieved;
+use App\Mail\OrderReturned;
 use App\Models\Page;
-use App\Models\ProductVariant;
+use App\Models\Order;
+use App\Models\Banner;
 use App\Models\Review;
-use Illuminate\Http\Request;
-use App\Models\Category;
 use App\Models\Product;
+use App\Models\Category;
 use App\Models\Wishlist;
+use App\Enums\OrderStatus;
+use Illuminate\Http\Request;
+use App\Models\ProductVariant;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class HomeController extends Controller
 {
     public function index()
     {
         $categories = Category::all();
-        $products = Product::where('is_active', 1)->get();
+        $discountProducts = Product::where('is_active', 1)
+        ->where('price_old', '>', 0) // Chỉ lấy sp có price_old > 0
+        ->orderByDesc('price_old')
+        ->limit(8)
+        ->get();
+
+
 
         $banners = Banner::orderBy('position')
             ->get()
@@ -25,7 +38,29 @@ class HomeController extends Controller
 
         $wishlistItems = Wishlist::where('user_id', Auth::id())->pluck('product_id')->toArray();
 
-        return view('client.home', compact('categories', 'products', 'wishlistItems', 'banners'));
+        $newProducts = Product::where('is_active', 1)
+        ->orderBy('created_at', 'desc')
+        ->take(8)
+        ->get();
+//
+//        $bestSellingProducts = Product::with('firstImage')
+//        ->select('products.*', DB::raw('SUM(order_details.quantity) as total_sold'))
+//        ->join('order_details', 'products.id', '=', 'order_details.product_id')
+//        ->join('orders', 'orders.id', '=', 'order_details.order_id')
+//        ->where('orders.status', 'received') // chỉ đơn đã nhận
+//        ->where('products.is_active', 1)     // sản phẩm đang hoạt động
+//        ->groupBy('products.id')
+//        ->orderByDesc('total_sold')
+//        ->get();
+        // dd($bestSellingProducts);
+        $mostViewedProducts = Product::with('firstImage')
+        ->where('is_active', 1)
+        ->orderByDesc('view')
+        ->get();
+
+
+
+        return view('client.home', compact('categories', 'discountProducts', 'wishlistItems', 'banners','newProducts','mostViewedProducts'));
     }
 
     public function productsByCategory($categoryId)
@@ -38,9 +73,21 @@ class HomeController extends Controller
 
     public function showProductDetail($id)
     {
+        $newProducts = Product::with('firstImage')->where('is_active', 1)
+        ->orderBy('created_at', 'desc')
+        ->take(8)
+        ->get();
+
         $product = Product::with([
             'variants.variantAttributes.attributeValue.attribute'
         ])->find($id);
+        // Lấy sản phẩm cùng category (ngoại trừ chính sản phẩm hiện tại)
+        $relatedProducts = Product::where('category_id', $product->category_id)
+        ->where('id', '!=', $product->id)
+        ->limit(8)
+        ->get();
+        $product->view += 1;
+        $product->save();
 
         $attributesGrouped = [];
         foreach ($product->variants as $variant) {
@@ -118,7 +165,7 @@ class HomeController extends Controller
 
         $totalReviews = $reviews->count();
 
-        return view('client.page.detail', compact('product', 'attributesGrouped', 'resultJson', 'reviews', 'averageRating', 'ratingStats', 'totalReviews', 'variants'));
+        return view('client.page.detail', compact('product','relatedProducts', 'attributesGrouped', 'resultJson', 'reviews', 'averageRating', 'ratingStats', 'totalReviews', 'variants','newProducts'));
     }
 
     public function addToWishlist($productId)
@@ -180,9 +227,152 @@ class HomeController extends Controller
         $data = Page::where('type', 'introduction')->first();
         return view('client.page.introduction', compact('data'));
     }
+
+    public function order()
+    {
+        $orders = Order::where('user_id', Auth::id())
+            ->with(['payment', 'userAddress'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('client.order', compact('orders'));
+    }
+
+    public function orderDetail(Request $request, $id)
+    {
+        $order = Order::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->with(['orderDetails', 'payment', 'userAddress', 'discounts'])
+            ->firstOrFail();
+
+        return view('client.order_detail', compact('order'));
+    }
+
+    public function updateStatusOrder(Request $request)
+    {
+        try {
+            $request->validate([
+                'order_id' => 'required|exists:orders,id',
+                'status' => 'required|in:' . implode(',', array_column(OrderStatus::cases(), 'value')),
+            ]);
+
+            $order = Order::findOrFail($request->order_id);
+
+            $allowedTransitions = [
+                OrderStatus::PENDING_CONFIRMATION->value => [OrderStatus::PENDING_CANCELLATION->value],
+                OrderStatus::CONFIRMED->value => [OrderStatus::PENDING_CANCELLATION->value],
+                OrderStatus::PREPARING->value => [OrderStatus::PENDING_CANCELLATION->value],
+                OrderStatus::PREPARED->value => [OrderStatus::PENDING_CANCELLATION->value],
+                OrderStatus::RECEIVED->value => [OrderStatus::RETURNED->value],
+                OrderStatus::DELIVERED->value => [
+                    OrderStatus::RECEIVED->value,
+                    OrderStatus::NOT_RECEIVED->value
+                ]
+            ];
+
+            if (!in_array($request->status, $allowedTransitions[$order->status->value] ?? [])) {
+                return redirect()->back()->with('error', 'Không thể chuyển sang trạng thái này');
+            }
+
+            $order->status = $request->status;
+            if ($request->reason) {
+                $order->reason = $request->reason;
+            }
+            $order->save();
+            if ($request->status == OrderStatus::RECEIVED->value)
+            {
+                Mail::to(env('MAIL_ADMIN_EMAIL') ?? 'lequyhieu1024@gmail.com')->send(new OrderRecieved($order));
+            }
+
+            if ($request->status == OrderStatus::RETURNED->value)
+            {
+                Mail::to(env('MAIL_ADMIN_EMAIL') ?? 'lequyhieu1024@gmail.com')->send(new OrderReturned($order, $request->reason));
+            }
+
+            if ($request->status == OrderStatus::PENDING_CANCELLATION->value)
+            {
+                Mail::to(env('MAIL_ADMIN_EMAIL') ?? 'lequyhieu1024@gmail.com')->send(new OrderCancelled($order, $request->reason));
+            }
+
+            return redirect()->back()->with('success', 'Cập nhật trạng thái thành công');
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Đã có lỗi xảy ra: ' . $e->getMessage());
+        }
+    }
+
+    public function addReview(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'order_id' => 'required|exists:orders,id',
+            'rating' => 'required|integer|between:1,5',
+            'content' => 'required|string|max:255',
+            'image' => 'required|image|max:2048',
+        ]);
+        $data = $request->all();
+
+        $order = Order::findOrFail($request->order_id);
+
+        if ($order->user_id !== auth()->id() ||
+            !in_array($order->status, [\App\Enums\OrderStatus::RECEIVED, \App\Enums\OrderStatus::RETURNED])) {
+            return redirect()->back()->with('error', 'Bạn không có quyền đánh giá sản phẩm này.');
+        }
+
+        $existingReview = Review::where('user_id', auth()->id())
+            ->where('product_id', $request->product_id)
+            ->where('product_variant_id', $request->product_variant_id)
+            ->exists();
+
+        if ($existingReview) {
+            return redirect()->back()->with('error', 'Bạn đã đánh giá sản phẩm này rồi.');
+        }
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('reviews', 'public');
+        }
+        $data['user_id'] = auth()->id();
+        $data['product_variant_id'] = $request->product_variant_id ?? 0;
+
+        Review::create($data);
+
+        return redirect()->back()->with('success', 'Đánh giá của bạn đã được gửi thành công!');
+    }
+
     public function error()
     {
         return view('client.error');
     }
+    public function search(Request $request)
+    {
+        $keyword = $request->input('keyword');
+        $sort = $request->input('sort');
+
+        $products = Product::query()
+            ->where('is_active', 1)  // Chỉ lấy sản phẩm đang active
+            ->when($keyword, function ($query) use ($keyword) {
+                $query->where(function ($q) use ($keyword) {
+                    $q->where('name', 'like', '%' . $keyword . '%')
+                      ->orWhere('short_description', 'like', '%' . $keyword . '%')
+                      ->orWhere('price', 'like', '%' . $keyword . '%')
+                      ->orWhereHas('category', function ($q2) use ($keyword) {
+                          $q2->where('name', 'like', '%' . $keyword . '%');
+                      });
+                });
+            });
+
+        if ($sort == 'asc') {
+            $products->orderBy('price', 'asc');
+        } elseif ($sort == 'desc') {
+            $products->orderBy('price', 'desc');
+        }
+
+        $products = $products->paginate(12);
+
+        return view('client.page.search', compact('products', 'keyword', 'sort'));
+    }
+
+
+
 
 }

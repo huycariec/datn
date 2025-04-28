@@ -25,4 +25,8 @@ class UserAddress extends Model
     public function ward() {
         return $this->belongsTo(Ward::class);
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

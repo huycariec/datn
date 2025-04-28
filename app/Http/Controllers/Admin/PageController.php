@@ -8,6 +8,14 @@ use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:pages_list')->only(['index']);
+        $this->middleware('permission:pages_create')->only(['create', 'store']);
+        $this->middleware('permission:pages_detail')->only(['show']);
+        $this->middleware('permission:pages_update')->only(['edit', 'update']);
+        $this->middleware('permission:pages_delete')->only(['destroy']);
+    }
     public function index(Request $request)
     {
         $query = Page::query();

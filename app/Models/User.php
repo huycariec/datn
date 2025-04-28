@@ -78,4 +78,9 @@ class User extends Authenticatable
         return $this->last_login_at && $this->last_login_at->gt(Carbon::now()->subMinutes(5));
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
 }

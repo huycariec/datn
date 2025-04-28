@@ -14,7 +14,7 @@
     <meta name="author"  content="pixelstrap">
     <link rel="icon" href="/assets/images/favicon.png" type="image/x-icon">
     <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/x-icon">
-    <title>Fastkart - Dashboard</title>
+    <title>LINGOAN</title>
     @yield('css')
 
 </head>
