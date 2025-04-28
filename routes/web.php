@@ -137,6 +137,7 @@ Route::post('/review', [HomeController::class, 'addReview'])->name('review.store
 //Route::group(['prefix' => 'admin', 'name' => 'admin.', 'middleware' => 'checkAdmin'], function () {
 Route::group(['prefix' => 'admin', 'name' => 'admin.'], function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::post('ai-suggest', [DashboardController::class, 'aiSuggest'])->name('ai_suggest');
 
     Route::resource("discounts", DiscountController::class);
     Route::resource("roles", RoleController::class);

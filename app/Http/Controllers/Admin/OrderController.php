@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
+use App\Mail\OrderAdminCancelled;
 use App\Mail\OrderConfirmed;
+use App\Mail\OrderNotAcceptCancellation;
 use App\Mail\OrderReturnAccept;
 use App\Models\Order;
+use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
@@ -130,7 +134,8 @@ class OrderController extends Controller
             'returned' => ['returned', 'returned_accept', 'received'],
             'returned_accept' => ['returned_accept', 'refunded'],
             'cancelled' => [],
-            'refunded' => []
+            'refunded' => [],
+            'pending_cancellation' => ['pending_cancellation', 'cancelled', 'confirmed']
         ];
 
         $currentStatus = $order->status->value;
@@ -147,12 +152,21 @@ class OrderController extends Controller
 
         session()->flash('success', 'Cập nhật trạng thái đơn hàng thành công');
 
-        if ($newStatus == OrderStatus::CONFIRMED->value) {
+        if ($newStatus == OrderStatus::CONFIRMED->value && $currentStatus !== OrderStatus::PENDING_CANCELLATION->value) {
             try {
                 Mail::to($order->user->email)->send(new OrderConfirmed($order));
             } catch (\Exception $e) {
-                \Log::error('Lỗi khi gửi email xác nhận đơn hàng: ' . $e->getMessage());
-                session()->flash('error', 'Đã xảy ra lỗi khi gửi email xác nhận');
+                \Log::error('Lỗi khi gửi email : ' . $e->getMessage());
+                session()->flash('error', 'Đã xảy ra lỗi khi gửi email');
+            }
+        }
+
+        if (($newStatus == OrderStatus::CONFIRMED->value || $newStatus == OrderStatus::CANCELLED->value && $currentStatus == OrderStatus::PENDING_CANCELLATION->value)) {
+            try {
+                Mail::to($order->user->email)->send(new OrderNotAcceptCancellation($order));
+            } catch (\Exception $e) {
+                \Log::error('Lỗi khi gửi email : ' . $e->getMessage());
+                session()->flash('error', 'Đã xảy ra lỗi khi gửi email');
             }
         }
 
@@ -161,6 +175,26 @@ class OrderController extends Controller
                 Mail::to($order->user->email)->send(new OrderReturnAccept($order));
             } catch (\Exception $e) {
                 session()->flash('error', 'Đã xảy ra lỗi khi gửi email');
+            }
+        }
+
+        if ($newStatus == OrderStatus::CANCELLED->value && $currentStatus != OrderStatus::PENDING_CANCELLATION->value) {
+            try {
+                Mail::to($order->user->email)->send(new OrderAdminCancelled($order));
+
+            } catch (\Exception $e) {
+                session()->flash('error', 'Đã xảy ra lỗi khi gửi email');
+            }
+        }
+        if ($newStatus == OrderStatus::CANCELLED->value) {
+            if ($order->orderDetails->isNotEmpty()) {
+                foreach ($order->orderDetails as $orderDetail) {
+                    if ($orderDetail->product && $orderDetail->productVariant) {
+                        $variant = ProductVariant::findOrFail($orderDetail->productVariant->id);
+                        $variant->stock += $orderDetail->quantity;
+                        $variant->save();
+                    }
+                }
             }
         }
 
