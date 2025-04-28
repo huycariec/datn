@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderCancelled;
 use App\Mail\OrderRecieved;
 use App\Mail\OrderReturned;
 use App\Models\Page;
@@ -41,16 +42,16 @@ class HomeController extends Controller
         ->orderBy('created_at', 'desc')
         ->take(8)
         ->get();
-
-        $bestSellingProducts = Product::with('firstImage')
-        ->select('products.*', DB::raw('SUM(order_details.quantity) as total_sold'))
-        ->join('order_details', 'products.id', '=', 'order_details.product_id')
-        ->join('orders', 'orders.id', '=', 'order_details.order_id')
-        ->where('orders.status', 'received') // chỉ đơn đã nhận
-        ->where('products.is_active', 1)     // sản phẩm đang hoạt động
-        ->groupBy('products.id')
-        ->orderByDesc('total_sold')
-        ->get();
+//
+//        $bestSellingProducts = Product::with('firstImage')
+//        ->select('products.*', DB::raw('SUM(order_details.quantity) as total_sold'))
+//        ->join('order_details', 'products.id', '=', 'order_details.product_id')
+//        ->join('orders', 'orders.id', '=', 'order_details.order_id')
+//        ->where('orders.status', 'received') // chỉ đơn đã nhận
+//        ->where('products.is_active', 1)     // sản phẩm đang hoạt động
+//        ->groupBy('products.id')
+//        ->orderByDesc('total_sold')
+//        ->get();
         // dd($bestSellingProducts);
         $mostViewedProducts = Product::with('firstImage')
         ->where('is_active', 1)
@@ -59,7 +60,7 @@ class HomeController extends Controller
 
 
 
-        return view('client.home', compact('categories', 'discountProducts', 'wishlistItems', 'banners','newProducts','bestSellingProducts','mostViewedProducts'));
+        return view('client.home', compact('categories', 'discountProducts', 'wishlistItems', 'banners','newProducts','mostViewedProducts'));
     }
 
     public function productsByCategory($categoryId)
@@ -258,10 +259,10 @@ class HomeController extends Controller
             $order = Order::findOrFail($request->order_id);
 
             $allowedTransitions = [
-                OrderStatus::PENDING_CONFIRMATION->value => [OrderStatus::CANCELLED->value],
-                OrderStatus::CONFIRMED->value => [OrderStatus::CANCELLED->value],
-                OrderStatus::PREPARING->value => [OrderStatus::CANCELLED->value],
-                OrderStatus::PREPARED->value => [OrderStatus::CANCELLED->value],
+                OrderStatus::PENDING_CONFIRMATION->value => [OrderStatus::PENDING_CANCELLATION->value],
+                OrderStatus::CONFIRMED->value => [OrderStatus::PENDING_CANCELLATION->value],
+                OrderStatus::PREPARING->value => [OrderStatus::PENDING_CANCELLATION->value],
+                OrderStatus::PREPARED->value => [OrderStatus::PENDING_CANCELLATION->value],
                 OrderStatus::RECEIVED->value => [OrderStatus::RETURNED->value],
                 OrderStatus::DELIVERED->value => [
                     OrderStatus::RECEIVED->value,
@@ -286,6 +287,11 @@ class HomeController extends Controller
             if ($request->status == OrderStatus::RETURNED->value)
             {
                 Mail::to(env('MAIL_ADMIN_EMAIL') ?? 'lequyhieu1024@gmail.com')->send(new OrderReturned($order, $request->reason));
+            }
+
+            if ($request->status == OrderStatus::PENDING_CANCELLATION->value)
+            {
+                Mail::to(env('MAIL_ADMIN_EMAIL') ?? 'lequyhieu1024@gmail.com')->send(new OrderCancelled($order, $request->reason));
             }
 
             return redirect()->back()->with('success', 'Cập nhật trạng thái thành công');

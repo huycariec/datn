@@ -17,6 +17,7 @@ enum OrderStatus: string
     case REFUNDED = 'refunded';
     case NOT_RECEIVED = 'not_received';
     case RETURNED_ACCEPT = 'returned_accept';
+    case PENDING_CANCELLATION = 'pending_cancellation';
 
     /**
      * Get the display name for the status
@@ -42,6 +43,7 @@ enum OrderStatus: string
             self::REFUNDED => 'Đã hoàn tiền',
             self::NOT_RECEIVED => 'Không nhận được hàng',
             self::RETURNED_ACCEPT => 'Chấp nhận hoàn hàng',
+            self::PENDING_CANCELLATION => 'Chờ xác nhận hủy đơn',
         };
     }
 
@@ -64,6 +66,7 @@ enum OrderStatus: string
             self::REFUNDED => '<span class="badge bg-dark">' . $this->label() . '</span>',
             self::NOT_RECEIVED => '<span class="badge bg-danger">' . $this->label() . '</span>',
             self::RETURNED_ACCEPT => '<span class="badge bg-success">' . $this->label() . '</span>',
+            self::PENDING_CANCELLATION => '<span class="badge bg-warning">' . $this->label() . '</span>',
         };
     }
 
