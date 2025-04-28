@@ -25,6 +25,7 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Great+Vibes&amp;family=Qwitcher+Grypen:wght@400;700&amp;display=swap">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     @include('client.inc.style')
     @yield('css')
     <meta name="csrf-token" content="{{ csrf_token() }}">
