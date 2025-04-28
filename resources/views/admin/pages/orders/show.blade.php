@@ -57,7 +57,7 @@
                                                     <a href="#" class="edit-order" data-id="{{ $order->id }}"
                                                        data-status="{{ $order->status }}"
                                                        data-return-reason="{{ $order->reason ?? '' }}"
-                                                       data-bs-toggle="modal" data-bs-target="#{{ $order->status == \App\Enums\OrderStatus::RETURNED->value ? "editOrderModal" : ""}}">
+                                                       data-bs-toggle="modal" data-bs-target="#{{ $order->status == \App\Enums\OrderStatus::RETURNED->value ? "approveReturnModal" : ($order->status == \App\Enums\OrderStatus::PENDING_CANCELLATION->value ? "approveCancelModal" : "editOrderModal") }}">
                                                         <i class="ri-pencil-line fs-5"></i>
                                                     </a>
                                                 @endif
@@ -114,7 +114,7 @@
                                                     {{ $order->ward_id ? \App\Models\Ward::find($order->ward_id)?->name : '' }}
                                                 </span>
                                             </span>
-                                            
+
                                         </div>
                                         <div class="mb-3">
                                             Địa chỉ chi tiết: <span class="text-dark fw-bold">{{ $order->address_detail ?? "" }}</span>
@@ -309,6 +309,31 @@
         </div>
     </div>
 
+    <!-- Modal Phê duyệt hủy đơn -->
+    <div class="modal fade" id="approveCancelModal" tabindex="-1" aria-labelledby="approveCancelModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="approveCancelModalLabel">Phê duyệt yêu cầu hủy đơn</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="approveCancelOrderId">
+                    <div class="mb-3">
+                        <label class="form-label">Lý do hủy đơn:</label>
+                        <p id="cancelReason" class="text-muted"></p>
+                    </div>
+                    <p>Bạn có muốn phê duyệt yêu cầu hủy đơn này?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" id="rejectCancelBtn" class="btn btn-danger">Không phê duyệt</button>
+                    <button type="button" id="approveCancelBtn" class="btn btn-success">Phê duyệt</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -324,7 +349,8 @@
                 'returned': ['returned', 'returned_accept', 'received'],
                 'returned_accept': ['returned_accept', 'refunded'],
                 'cancelled': [],
-                'refunded': []
+                'refunded': [],
+                'pending_cancellation': ['pending_cancellation', 'cancelled', 'confirmed']
             };
 
             const allStatuses = @json(\App\Enums\OrderStatus::toArray());
@@ -342,39 +368,26 @@
                         document.getElementById('returnReason').textContent = returnReason || 'Không có lý do được cung cấp';
                         const approveModal = new bootstrap.Modal(document.getElementById('approveReturnModal'));
                         approveModal.show();
+                    } else if (currentStatus === 'pending_cancellation') {
+                        // Hiển thị modal phê duyệt hủy đơn
+                        document.getElementById('approveCancelOrderId').value = orderId;
+                        document.getElementById('cancelReason').textContent = returnReason || 'Không có lý do được cung cấp';
+                        const approveModal = new bootstrap.Modal(document.getElementById('approveCancelModal'));
+                        approveModal.show();
                     } else {
                         // Hiển thị modal cập nhật trạng thái thông thường
                         document.getElementById('order_id').value = orderId;
                         const statusSelect = document.getElementById('status');
                         statusSelect.innerHTML = '';
-
-                        const availableStatuses = statusTransitions[currentStatus] || [];
-
-                        availableStatuses.forEach(statusValue => {
-                            const status = allStatuses.find(s => s.value === statusValue);
-                            if (status) {
+                        const allowedStatuses = statusTransitions[currentStatus] || [];
+                        allStatuses.forEach(status => {
+                            if (allowedStatuses.includes(status.value)) {
                                 const option = document.createElement('option');
                                 option.value = status.value;
                                 option.textContent = status.label;
-                                if (status.value === currentStatus) {
-                                    option.selected = true;
-                                }
                                 statusSelect.appendChild(option);
                             }
                         });
-
-                        if (availableStatuses.length === 0) {
-                            const option = document.createElement('option');
-                            option.value = currentStatus;
-                            option.textContent = 'Không thể thay đổi';
-                            option.selected = true;
-                            option.disabled = true;
-                            statusSelect.appendChild(option);
-                            document.getElementById('updateBtn').disabled = true;
-                        } else {
-                            document.getElementById('updateBtn').disabled = false;
-                        }
-
                         const editModal = new bootstrap.Modal(document.getElementById('editOrderModal'));
                         editModal.show();
                     }
@@ -418,7 +431,24 @@
                 updateOrderStatus(orderId, 'received', 'Đã từ chối yêu cầu trả hàng.');
             });
 
-            // Hàm gửi AJAX cập nhật trạng thái
+            let isSubmit = false;
+            document.getElementById('approveCancelBtn').addEventListener('click', function () {
+                if (isSubmit) return;
+                isSubmit = true;
+
+                const orderId = document.getElementById('approveCancelOrderId').value;
+                updateOrderStatus(orderId, 'cancelled', 'Phê duyệt hủy đơn thành công!');
+            });
+
+            // Xử lý không phê duyệt hủy đơn
+            document.getElementById('rejectCancelBtn').addEventListener('click', function () {
+                if (isSubmit) return;
+                isSubmit = true;
+
+                const orderId = document.getElementById('approveCancelOrderId').value;
+                updateOrderStatus(orderId, 'confirmed', 'Đã từ chối yêu cầu hủy đơn.');
+            });
+
             function updateOrderStatus(orderId, status, successMessage) {
                 $.ajax({
                     url: '{{ route("orders.update", "__ID__") }}'.replace('__ID__', orderId),
@@ -439,6 +469,7 @@
                         alert('Đã có lỗi xảy ra khi cập nhật trạng thái.');
                     },
                     complete: function () {
+                        isSubmit = false;
                         const approveModal = bootstrap.Modal.getInstance(document.getElementById('approveReturnModal'));
                         approveModal.hide();
                     }

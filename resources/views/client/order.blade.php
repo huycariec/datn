@@ -112,25 +112,15 @@
                                                class="btn btn-outline-primary btn-sm fw-bold"
                                                style="border-radius: 20px; padding: 6px 15px;">Chi tiết đơn hàng</a>
 
-                                            @if(in_array($order->status, [
-                                                \App\Enums\OrderStatus::PENDING_CONFIRMATION,
-                                                \App\Enums\OrderStatus::CONFIRMED,
-                                                \App\Enums\OrderStatus::PREPARING,
-                                                \App\Enums\OrderStatus::PREPARED
-                                            ]))
-                                                <form action="{{ route('update-status') }}" method="POST"
-                                                      style="display: inline;">
-                                                    @csrf
-                                                    <input type="hidden" name="order_id" value="{{ $order->id }}">
-                                                    <input type="hidden" name="status"
-                                                           value="{{ \App\Enums\OrderStatus::CANCELLED }}">
-                                                    <button type="submit"
-                                                            class="btn btn-outline-danger btn-sm fw-bold"
-                                                            style="border-radius: 20px; padding: 6px 15px;"
-                                                            onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
-                                                        Hủy đơn
-                                                    </button>
-                                                </form>
+                                            @if(in_array($order->status, [\App\Enums\OrderStatus::PENDING_CONFIRMATION, \App\Enums\OrderStatus::CONFIRMED, \App\Enums\OrderStatus::PREPARING, \App\Enums\OrderStatus::PREPARED]))
+                                                <button type="button"
+                                                        class="btn btn-outline-danger btn-sm fw-bold cancel-order-btn"
+                                                        style="border-radius: 20px; padding: 6px 15px;"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#cancelOrderModal"
+                                                        data-order-id="{{ $order->id }}">
+                                                    Hủy đơn hàng
+                                                </button>
                                             @endif
 
                                             @if(in_array($order->status, [\App\Enums\OrderStatus::RECEIVED]))
@@ -230,6 +220,33 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal Hủy đơn hàng -->
+        <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cancelOrderModalLabel">Hủy đơn hàng</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ route('update-status') }}" method="POST">
+                        @csrf
+                        <div class="modal-body">
+                            <input type="hidden" name="order_id" id="cancelOrderId">
+                            <input type="hidden" name="status" value="{{ \App\Enums\OrderStatus::PENDING_CANCELLATION }}">
+                            <div class="mb-3">
+                                <label for="cancelReason" class="form-label">Lý do hủy đơn hàng</label>
+                                <textarea class="form-control" id="cancelReason" name="reason" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            <button type="submit" class="btn btn-danger">Xác nhận hủy đơn</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </section>
 
     <script>
@@ -273,6 +290,16 @@
                     document.getElementById('returnOrderModal').querySelector('.btn-close').click();
                     location.reload();
                 }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Xử lý nút hủy đơn hàng
+            document.querySelectorAll('.cancel-order-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const orderId = this.getAttribute('data-order-id');
+                    document.getElementById('cancelOrderId').value = orderId;
+                });
             });
         });
     </script>

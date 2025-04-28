@@ -255,38 +255,38 @@
                                             <h3>Bán chạy nhất</h3>
                                         </div>
 
-                                        @foreach($bestSellingProducts->take(4) as $product)
-                                            <div class="top-selling-contain wow fadeInUp">
-                                                <a href="{{ route('product.detail', $product->id) }}" class="top-selling-image">
-                                                    @if($product->images->first())
-                                                        <img src="{{ Storage::url($product->images->first()->url) }}"
-                                                             class="img-fluid blur-up lazyload" alt="{{ $product->name }}">
-                                                    @else
-                                                        <img src="{{ asset('path/to/default.jpg') }}"
-                                                             class="img-fluid blur-up lazyload" alt="{{ $product->name }}">
-                                                    @endif
-                                                </a>
+{{--                                        @foreach($bestSellingProducts->take(4) as $product)--}}
+{{--                                            <div class="top-selling-contain wow fadeInUp">--}}
+{{--                                                <a href="{{ route('product.detail', $product->id) }}" class="top-selling-image">--}}
+{{--                                                    @if($product->images->first())--}}
+{{--                                                        <img src="{{ Storage::url($product->images->first()->url) }}"--}}
+{{--                                                             class="img-fluid blur-up lazyload" alt="{{ $product->name }}">--}}
+{{--                                                    @else--}}
+{{--                                                        <img src="{{ asset('path/to/default.jpg') }}"--}}
+{{--                                                             class="img-fluid blur-up lazyload" alt="{{ $product->name }}">--}}
+{{--                                                    @endif--}}
+{{--                                                </a>--}}
 
-                                                <div class="top-selling-detail">
-                                                    <a href="{{ route('product.detail', $product->id) }}">
-                                                        <h5>{{ $product->name }}</h5>
-                                                    </a>
+{{--                                                <div class="top-selling-detail">--}}
+{{--                                                    <a href="{{ route('product.detail', $product->id) }}">--}}
+{{--                                                        <h5>{{ $product->name }}</h5>--}}
+{{--                                                    </a>--}}
 
-                                                    <div class="product-rating">
-                                                        <ul class="rating">
-                                                            <li><i data-feather="star" class="fill"></i></li>
-                                                            <li><i data-feather="star" class="fill"></i></li>
-                                                            <li><i data-feather="star" class="fill"></i></li>
-                                                            <li><i data-feather="star" class="fill"></i></li>
-                                                            <li><i data-feather="star"></i></li>
-                                                        </ul>
-                                                        <span>(34)</span> {{-- tạm cứng, sau đổ rating thật sau --}}
-                                                    </div>
+{{--                                                    <div class="product-rating">--}}
+{{--                                                        <ul class="rating">--}}
+{{--                                                            <li><i data-feather="star" class="fill"></i></li>--}}
+{{--                                                            <li><i data-feather="star" class="fill"></i></li>--}}
+{{--                                                            <li><i data-feather="star" class="fill"></i></li>--}}
+{{--                                                            <li><i data-feather="star" class="fill"></i></li>--}}
+{{--                                                            <li><i data-feather="star"></i></li>--}}
+{{--                                                        </ul>--}}
+{{--                                                        <span>(34)</span> --}}{{-- tạm cứng, sau đổ rating thật sau --}}
+{{--                                                    </div>--}}
 
-                                                    <h6>{{ number_format($product->price, 0, ',', '.') }} đ</h6>
-                                                </div>
-                                            </div>
-                                        @endforeach
+{{--                                                    <h6>{{ number_format($product->price, 0, ',', '.') }} đ</h6>--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                        @endforeach--}}
                                     </div>
 
                                 </div>
@@ -490,59 +490,58 @@
             <div class="row g-sm-4 g-3">
                 <div class="col-xxl-12 ratio_110">
                     <div class="slider-6 img-slider">
-                        @foreach($bestSellingProducts as $product)
-                        <div>
-                            <div class="product-box-5 wow fadeInUp">
-                                <div class="product-image">
-                                    @foreach ($product->images as $image)
-                                    <a href="{{ route('product.detail', $product->id) }}">
-                                        <img src="{{Storage::url($image->url)}}"
-                                             class="img-fluid blur-up lazyload bg-img" alt="{{ $product->name }}">
-                                    </a>
-                                    @endforeach
+{{--                        @foreach($bestSellingProducts as $product)--}}
+{{--                        <div>--}}
+{{--                            <div class="product-box-5 wow fadeInUp">--}}
+{{--                                <div class="product-image">--}}
+{{--                                    @foreach ($product->images as $image)--}}
+{{--                                    <a href="{{ route('product.detail', $product->id) }}">--}}
+{{--                                        <img src="{{Storage::url($image->url)}}"--}}
+{{--                                             class="img-fluid blur-up lazyload bg-img" alt="{{ $product->name }}">--}}
+{{--                                    </a>--}}
+{{--                                    @endforeach--}}
 
-                                    <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
-                                       data-bs-placement="top" title="Wishlist">
-                                        <i data-feather="bookmark"></i>
-                                    </a>
+{{--                                    <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"--}}
+{{--                                       data-bs-placement="top" title="Wishlist">--}}
+{{--                                        <i data-feather="bookmark"></i>--}}
+{{--                                    </a>--}}
 
-                                    <ul class="product-option">
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
-                                            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
-                                                <i data-feather="eye"></i>
-                                            </a>
-                                        </li>
+{{--                                    <ul class="product-option">--}}
+{{--                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">--}}
+{{--                                            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">--}}
+{{--                                                <i data-feather="eye"></i>--}}
+{{--                                            </a>--}}
+{{--                                        </li>--}}
 
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
-                                            <a href="compare.html">
-                                                <i data-feather="refresh-cw"></i>
-                                            </a>
-                                        </li>
+{{--                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">--}}
+{{--                                            <a href="compare.html">--}}
+{{--                                                <i data-feather="refresh-cw"></i>--}}
+{{--                                            </a>--}}
+{{--                                        </li>--}}
 
-                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
-                                            <a href="wishlist.html" class="notifi-wishlist">
-                                                <i data-feather="heart"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
+{{--                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">--}}
+{{--                                            <a href="wishlist.html" class="notifi-wishlist">--}}
+{{--                                                <i data-feather="heart"></i>--}}
+{{--                                            </a>--}}
+{{--                                        </li>--}}
+{{--                                    </ul>--}}
+{{--                                </div>--}}
 
-                                <div class="product-detail">
-                                    <a href="{{ route('product.detail', $product->id) }}">
-                                        <h5 class="name">{{ $product->name }}</h5>
-                                    </a>
+{{--                                <div class="product-detail">--}}
+{{--                                    <a href="{{ route('product.detail', $product->id) }}">--}}
+{{--                                        <h5 class="name">{{ $product->name }}</h5>--}}
+{{--                                    </a>--}}
 
-                                    <h5 class="sold text-content">
-                                        <span class="theme-color price">{{ number_format($product->price, 0, ',', '.') }} đ</span>
-                                        @if($product->price_old)
-                                            <del style="color: red;">{{ number_format($product->price_old, 0, ',', '.') }} đ</del>
-                                        @endif
-                                    </h5>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-
+{{--                                    <h5 class="sold text-content">--}}
+{{--                                        <span class="theme-color price">{{ number_format($product->price, 0, ',', '.') }} đ</span>--}}
+{{--                                        @if($product->price_old)--}}
+{{--                                            <del style="color: red;">{{ number_format($product->price_old, 0, ',', '.') }} đ</del>--}}
+{{--                                        @endif--}}
+{{--                                    </h5>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                        @endforeach--}}
                     </div>
                 </div>
             </div>
