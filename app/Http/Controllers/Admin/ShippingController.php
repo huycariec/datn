@@ -28,8 +28,7 @@ class ShippingController extends Controller
 
     public function listShippingFees()
 {
-    $shippingFees = ShippingFee::with('province', 'district', 'ward')
-                               ->paginate(10);
+    $shippingFees = ShippingFee::with('province', 'district', 'ward')->paginate(10);
     return view('admin.pages.adrees.list-shipping-fees', compact('shippingFees'));
 }
 

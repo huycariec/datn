@@ -225,6 +225,8 @@ class ProductController extends Controller
         $product = Product::findOrFail($id); // Tìm sản phẩm theo ID
         $product->is_active = 0; // Cập nhật trạng thái is_active thành 0
         $product->save(); // Lưu thay đổi
+        // ProductVariant::where('product_id', $id)->update(['is_active' => 0]);
+        ProductVariant::where('product_id', $id)->update(['is_active' => 0]);
 
         return redirect()->route('admin.product.index')->with('success', 'Sản phẩm đã được tắt thành công!');
     }
