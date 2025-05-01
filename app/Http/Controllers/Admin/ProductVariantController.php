@@ -137,11 +137,6 @@ class ProductVariantController extends Controller
         }
     }
     
-    
-    
-    
-    
-
     public function updateStatus(Request $request)
     {
         $variant = ProductVariant::findOrFail($request->id);
@@ -154,9 +149,5 @@ class ProductVariantController extends Controller
             'message' => 'Cập nhật trạng thái thành công!',
             'is_active' => $variant->is_active // gửi về luôn để frontend xử lý nếu cần
         ]);
-    }
-
-    
-
-    
+    }  
 }

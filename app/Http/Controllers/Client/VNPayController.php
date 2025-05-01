@@ -39,7 +39,7 @@ class VNPayController extends Controller
             // dd('thanh toán thành công');
             return redirect()->route('order')->with('success', 'Thanh toán thành công!');
         } else {
-            return redirect()->route('order.failed')->with('error', 'Thanh toán thất bại, vui lòng thử lại!');
+            return redirect()->route('order')->with('error', 'Thanh toán thất bại, vui lòng thử lại!');
         }
     }
         
