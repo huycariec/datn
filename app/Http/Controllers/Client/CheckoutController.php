@@ -212,14 +212,17 @@ class CheckoutController extends Controller
                 return back()->with('error', 'Không tìm thấy sản phẩm trong giỏ hàng!');
             }
 
-            // Kiểm tra trạng thái active của sản phẩm
             $inactiveProductNames = $cartItems->filter(function ($item) {
-                return optional($item->variant)->is_active == 0;
+                $variant = $item->variant;
+                $product = optional($variant)->product;
+            
+                return optional($variant)->is_active == 0 || optional($product)->is_active == 0;
             })->pluck('product.name')->toArray();
-
+            
             if (!empty($inactiveProductNames)) {
                 return back()->with('error', 'Sản phẩm "' . implode(', ', $inactiveProductNames) . '" đã ngừng bán, vui lòng kiểm tra lại giỏ hàng!');
             }
+            
 
             $totalProductPrice = $cartItems->sum(function($item) {
                 return ($item->variant->price ?? 0) * $item->quantity;

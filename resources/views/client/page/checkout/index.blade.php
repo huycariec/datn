@@ -78,14 +78,16 @@
                         <select id="address-select" class="form-select" name="user_address_id" onchange="handleAddressChange()">
                             <option value="">-- Chọn địa chỉ có sẵn --</option>
                             @foreach($userAddresses as $address)
-                                <option value="{{ $address->id }}" 
-                                    data-detail="{{ $address->address_detail }}"
-                                    data-ward="{{ $address->ward->name ?? '' }}"
-                                    data-district="{{ $address->district->name ?? '' }}"
-                                    data-province="{{ $address->province->name ?? '' }}"
-                                    {{ $address->id == $defaultAddress->id ? 'selected' : '' }}>
-                                    {{ $address->address_detail }}, {{ $address->ward->name ?? '' }}, {{ $address->district->name ?? '' }}, {{ $address->province->name ?? '' }}
-                                </option>
+                            <option value="{{ $address->id }}"
+                                data-district-id="{{ $address->district_id }}"
+                                data-detail="{{ $address->address_detail }}"
+                                data-ward="{{ $address->ward->name ?? '' }}"
+                                data-district="{{ $address->district->name ?? '' }}"
+                                data-province="{{ $address->province->name ?? '' }}"
+                                {{ $address->id == $defaultAddress->id ? 'selected' : '' }}>
+                                {{ $address->address_detail }}, {{ $address->ward->name ?? '' }}, {{ $address->district->name ?? '' }}, {{ $address->province->name ?? '' }}
+                            </option>
+                            
                             @endforeach
                         </select>
                         <p id="error_address" class="text-danger mt-2"></p>
@@ -134,20 +136,23 @@
                 <tbody>
                     @php $totalCart = 0; @endphp
                     @foreach($cartItems as $cartItem)
-                    @php
-                        $totalPrice = $cartItem->variant->price * $cartItem->quantity;
-                        $totalCart += $totalPrice;
+                        @php
+                            $totalPrice = $cartItem->variant->price * $cartItem->quantity;
+                            $totalCart += $totalPrice;
 
-                    @endphp
-                    @foreach ($cartItem->product->images as $image)
+                        @endphp
                         <tr>
                             <input type="hidden" name="cart_items[{{ $cartItem->id }}][id]" value="[{{ $cartItem->id }}]">
        
                             <td class="d-flex align-items-center gap-3">
+                                @foreach ($cartItem->product->images as $image)
+                                  <a href="{{route('product.detail',$cartItem->product->id)}}">
+
                                     @if (empty($image->product_variant_id))
                                         <img src="{{ Storage::url($image->url) }}" alt="Hình ảnh sản phẩm" width="100" class="img-thumbnail">
                                         @break
                                     @endif
+                                  </a>
                                 @endforeach
                                 <div>
                                     <div class="fw-bold">{{ $cartItem->product->name }}</div>
@@ -247,182 +252,6 @@
 
 @section('js-custom')
 {{-- <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        let totalCart = parseInt({{ $totalCart }}); // Tổng tiền giỏ hàng
-        let shippingFee = 0; // Mặc định phí vận chuyển
-        let discountValue = 0; // Giá trị giảm giá từ voucher
-
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
-        }
-
-        function updateTotalPayment() {
-        let totalPayment = totalCart + shippingFee - discountValue;
-        if (totalPayment < 0) totalPayment = 0;
-
-        console.log("🛠 Tổng tiền giỏ hàng:", totalCart);
-        console.log("🛠 Phí vận chuyển:", shippingFee);
-        console.log("🛠 Giá trị giảm giá:", discountValue);
-        console.log("🛠 Tổng thanh toán:", totalPayment);
-
-        let totalPaymentEl = document.getElementById('total_payment');
-        let totalPaymentInput = document.getElementById('total_payment_input');
-        let totalCartInput = document.getElementById('total_cart_input');
-
-        if (!totalPaymentEl || !totalPaymentInput || !totalCartInput) {
-            console.error("❌ Lỗi: Không tìm thấy phần tử HTML cần cập nhật!");
-            return;
-        }
-
-        totalPaymentEl.textContent = formatCurrency(totalPayment);
-        totalPaymentInput.value = totalPayment;
-        totalCartInput.value = totalCart;
-    }
-
-        function fetchShippingFee(districtId) {
-            if (!districtId) return;
-            fetch(`/checkout/get-shipping-fee/${districtId}`)
-                .then(response => response.json())
-                .then(data => {
-                    shippingFee = parseInt(data.fee) || 0;
-                    document.getElementById('shipping_fee').textContent = formatCurrency(shippingFee);
-                    // Cập nhật input ẩn phí ship
-                    document.getElementById('shipping_fee_input').value = shippingFee;
-                    updateTotalPayment();
-                })
-                .catch(error => console.error("Lỗi khi lấy phí ship:", error));
-        }
-
-        // Tự động tính phí vận chuyển nếu đã có địa chỉ sẵn
-        let userAddress = @json($userAddress);
-        if (userAddress && userAddress.district_id) {
-            fetchShippingFee(userAddress.district_id);
-        }
-
-        // Khi chọn tỉnh/thành -> Load quận/huyện
-        document.getElementById('province-select').addEventListener('change', function() {
-            let provinceId = this.value;
-            let districtSelect = document.getElementById('district-select');
-            let wardSelect = document.getElementById('ward-select');
-
-            districtSelect.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
-            wardSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
-            shippingFee = 0;
-            updateTotalPayment();
-
-            if (!provinceId) return;
-
-            fetch(`/checkout/get-districts/${provinceId}`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(district => {
-                        districtSelect.innerHTML += `<option value="${district.id}">${district.name}</option>`;
-                    });
-                });
-        });
-
-        // Khi chọn quận/huyện -> Load phường/xã & tính phí ship
-        document.getElementById('district-select').addEventListener('change', function() {
-            let districtId = this.value;
-            let wardSelect = document.getElementById('ward-select');
-            wardSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
-            shippingFee = 0;
-            updateTotalPayment();
-
-            if (!districtId) return;
-
-            fetch(`/checkout/get-wards/${districtId}`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(ward => {
-                        wardSelect.innerHTML += `<option value="${ward.id}">${ward.name}</option>`;
-                    });
-                });
-
-            fetchShippingFee(districtId);
-        });
-
-        // Gửi form lưu địa chỉ
-        document.getElementById('addressForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            let formData = new FormData(this);
-
-            fetch('/checkout/save-address', {
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert('Lưu địa chỉ thành công!');
-                location.reload();
-            })
-            .catch(error => {
-                alert('Lưu địa chỉ thất bại!');
-            });
-        });
-
-        // Ẩn/hiện form địa chỉ
-        window.toggleAddressForm = function() {
-            document.getElementById('show-address').style.display = 'none';
-            document.getElementById('address-form').style.display = 'block';
-        };
-
-        // Xử lý khi chọn voucher
-        document.getElementById('voucher-select').addEventListener('change', function() {
-            let selectedOption = this.selectedOptions[0];
-            let discountType = selectedOption.dataset.type;
-            discountValue = parseInt(selectedOption.dataset.value) || 0;
-
-            let displayText = "";
-            if (discountType === 'percent') {
-                displayText = `🔥 Bạn được giảm ${discountValue}đ tổng đơn hàng!`;
-            } else if (discountType === 'fixed') {
-                displayText = `🔥 Bạn được giảm ${formatCurrency(discountValue)}!`;
-            } else {
-                displayText = "";
-            }
-
-            document.getElementById('voucher-info').textContent = displayText;
-            updateTotalPayment();
-        });
-
-
-        document.querySelector('.btn-danger').addEventListener('click', function(e) {
-            e.preventDefault(); // Ngăn submit mặc định để kiểm tra hợp lệ
-
-            let addressDetail = document.querySelector('input[name="address_detail"]');
-            let province = document.querySelector('select[name="province_id"]');
-            let district = document.querySelector('select[name="district_id"]');
-            let ward = document.querySelector('select[name="ward_id"]');
-            let paymentMethod = document.querySelector('input[name="payment_method"]:checked');
-            let errorPayment = document.getElementById('error_payment');
-
-            // Kiểm tra địa chỉ có hợp lệ không
-            if (!addressDetail.value.trim() || !province.value || !district.value || !ward.value) {
-                alert("Vui lòng nhập đầy đủ địa chỉ nhận hàng!");
-                return;
-            }
-
-            // Kiểm tra đã chọn phương thức thanh toán chưa
-            if (!paymentMethod) {
-                errorPayment.textContent = "Vui lòng chọn phương thức thanh toán!";
-                return;
-            } else {
-                errorPayment.textContent = "";
-            }
-
-            // Nếu hợp lệ thì submit form
-            document.getElementById('checkoutForm').submit();
-        });
-
-    });
-
-
-
-
-
-</script> --}}
-<script>
     document.addEventListener("DOMContentLoaded", function() {
         let totalCart = parseInt({{ $totalCart }});
         let shippingFee = 0;
@@ -603,5 +432,174 @@
     </script>
     
 
+</script> --}}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let totalCart = parseInt({{ $totalCart }});
+        let shippingFee = 0;
+        let discountValue = 0;
+        let isUsingNewAddress = false;
+
+        const addressSelect = document.getElementById('address-select');
+        const provinceSelect = document.getElementById('province-select');
+        const districtSelect = document.getElementById('district-select');
+        const wardSelect = document.getElementById('ward-select');
+        const newAddressFields = document.getElementById('new-address-fields');
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        }
+
+        function updateTotalPayment() {
+            let totalPayment = totalCart + shippingFee - discountValue;
+            totalPayment = totalPayment < 0 ? 0 : totalPayment;
+
+            document.getElementById('total_payment').textContent = formatCurrency(totalPayment);
+            document.getElementById('total_payment_input').value = totalPayment;
+            document.getElementById('total_cart_input').value = totalCart;
+        }
+
+        function fetchShippingFee(districtId) {
+            if (!districtId) return;
+            fetch(`/checkout/get-shipping-fee/${districtId}`)
+                .then(res => res.json())
+                .then(data => {
+                    shippingFee = parseInt(data.fee) || 0;
+                    document.getElementById('shipping_fee').textContent = formatCurrency(shippingFee);
+                    document.getElementById('shipping_fee_input').value = shippingFee;
+                    updateTotalPayment();
+                })
+                .catch(error => console.error("Lỗi khi lấy phí ship:", error));
+        }
+
+        function toggleNewAddress() {
+            isUsingNewAddress = true;
+            newAddressFields.style.display = 'block';
+            if (addressSelect) addressSelect.value = ''; // Bỏ chọn địa chỉ cũ
+        }
+
+        function handleAddressChange() {
+            isUsingNewAddress = false; // Đang chọn địa chỉ cũ
+
+            if (!addressSelect) return;
+            const selectedOption = addressSelect.options[addressSelect.selectedIndex];
+
+            if (addressSelect.value) {
+                newAddressFields.style.display = 'none';
+                const fullAddress = [selectedOption.dataset.detail, selectedOption.dataset.ward, selectedOption.dataset.district, selectedOption.dataset.province]
+                    .filter(Boolean).join(', ');
+                document.getElementById('address-text').textContent = fullAddress;
+
+                const districtId = selectedOption.dataset.districtId;
+                if (districtId) {
+                    fetchShippingFee(districtId);
+                }
+            }
+        }
+
+        // Lấy phí ship ban đầu nếu có địa chỉ mặc định
+        let userAddress = @json($userAddress);
+        if (userAddress && userAddress.district_id) {
+            fetchShippingFee(userAddress.district_id);
+        }
+
+        // Sự kiện thay đổi Tỉnh
+        provinceSelect?.addEventListener('change', function() {
+            let provinceId = this.value;
+            districtSelect.innerHTML = '<option value="">-- Chọn Quận/Huyện --</option>';
+            wardSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+            if (isUsingNewAddress) {
+                shippingFee = 0;
+                updateTotalPayment();
+            }
+
+            if (!provinceId) return;
+
+            fetch(`/checkout/get-districts/${provinceId}`)
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(district => {
+                        districtSelect.innerHTML += `<option value="${district.id}">${district.name}</option>`;
+                    });
+                });
+        });
+
+        // Sự kiện thay đổi Quận
+        districtSelect?.addEventListener('change', function() {
+            let districtId = this.value;
+            wardSelect.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>';
+            if (isUsingNewAddress) {
+                shippingFee = 0;
+                updateTotalPayment();
+                fetchShippingFee(districtId);
+            }
+
+            if (!districtId) return;
+
+            fetch(`/checkout/get-wards/${districtId}`)
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(ward => {
+                        wardSelect.innerHTML += `<option value="${ward.id}">${ward.name}</option>`;
+                    });
+                });
+        });
+
+        // Khi chọn địa chỉ cũ
+        addressSelect?.addEventListener('change', handleAddressChange);
+
+        // Voucher
+        document.getElementById('voucher-select')?.addEventListener('change', function() {
+            let selectedOption = this.selectedOptions[0];
+            let discountType = selectedOption.dataset.type;
+            discountValue = parseInt(selectedOption.dataset.value) || 0;
+
+            let displayText = "";
+            if (discountType === 'percent') {
+                displayText = `🔥 Giảm ${discountValue}% tổng đơn hàng!`;
+            } else if (discountType === 'fixed') {
+                displayText = `🔥 Giảm ${formatCurrency(discountValue)}!`;
+            }
+            document.getElementById('voucher-info').textContent = displayText;
+            updateTotalPayment();
+        });
+
+        // Validate trước khi submit
+        document.getElementById('checkout').addEventListener('click', function(e) {
+            e.preventDefault();
+
+            const newAddressDetail = document.querySelector('input[name="new_address_detail"]');
+            const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
+            const errorPayment = document.getElementById('error_payment');
+            const errorAddress = document.getElementById('error_address');
+
+            let valid = true;
+            errorAddress.textContent = "";
+            errorPayment.textContent = "";
+
+            if (newAddressFields.style.display === 'block') {
+                if (!newAddressDetail.value.trim() || !provinceSelect.value || !districtSelect.value || !wardSelect.value) {
+                    errorAddress.textContent = "⚠️ Vui lòng nhập đầy đủ địa chỉ nhận hàng mới!";
+                    valid = false;
+                }
+            } else if (!addressSelect.value) {
+                errorAddress.textContent = "⚠️ Vui lòng chọn địa chỉ giao hàng!";
+                valid = false;
+            }
+
+            if (!paymentMethod) {
+                errorPayment.textContent = "⚠️ Vui lòng chọn phương thức thanh toán!";
+                valid = false;
+            }
+
+            if (valid) {
+                document.getElementById('checkoutForm').submit();
+            }
+        });
+
+        // Gán toggle vào nút thêm mới
+        window.toggleNewAddress = toggleNewAddress;
+    });
 </script>
+
 @endsection
