@@ -132,26 +132,6 @@
 
 
                         <div class="header-nav-middle">
-
-                            {{-- SEARCH FORM --}}
-                            <div class="d-flex justify-content-center mt-4 mb-4">
-                                <form action="{{ route('product.search') }}" method="GET" class="d-flex w-75">
-                                    @csrf
-                                    <input class="form-control me-2" type="search" name="keyword" placeholder="Nhập tên, mô tả, danh mục..."
-                                           value="{{ request('keyword') }}" required>
-
-                                    <select name="sort" class="form-select me-2" style="max-width:150px;">
-                                        <option value="">Sắp xếp</option>
-                                        <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Giá tăng dần</option>
-                                        <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Giá giảm dần</option>
-                                    </select>
-
-                                    <button class="btn btn-danger" type="submit">
-                                        <i class="fa fa-search"></i>
-                                    </button>
-                                </form>
-                            </div>
-
                             <div class="main-nav navbar navbar-expand-xl navbar-light navbar-sticky">
                                 <div class="offcanvas offcanvas-collapse order-xl-2" id="primaryMenu">
                                     <div class="offcanvas-header navbar-shadow">
@@ -315,7 +295,14 @@
                                     <li class="right-side onhover-dropdown">
                                         <div class="delivery-login-box">
                                             <div class="delivery-icon">
+                                            @if (Auth::check())
+                                                <img class="user-profile rounded-circle" style="width: 30px; height: 30px;"
+                                                src="{{ Storage::url(Auth::user()->profile->avatar) }}"
+                                                alt="Avatar">
+                                            @else
                                                 <i data-feather="user"></i>
+                                            @endif
+                                                
                                             </div>
 
                                             <div class="delivery-detail">
@@ -378,6 +365,31 @@
                     </div>
                 </div>
             </div>
+            {{-- SEARCH FORM --}}
+            <div class="container my-4">
+                <form action="{{ route('product.search') }}" method="GET" class="row g-2 align-items-center justify-content-center">
+                    @csrf
+
+                    <div class="col-md-6">
+                        <input class="form-control p-3" type="search" name="keyword" placeholder="Nhập tên, mô tả, danh mục..." value="{{ request('keyword') }}" required>
+                    </div>
+
+                    <div class="col-md-3">
+                        <select name="sort" class="form-select p-3">
+                            <option value="">Sắp xếp</option>
+                            <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Giá tăng dần</option>
+                            <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Giá giảm dần</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <button class="btn btn-danger w-100 p-3" type="submit">
+                            <i class="fa fa-search me-2"></i> Tìm kiếm
+                        </button>
+                    </div>
+                </form>
+            </div>
+
         </div>
     </div>
 </header>

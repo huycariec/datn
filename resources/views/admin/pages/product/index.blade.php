@@ -69,10 +69,13 @@
                                         <div class="title-header option-title">
                                             <h5>Danh sách sản phẩm</h5>
                                         </div>
-
-                                        <a href="{{ route('admin.product.create') }}" class="btn btn-primary">
-                                            <i class="fas fa-plus me-1"></i> Thêm Mới Sản Phẩm
-                                        </a>
+                                        @canany(['products_list', 'products_create'])
+                                            @can('products_create')
+                                            <a href="{{ route('admin.product.create') }}" class="btn btn-primary">
+                                                <i class="fas fa-plus me-1"></i> Thêm Mới Sản Phẩm
+                                            </a>
+                                            @endcan
+                                        @endcanany
                                     </div>
                                     <div class="mb-4">
                                         <form method="GET" action="{{ route('admin.product.index') }}">
@@ -172,27 +175,36 @@
                                                         </td>
                                                         <td>
                                                             <ul>
-                                                                <li>
-                                                                    <a href="{{route('admin.variant.index',$product->id)}}">
-                                                                        <i class="ri-eye-line"></i>
-                                                                    </a>
-                                                                </li>
+                                                                @canany(['products_update', 'products_delete','products_detail'])
+                                                                    @can('products_detail')
+                                                                        <li>
+                                                                            <a href="{{route('admin.variant.index',$product->id)}}">
+                                                                                <i class="ri-eye-line"></i>
+                                                                            </a>
+                                                                        </li>
+                                                                    @endcan
+                                                                
+                                                                    @can('products_update')
 
-                                                                <li>
-                                                                    <a href="{{route('admin.product.edit',$product->id)}}">
-                                                                        <i class="ri-pencil-line"></i>
-                                                                    </a>
-                                                                </li>
+                                                                        <li>
+                                                                            <a href="{{route('admin.product.edit',$product->id)}}">
+                                                                                <i class="ri-pencil-line"></i>
+                                                                            </a>
+                                                                        </li>
+                                                                    @endcan
+                                                                    @can('products_delete')
+                                                                        <li>
+                                                                            <form action="{{ route('admin.product.delete', $product->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn tắt sản phẩm này không?')">
+                                                                                @csrf
+                                                                                @method('POST')
+                                                                                <button type="submit" class="btn btn-link p-0 border-0 text-danger">
+                                                                                    <i class="ri-delete-bin-line"></i>
+                                                                                </button>
+                                                                            </form>
+                                                                        </li> 
 
-                                                                <li>
-                                                                    <form action="{{ route('admin.product.delete', $product->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn tắt sản phẩm này không?')">
-                                                                        @csrf
-                                                                        @method('POST')
-                                                                        <button type="submit" class="btn btn-link p-0 border-0 text-danger">
-                                                                            <i class="ri-delete-bin-line"></i>
-                                                                        </button>
-                                                                    </form>
-                                                                </li>
+                                                                @endcan
+                                                                @endcanany
 
                                                             </ul>
                                                         </td>

@@ -12,6 +12,17 @@
                             <div class="card-header-2">
                                 <h5>Thông tin sản phẩm</h5>
                             </div>
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <strong>Đã xảy ra lỗi:</strong>
+                                    <ul class="mb-0">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
                                 <div class="mb-4 row align-items-center">
                                     <label class="form-label-title col-sm-3 mb-0">Tên sản phẩm</label>
                                     <div class="col-sm-9">
