@@ -63,24 +63,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Thương hiệu sản phẩm -->
-                                {{-- <div class="mb-4 row align-items-center">
-                                    <label class="col-sm-3 col-form-label form-label-title">Thương hiệu</label>
-                                    <div class="col-sm-9">
-                                        <select class="js-example-basic-single w-100" name="brand_id" required>
-                                            <option disabled>Chọn thương hiệu</option>
-                                            @foreach($brands as $brand)
-                                                <option value="{{ $brand->id }}" {{ old('brand_id', $product->brand_id) == $brand->id ? 'selected' : '' }}>
-                                                    {{ $brand->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    @error('brand_id')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div> --}}
-
                                 <!-- Đơn vị khối lượng -->
                                 <div class="mb-4 row align-items-center">
                                     <label class="col-sm-3 col-form-label form-label-title">Đơn vị khối lượng</label>

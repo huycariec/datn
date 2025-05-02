@@ -42,25 +42,21 @@ class HomeController extends Controller
         ->orderBy('created_at', 'desc')
         ->take(8)
         ->get();
-//
-//        $bestSellingProducts = Product::with('firstImage')
-//        ->select('products.*', DB::raw('SUM(order_details.quantity) as total_sold'))
-//        ->join('order_details', 'products.id', '=', 'order_details.product_id')
-//        ->join('orders', 'orders.id', '=', 'order_details.order_id')
-//        ->where('orders.status', 'received') // chỉ đơn đã nhận
-//        ->where('products.is_active', 1)     // sản phẩm đang hoạt động
-//        ->groupBy('products.id')
-//        ->orderByDesc('total_sold')
-//        ->get();
-        // dd($bestSellingProducts);
         $mostViewedProducts = Product::with('firstImage')
         ->where('is_active', 1)
         ->orderByDesc('view')
         ->get();
 
+        $topProducts = Product::withSum('orderDetails', 'quantity')
+        ->where('is_active', 1)
+        ->orderByDesc('order_details_sum_quantity')
+        ->take(10)
+        ->get();
 
 
-        return view('client.home', compact('categories', 'discountProducts', 'wishlistItems', 'banners','newProducts','mostViewedProducts'));
+
+
+        return view('client.home', compact('categories', 'discountProducts', 'wishlistItems', 'banners','newProducts','mostViewedProducts','topProducts'));
     }
 
     public function productsByCategory($categoryId)
