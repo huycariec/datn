@@ -3,57 +3,6 @@
 @section('content')
 <div class="container py-4">
     <h2 class="mb-4 text-danger">🛒 Thanh Toán</h2>
-
-    <!-- Địa chỉ nhận hàng -->
-    {{-- <div class="bg-white p-3 rounded shadow-sm mb-4">
-        <h5>📍 Địa Chỉ Nhận Hàng</h5>
-
-        @if(isset($userAddress) && $userAddress)
-            <div id="show-address">
-                <p><strong>{{ $user->name }}</strong> (+84) {{ $user->phone }}</p>
-                <p>{{ $userAddress->address_detail }}, {{ $userAddress->ward->name ?? '' }}, {{ $userAddress->district->name ?? '' }}, {{ $userAddress->province->name ?? '' }}</p>
-                <a href="javascript:void(0);" onclick="toggleAddressForm()" class="text-primary">Chỉnh sửa</a>
-            </div>
-        @endif
-
-        <!-- Form nhập địa chỉ -->
-        <div id="address-form" style="{{ isset($userAddress) && $userAddress ? 'display:none;' : '' }}">
-            <form id="addressForm" method="POST">
-                    @csrf
-                    <label>Địa chỉ chi tiết:</label>
-                    <input type="text" name="address_detail" value="{{ $userAddress->address_detail ?? '' }}" placeholder="Số nhà, tên đường..." required>
-
-                <select name="province_id" id="province-select">
-                    <option value="">-- Chọn Tỉnh/Thành --</option>
-                    @foreach($provinces as $province)
-                        <option value="{{ $province->id }}" {{ (isset($userAddress) && $userAddress->province_id == $province->id) ? 'selected' : '' }}>
-                            {{ $province->name }}
-                        </option>
-                    @endforeach
-                </select>
-                
-                <select name="district_id" id="district-select">
-                    <option value="">-- Chọn Quận/Huyện --</option>
-                    @foreach($districts as $district)
-                        <option value="{{ $district->id }}" {{ (isset($userAddress) && $userAddress->district_id == $district->id) ? 'selected' : '' }}>
-                            {{ $district->name }}
-                        </option>
-                    @endforeach
-                </select>
-                
-                <select name="ward_id" id="ward-select">
-                    <option value="">-- Chọn Phường/Xã --</option>
-                    @foreach($wards as $ward)
-                        <option value="{{ $ward->id }}" {{ (isset($userAddress) && $userAddress->ward_id == $ward->id) ? 'selected' : '' }}>
-                            {{ $ward->name }}
-                        </option>
-                    @endforeach
-                </select>
-                    <button type="submit" class="btn btn-primary mt-2">Lưu địa chỉ</button>
-            </form>
-        </div>
-    </div> --}}
-
     <form  id="checkoutForm" action="{{route('checkout.placeOrder')}}" method="POST">
         @csrf
         <!-- Địa chỉ nhận hàng -->

@@ -130,23 +130,13 @@
 
                                     <div class="product-rating custom-rate">
                                         <ul class="rating">
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star" class="fill"></i>
-                                            </li>
-                                            <li>
-                                                <i data-feather="star"></i>
-                                            </li>
-                                        </ul>
-                                        <span class="review">23 Customer Review</span>
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <li>
+                                                    <i data-feather="star" class="{{ $i <= floor($product->average_rating) ? 'fill' : '' }}"></i>
+                                                </li>
+                                            @endfor
+                                       </ul>
+                                       <span class="review"> đánh giá({{ number_format($product->average_rating, 1) }})</span>
                                     </div>
                                 </div>
                                 <!-- Mô tả ngắn -->
@@ -283,24 +273,6 @@
                                 <h3>Sản Phẩm mới nhất</h3>
 
                                 <ul class="product-list product-right-sidebar border-0 p-0">
-                                    {{-- <li>
-                                        <div class="offer-product">
-                                            <a href="product-left-thumbnail.html" class="offer-image">
-                                                <img src="../assets/images/vegetable/product/23.png"
-                                                    class="img-fluid blur-up lazyload" alt="">
-                                            </a>
-
-                                            <div class="offer-detail">
-                                                <div>
-                                                    <a href="product-left-thumbnail.html">
-                                                        <h6 class="name">Meatigo Premium Goat Curry</h6>
-                                                    </a>
-                                                    <span>450 G</span>
-                                                    <h6 class="price theme-color">$ 70.00</h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li> --}}
                                     @foreach($newProducts as $product)
                                     <li>
                                         <div class="offer-product">
@@ -321,84 +293,9 @@
                                     </li>
                                 @endforeach
                                 
-                                    {{-- <li>
-                                        <div class="offer-product">
-                                            <a href="product-left-thumbnail.html" class="offer-image">
-                                                <img src="../assets/images/vegetable/product/24.png"
-                                                    class="blur-up lazyload" alt="">
-                                            </a>
-
-                                            <div class="offer-detail">
-                                                <div>
-                                                    <a href="product-left-thumbnail.html">
-                                                        <h6 class="name">Dates Medjoul Premium Imported</h6>
-                                                    </a>
-                                                    <span>450 G</span>
-                                                    <h6 class="price theme-color">$ 40.00</h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-
-                                    <li>
-                                        <div class="offer-product">
-                                            <a href="product-left-thumbnail.html" class="offer-image">
-                                                <img src="../assets/images/vegetable/product/25.png"
-                                                    class="blur-up lazyload" alt="">
-                                            </a>
-
-                                            <div class="offer-detail">
-                                                <div>
-                                                    <a href="product-left-thumbnail.html">
-                                                        <h6 class="name">Good Life Walnut Kernels</h6>
-                                                    </a>
-                                                    <span>200 G</span>
-                                                    <h6 class="price theme-color">$ 52.00</h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-
-                                    <li class="mb-0">
-                                        <div class="offer-product">
-                                            <a href="product-left-thumbnail.html" class="offer-image">
-                                                <img src="../assets/images/vegetable/product/26.png"
-                                                    class="blur-up lazyload" alt="">
-                                            </a>
-
-                                            <div class="offer-detail">
-                                                <div>
-                                                    <a href="product-left-thumbnail.html">
-                                                        <h6 class="name">Apple Red Premium Imported</h6>
-                                                    </a>
-                                                    <span>1 KG</span>
-                                                    <h6 class="price theme-color">$ 80.00</h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li> --}}
                                 </ul>
                             </div>
                         </div>
-
-                        <!-- Banner Section -->
-                        {{-- <div class="ratio_156 pt-25">
-                            <div class="home-contain">
-                                <img src="../assets/images/vegetable/banner/8.jpg" class="bg-img blur-up lazyload"
-                                    alt="">
-                                <div class="home-detail p-top-left home-p-medium">
-                                    <div>
-                                        <h6 class="text-yellow home-banner">Seafood</h6>
-                                        <h3 class="text-uppercase fw-normal"><span
-                                                class="theme-color fw-bold">Freshes</span> Products</h3>
-                                        <h3 class="fw-light">every hour</h3>
-                                        <button onclick="location.href = 'shop-left-sidebar.html';"
-                                            class="btn btn-animation btn-md fw-bold mend-auto">Shop Now <i
-                                                class="fa-solid fa-arrow-right icon"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> --}}
                     </div>
                 </div>
             </div>
@@ -576,23 +473,13 @@
                                             </a>
                                             <div class="product-rating mt-2">
                                                 <ul class="rating">
-                                                    <li>
-                                                        <i data-feather="star" class="fill"></i>
-                                                    </li>
-                                                    <li>
-                                                        <i data-feather="star" class="fill"></i>
-                                                    </li>
-                                                    <li>
-                                                        <i data-feather="star" class="fill"></i>
-                                                    </li>
-                                                    <li>
-                                                        <i data-feather="star"></i>
-                                                    </li>
-                                                    <li>
-                                                        <i data-feather="star"></i>
-                                                    </li>
-                                                </ul>
-                                                <span>(3.8)</span>
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        <li>
+                                                            <i data-feather="star" class="{{ $i <= floor($product->average_rating) ? 'fill' : '' }}"></i>
+                                                        </li>
+                                                    @endfor
+                                               </ul>
+                                               <span>({{ number_format($product->average_rating, 1) }})</span>
                                             </div>
 
                                             <h6 class="unit">1 Kg</h6>

@@ -160,15 +160,16 @@
                                     <h5 class="sold text-content d-flex flex-column text-center">
                                         @if(!empty($product->price_old) && $product->price_old > 0 && $product->price_old > $product->price)
                                             <span class="old-price text-danger text-decoration-line-through mb-1">
-                                                {{ number_format($product->price_old, 0, ',', '.') }} đ
+                                                giá gốc: {{ number_format($product->price_old, 0, ',', '.') }} đ
                                             </span>
                                         @endif
 
 
                                         <span class="theme-color price fw-bold fs-5">
-                                            {{ number_format($product->price, 0, ',', '.') }} đ
+                                            giá siêu ưu đãi: {{ number_format($product->price, 0, ',', '.') }} đ
                                         </span>
                                     </h5>
+                                    <span>danh mục: {{ $product->category->name }}</span>
 
                                 </div>
                             </div>
@@ -255,38 +256,37 @@
                                             <h3>Bán chạy nhất</h3>
                                         </div>
 
-{{--                                        @foreach($bestSellingProducts->take(4) as $product)--}}
-{{--                                            <div class="top-selling-contain wow fadeInUp">--}}
-{{--                                                <a href="{{ route('product.detail', $product->id) }}" class="top-selling-image">--}}
-{{--                                                    @if($product->images->first())--}}
-{{--                                                        <img src="{{ Storage::url($product->images->first()->url) }}"--}}
-{{--                                                             class="img-fluid blur-up lazyload" alt="{{ $product->name }}">--}}
-{{--                                                    @else--}}
-{{--                                                        <img src="{{ asset('path/to/default.jpg') }}"--}}
-{{--                                                             class="img-fluid blur-up lazyload" alt="{{ $product->name }}">--}}
-{{--                                                    @endif--}}
-{{--                                                </a>--}}
+                                       @foreach($topProducts->take(4) as $product)
+                                           <div class="top-selling-contain wow fadeInUp">
+                                               <a href="{{ route('product.detail', $product->id) }}" class="top-selling-image">
+                                                   @if($product->images->first())
+                                                       <img src="{{ Storage::url($product->images->first()->url) }}"
+                                                            class="img-fluid blur-up lazyload" alt="{{ $product->name }}">
+                                                   @else
+                                                       <img src="{{ asset('path/to/default.jpg') }}"
+                                                            class="img-fluid blur-up lazyload" alt="{{ $product->name }}">
+                                                   @endif
+                                               </a>
 
-{{--                                                <div class="top-selling-detail">--}}
-{{--                                                    <a href="{{ route('product.detail', $product->id) }}">--}}
-{{--                                                        <h5>{{ $product->name }}</h5>--}}
-{{--                                                    </a>--}}
+                                               <div class="top-selling-detail">
+                                                   <a href="{{ route('product.detail', $product->id) }}">
+                                                       <h5>{{ $product->name }}</h5>
+                                                   </a>
+                                                   <div class="product-rating">
+                                                       <ul class="rating">
+                                                            @for ($i = 1; $i <= 5; $i++)
+                                                                <li>
+                                                                    <i data-feather="star" class="{{ $i <= floor($product->average_rating) ? 'fill' : '' }}"></i>
+                                                                </li>
+                                                            @endfor
+                                                       </ul>
+                                                       <span>({{ number_format($product->average_rating, 1) }})</span>
+                                                   </div>
 
-{{--                                                    <div class="product-rating">--}}
-{{--                                                        <ul class="rating">--}}
-{{--                                                            <li><i data-feather="star" class="fill"></i></li>--}}
-{{--                                                            <li><i data-feather="star" class="fill"></i></li>--}}
-{{--                                                            <li><i data-feather="star" class="fill"></i></li>--}}
-{{--                                                            <li><i data-feather="star" class="fill"></i></li>--}}
-{{--                                                            <li><i data-feather="star"></i></li>--}}
-{{--                                                        </ul>--}}
-{{--                                                        <span>(34)</span> --}}{{-- tạm cứng, sau đổ rating thật sau --}}
-{{--                                                    </div>--}}
-
-{{--                                                    <h6>{{ number_format($product->price, 0, ',', '.') }} đ</h6>--}}
-{{--                                                </div>--}}
-{{--                                            </div>--}}
-{{--                                        @endforeach--}}
+                                                   <h6>{{ number_format($product->price, 0, ',', '.') }} đ</h6>
+                                               </div>
+                                           </div>
+                                       @endforeach
                                     </div>
 
                                 </div>
@@ -320,13 +320,13 @@
 
                                                     <div class="product-rating">
                                                         <ul class="rating">
-                                                            <li><i data-feather="star" class="fill"></i></li>
-                                                            <li><i data-feather="star" class="fill"></i></li>
-                                                            <li><i data-feather="star" class="fill"></i></li>
-                                                            <li><i data-feather="star" class="fill"></i></li>
-                                                            <li><i data-feather="star"></i></li>
+                                                            @for ($i = 1; $i <= 5; $i++)
+                                                                <li>
+                                                                    <i data-feather="star" class="{{ $i <= floor($product->average_rating) ? 'fill' : '' }}"></i>
+                                                                </li>
+                                                            @endfor
                                                         </ul>
-                                                        <span>(34)</span> {{-- tạm cứng, sau đổ rating thật sau --}}
+                                                        <span>({{ number_format($product->average_rating, 1) }})</span>
                                                     </div>
 
                                                     <h6>{{ number_format($product->price, 0, ',', '.') }} đ</h6>
@@ -367,13 +367,14 @@
 
                                                     <div class="product-rating">
                                                         <ul class="rating">
-                                                            <li><i data-feather="star" class="fill"></i></li>
-                                                            <li><i data-feather="star" class="fill"></i></li>
-                                                            <li><i data-feather="star" class="fill"></i></li>
-                                                            <li><i data-feather="star" class="fill"></i></li>
-                                                            <li><i data-feather="star"></i></li>
+                                                            @for ($i = 1; $i <= 5; $i++)
+                                                                <li>
+                                                                    <i data-feather="star" class="{{ $i <= floor($product->average_rating) ? 'fill' : '' }}"></i>
+                                                                </li>
+                                                            @endfor
                                                         </ul>
-                                                        <span>(34)</span> {{-- tạm cứng, sau đổ rating thật sau --}}
+                                                        <span>({{ number_format($product->average_rating, 1) }})</span>
+ 
                                                     </div>
 
                                                     <h6>{{ number_format($product->price, 0, ',', '.') }} đ</h6>
@@ -456,19 +457,24 @@
                                     </div>
 
                                     <div class="product-detail">
-                                        <a href="{{route('product.detail',$newProduct->id)}}">
-                                            <h5 class="name">{{$newProduct->name}}</h5>
+                                        <a href="{{ route('product.detail', $product->id) }}">
+                                            <h5 class="name">{{ $product->name }}</h5>
                                         </a>
-
-                                        <h5 class="sold text-content">
-                                            <span class="theme-color price">{{ number_format($newProduct->price, 0, ',', '.') }} đ</span>
-
-                                            @if($newProduct->price_old)
-                                                <del style="color: red;">{{ number_format($newProduct->price_old, 0, ',', '.') }} đ</del>
+    
+                                        <h5 class="sold text-content d-flex flex-column text-center">
+                                            @if(!empty($product->price_old) && $product->price_old > 0 && $product->price_old > $product->price)
+                                                <span class="old-price text-danger text-decoration-line-through mb-1">
+                                                    giá gốc: {{ number_format($product->price_old, 0, ',', '.') }} đ
+                                                </span>
                                             @endif
+    
+    
+                                            <span class="theme-color price fw-bold fs-5">
+                                                giá sản phẩm: {{ number_format($product->price, 0, ',', '.') }} đ
+                                            </span>
                                         </h5>
-
-
+                                        <span>danh mục: {{ $product->category->name }}</span>
+    
                                     </div>
                                 </div>
                             </div>
@@ -490,58 +496,65 @@
             <div class="row g-sm-4 g-3">
                 <div class="col-xxl-12 ratio_110">
                     <div class="slider-6 img-slider">
-{{--                        @foreach($bestSellingProducts as $product)--}}
-{{--                        <div>--}}
-{{--                            <div class="product-box-5 wow fadeInUp">--}}
-{{--                                <div class="product-image">--}}
-{{--                                    @foreach ($product->images as $image)--}}
-{{--                                    <a href="{{ route('product.detail', $product->id) }}">--}}
-{{--                                        <img src="{{Storage::url($image->url)}}"--}}
-{{--                                             class="img-fluid blur-up lazyload bg-img" alt="{{ $product->name }}">--}}
-{{--                                    </a>--}}
-{{--                                    @endforeach--}}
+                       @foreach($topProducts as $product)
+                       <div>
+                           <div class="product-box-5 wow fadeInUp">
+                               <div class="product-image">
+                                   @foreach ($product->images as $image)
+                                   <a href="{{ route('product.detail', $product->id) }}">
+                                       <img src="{{Storage::url($image->url)}}"
+                                            class="img-fluid blur-up lazyload bg-img" alt="{{ $product->name }}">
+                                   </a>
+                                   @endforeach
 
-{{--                                    <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"--}}
-{{--                                       data-bs-placement="top" title="Wishlist">--}}
-{{--                                        <i data-feather="bookmark"></i>--}}
-{{--                                    </a>--}}
+                                   <a href="javascript:void(0)" class="wishlist-top" data-bs-toggle="tooltip"
+                                      data-bs-placement="top" title="Wishlist">
+                                       <i data-feather="bookmark"></i>
+                                   </a>
 
-{{--                                    <ul class="product-option">--}}
-{{--                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">--}}
-{{--                                            <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">--}}
-{{--                                                <i data-feather="eye"></i>--}}
-{{--                                            </a>--}}
-{{--                                        </li>--}}
+                                   <ul class="product-option">
+                                       <li data-bs-toggle="tooltip" data-bs-placement="top" title="View">
+                                           <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#view">
+                                               <i data-feather="eye"></i>
+                                           </a>
+                                       </li>
 
-{{--                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">--}}
-{{--                                            <a href="compare.html">--}}
-{{--                                                <i data-feather="refresh-cw"></i>--}}
-{{--                                            </a>--}}
-{{--                                        </li>--}}
+                                       <li data-bs-toggle="tooltip" data-bs-placement="top" title="Compare">
+                                           <a href="compare.html">
+                                               <i data-feather="refresh-cw"></i>
+                                           </a>
+                                       </li>
+                                       <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">
+                                           <a href="wishlist.html" class="notifi-wishlist">
+                                               <i data-feather="heart"></i>
+                                           </a>
+                                       </li>
+                                   </ul>
+                               </div>
 
-{{--                                        <li data-bs-toggle="tooltip" data-bs-placement="top" title="Wishlist">--}}
-{{--                                            <a href="wishlist.html" class="notifi-wishlist">--}}
-{{--                                                <i data-feather="heart"></i>--}}
-{{--                                            </a>--}}
-{{--                                        </li>--}}
-{{--                                    </ul>--}}
-{{--                                </div>--}}
+                                <div class="product-detail">
+                                    <a href="{{ route('product.detail', $product->id) }}">
+                                        <h5 class="name">{{ $product->name }}</h5>
+                                    </a>
 
-{{--                                <div class="product-detail">--}}
-{{--                                    <a href="{{ route('product.detail', $product->id) }}">--}}
-{{--                                        <h5 class="name">{{ $product->name }}</h5>--}}
-{{--                                    </a>--}}
+                                    <h5 class="sold text-content d-flex flex-column text-center">
+                                        @if(!empty($product->price_old) && $product->price_old > 0 && $product->price_old > $product->price)
+                                            <span class="old-price text-danger text-decoration-line-through mb-1">
+                                                giá gốc: {{ number_format($product->price_old, 0, ',', '.') }} đ
+                                            </span>
+                                        @endif
 
-{{--                                    <h5 class="sold text-content">--}}
-{{--                                        <span class="theme-color price">{{ number_format($product->price, 0, ',', '.') }} đ</span>--}}
-{{--                                        @if($product->price_old)--}}
-{{--                                            <del style="color: red;">{{ number_format($product->price_old, 0, ',', '.') }} đ</del>--}}
-{{--                                        @endif--}}
-{{--                                    </h5>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                        @endforeach--}}
+
+                                        <span class="theme-color price fw-bold fs-5">
+                                            giá siêu ưu đãi: {{ number_format($product->price, 0, ',', '.') }} đ
+                                        </span>
+                                    </h5>
+                                    <span>danh mục: {{ $product->category->name }}</span>
+
+                                </div>
+                           </div>
+                       </div>
+                       @endforeach
                     </div>
                 </div>
             </div>

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Cart;
 use App\Models\Images;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Attribute;
+use App\Models\OrderDetail;
 use Illuminate\Http\Request;
 use App\Models\AttributeValue;
 use App\Models\ProductVariant;
@@ -76,6 +78,65 @@ class ProductController extends Controller
     }
     public function store(Request $request)
     {
+        $request->validate([
+            'product_name' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'description' => 'nullable|string',
+            'short_description' => 'nullable|string|max:500',
+            'product_price' => 'nullable|numeric|min:0',
+            'product_price_old' => 'nullable|numeric|min:0',
+            'product_image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'product_type' => 'required|in:simple,variable',
+            'variants' => 'required_if:product_type,variable|array',
+            'variants.*.attributes' => 'required_if:product_type,variable|array',
+            'variants.*.attributes.*' => 'required|string|max:255',
+            'variants.*.pricing.price' => 'required_if:product_type,variable|numeric|min:0',
+            'variants.*.pricing.stock' => 'required_if:product_type,variable|integer|min:0',
+            'variants.*.pricing.image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ], [
+            'product_name.required' => 'Tên sản phẩm là bắt buộc.',
+            'product_name.max' => 'Tên sản phẩm không được vượt quá 255 ký tự.',
+            'category_id.required' => 'Vui lòng chọn danh mục.',
+            'category_id.exists' => 'Danh mục đã chọn không tồn tại.',
+            'description.string' => 'Mô tả phải là một chuỗi.',
+            'short_description.string' => 'Mô tả ngắn phải là một chuỗi.',
+            'short_description.max' => 'Mô tả ngắn không được vượt quá 500 ký tự.',
+            'product_price.numeric' => 'Giá sản phẩm phải là một số.',
+            'product_price.min' => 'Giá sản phẩm phải lớn hơn hoặc bằng 0.',
+            'product_price_old.numeric' => 'Giá gốc phải là một số.',
+            'product_price_old.min' => 'Giá gốc phải lớn hơn hoặc bằng 0.',
+            'product_image.image' => 'Ảnh sản phẩm phải là một tệp hình ảnh.',
+            'product_image.mimes' => 'Ảnh sản phẩm phải có định dạng jpg, jpeg, png.',
+            'product_image.max' => 'Ảnh sản phẩm không được lớn hơn 2MB.',
+            'product_type.required' => 'Vui lòng chọn loại sản phẩm.',
+            'product_type.in' => 'Loại sản phẩm không hợp lệ.',
+            'variants.required_if' => 'Vui lòng thêm ít nhất một biến thể cho sản phẩm.',
+            'variants.*.attributes.required_if' => 'Thuộc tính của biến thể là bắt buộc.',
+            'variants.*.attributes.*.required' => 'Giá trị thuộc tính là bắt buộc.',
+            'variants.*.attributes.*.max' => 'Giá trị thuộc tính không được vượt quá 255 ký tự.',
+            'variants.*.pricing.price.required_if' => 'Giá của biến thể là bắt buộc.',
+            'variants.*.pricing.price.numeric' => 'Giá của biến thể phải là một số.',
+            'variants.*.pricing.price.min' => 'Giá của biến thể phải lớn hơn hoặc bằng 0.',
+            'variants.*.pricing.stock.required_if' => 'Tồn kho của biến thể là bắt buộc.',
+            'variants.*.pricing.stock.integer' => 'Tồn kho của biến thể phải là số nguyên.',
+            'variants.*.pricing.stock.min' => 'Tồn kho của biến thể không được nhỏ hơn 0.',
+            'variants.*.pricing.image.image' => 'Ảnh của biến thể phải là tệp hình ảnh.',
+            'variants.*.pricing.image.mimes' => 'Ảnh của biến thể phải có định dạng jpg, jpeg, png hoặc webp.',
+            'variants.*.pricing.image.max' => 'Ảnh của biến thể không được lớn hơn 2MB.',
+        ]);
+        
+        // 👉 So sánh sau validate
+        if (
+            $request->filled('product_price') &&
+            $request->filled('product_price_old') &&
+            $request->product_price > $request->product_price_old
+        ) {
+            return back()->withErrors([
+                'product_price' => 'Giá khuyến mãi không được lớn hơn giá gốc.',
+            ])->withInput();
+        }
+        
+        
         $dataProduct=$request->all();
         $productName = $dataProduct['product_name'] ?? 'Sản phẩm chưa có tên';
 
@@ -85,7 +146,8 @@ class ProductController extends Controller
             'category_id' => $dataProduct['category_id'], // Nếu không có thì mặc định là 1
             'description' => $dataProduct['description'] ?? '', // Nếu không có thì mặc định rỗng
             'short_description' => $dataProduct['short_description'] ?? '', // Thêm mô tả ngắn
-            'price' => $dataProduct['product_price'] ?? 0, // Nếu không có thì mặc định 0
+            'price' => $dataProduct['product_price'],
+            'price_pld'=>$dataProduct['product_price_old'],
             'view' => 0, // Mặc định là 0 thay vì 1
         ]);
 
@@ -220,16 +282,32 @@ class ProductController extends Controller
     }
 
 
+    //tắt trạng thái
     public function delete($id)
     {
-        $product = Product::findOrFail($id); // Tìm sản phẩm theo ID
-        $product->is_active = 0; // Cập nhật trạng thái is_active thành 0
-        $product->save(); // Lưu thay đổi
-        // ProductVariant::where('product_id', $id)->update(['is_active' => 0]);
-        ProductVariant::where('product_id', $id)->update(['is_active' => 0]);
-
-        return redirect()->route('admin.product.index')->with('success', 'Sản phẩm đã được tắt thành công!');
+        // Kiểm tra xem sản phẩm đã có trong đơn hàng chưa
+        $hasOrderDetails = OrderDetail::where('product_id', $id)->exists();
+    
+        if ($hasOrderDetails) {
+            return redirect()->route('admin.product.index')
+                ->with('error', 'Không thể xóa sản phẩm vì đã có dữ liệu liên quan đến đơn hàng.');
+        }
+    
+        // Xóa các biến thể sản phẩm liên quan
+        ProductVariant::where('product_id', $id)->delete();
+    
+        // Xóa các mục giỏ hàng liên quan
+        Cart::where('product_id', $id)->delete();
+    
+        // Xóa sản phẩm
+        $product = Product::findOrFail($id);
+        $product->delete();
+    
+        return redirect()->route('admin.product.index')
+            ->with('success', 'Sản phẩm và các dữ liệu liên quan đã được xóa thành công!');
     }
+    
+
     public function toggleStatus(Request $request, $id)
     {
         $product = Product::findOrFail($id);

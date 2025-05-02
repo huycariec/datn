@@ -42,5 +42,13 @@ class Product extends Model
     {
         return $this->hasOne(Images::class)->orderBy('created_at', 'asc');
     }
+    public function getAverageRatingAttribute()
+    {
+        return $this->reviews()->avg('rating') ?? 0;
+    }
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class, 'product_id');
+    }
 
 }
