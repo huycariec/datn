@@ -168,8 +168,7 @@
 
                                                 <ul class="dropdown-menu">
                                                     <li>
-                                                        <a class="dropdown-item"
-                                                           href="#">Bài viết</a>
+                                                    <a class="dropdown-item" href="{{ route('blog.list') }}">Bài viết</a>
                                                     </li>
                                                 </ul>
                                             </li>

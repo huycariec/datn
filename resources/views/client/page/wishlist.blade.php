@@ -7,7 +7,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="breadcrumb-contain">
-                        <h2>Wishlist</h2>
+                        <h2>Yêu thích</h2>
                         <nav>
                             <ol class="breadcrumb mb-0">
                                 <li class="breadcrumb-item">
@@ -15,7 +15,7 @@
                                         <i class="fa-solid fa-house"></i>
                                     </a>
                                 </li>
-                                <li class="breadcrumb-item active">Wishlist</li>
+                                <li class="breadcrumb-item active">Danh sách yêu thích</li>
                             </ol>
                         </nav>
                     </div>
@@ -71,24 +71,6 @@
                                             <del>{{ number_format($item->product->old_price, 0, ',', '.') }} VNĐ</del>
                                         @endif
                                     </h5>
-                                    <div class="add-to-cart-box bg-white mt-2">
-                                        <button class="btn btn-add-cart addcart-button">Thêm vào giỏ
-                                            <span class="add-icon bg-light-gray">
-                                                <i class="fa-solid fa-plus"></i>
-                                            </span>
-                                        </button>
-                                        <div class="cart_qty qty-box">
-                                            <div class="input-group bg-white">
-                                                <button type="button" class="qty-left-minus bg-gray" data-type="minus" data-field="">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                                <input class="form-control input-number qty-input" type="text" name="quantity" value="1">
-                                                <button type="button" class="qty-right-plus bg-gray" data-type="plus" data-field="">
-                                                    <i class="fa fa-plus"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
