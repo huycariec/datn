@@ -46,6 +46,8 @@ Route::get('/error', [HomeController::class, 'error'])->name('error');
 //Detail
 Route::get('/product/{id}', [HomeController::class, 'showProductDetail'])->name('product.detail');
 
+Route::get('/blogs', [HomeController::class, 'blogList'])->name('blog.list');
+
 Route::middleware(['auth'])->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('blogs', BlogController::class)->except(['show']);

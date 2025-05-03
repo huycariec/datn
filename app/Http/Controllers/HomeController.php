@@ -18,6 +18,7 @@ use App\Models\ProductVariant;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Models\Blog;
 
 class HomeController extends Controller
 {
@@ -367,8 +368,12 @@ class HomeController extends Controller
 
         return view('client.page.search', compact('products', 'keyword', 'sort'));
     }
+    public function blogList()
+{
+    $blogs = Blog::with('user') 
+                ->where('status', 'published') 
+                ->latest()
+                ->get();
 
-
-
-
+                return view('client.blogs', compact('blogs'));}
 }
