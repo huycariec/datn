@@ -139,14 +139,14 @@
                                                     <div class="best-product-box">
                                                         <div class="product-name">
                                                             <h5>{{ $product->name }}</h5>
-                                                            <h6>{{ $product->total_quantity }} đơn</h6>
+                                                            <h6>{{ $product->total_quantity_selled }} đơn</h6>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="product-detail-box">
                                                         <h6>Doanh thu</h6>
-                                                        <h5>{{ number_format($product->revenue) }}đ</h5>
+                                                        <h5>{{ number_format($product->revenue_product) }}đ</h5>
                                                     </div>
                                                 </td>
                                             </tr>
