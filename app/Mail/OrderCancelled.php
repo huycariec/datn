@@ -15,13 +15,15 @@ class OrderCancelled extends Mailable
 
     public $order;
     public $reason;
+    public $isCancelled;
     /**
      * Create a new message instance.
      */
-    public function __construct($order, $reason)
+    public function __construct($order, $reason, $isCancelled)
     {
         $this->order = $order;
         $this->reason = $reason;
+        $this->isCancelled = $isCancelled;
     }
 
     /**

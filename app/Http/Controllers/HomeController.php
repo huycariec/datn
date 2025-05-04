@@ -254,9 +254,10 @@ class HomeController extends Controller
             ]);
 
             $order = Order::findOrFail($request->order_id);
+            $oldStatus = $order->status;
 
             $allowedTransitions = [
-                OrderStatus::PENDING_CONFIRMATION->value => [OrderStatus::PENDING_CANCELLATION->value],
+                OrderStatus::PENDING_CONFIRMATION->value => [OrderStatus::PENDING_CANCELLATION->value, OrderStatus::CANCELLED->value],
                 OrderStatus::CONFIRMED->value => [OrderStatus::PENDING_CANCELLATION->value],
                 OrderStatus::PREPARING->value => [OrderStatus::PENDING_CANCELLATION->value],
                 OrderStatus::PREPARED->value => [OrderStatus::PENDING_CANCELLATION->value],
@@ -275,6 +276,24 @@ class HomeController extends Controller
             if ($request->reason) {
                 $order->reason = $request->reason;
             }
+
+            if ($oldStatus == OrderStatus::PENDING_CONFIRMATION && $request->status == OrderStatus::PENDING_CANCELLATION->value)
+            {
+                $order->status = OrderStatus::CANCELLED->value;
+                $order->save();
+                if ($order->orderDetails->isNotEmpty()) {
+                    foreach ($order->orderDetails as $orderDetail) {
+                        if ($orderDetail->product && $orderDetail->productVariant) {
+                            $variant = ProductVariant::findOrFail($orderDetail->productVariant->id);
+                            $variant->stock += $orderDetail->quantity;
+                            $variant->save();
+                        }
+                    }
+                }
+                Mail::to(env('MAIL_ADMIN_EMAIL') ?? 'lequyhieu1024@gmail.com')->send(new OrderCancelled($order, $request->reason, true));
+                return redirect()->back()->with('success', 'Đơn hàng đã được hủy thành công');
+            }
+
             $order->save();
             if ($request->status == OrderStatus::RECEIVED->value)
             {
@@ -288,7 +307,7 @@ class HomeController extends Controller
 
             if ($request->status == OrderStatus::PENDING_CANCELLATION->value)
             {
-                Mail::to(env('MAIL_ADMIN_EMAIL') ?? 'lequyhieu1024@gmail.com')->send(new OrderCancelled($order, $request->reason));
+                Mail::to(env('MAIL_ADMIN_EMAIL') ?? 'lequyhieu1024@gmail.com')->send(new OrderCancelled($order, $request->reason, false));
             }
 
             return redirect()->back()->with('success', 'Cập nhật trạng thái thành công');
@@ -370,8 +389,8 @@ class HomeController extends Controller
     }
     public function blogList()
 {
-    $blogs = Blog::with('user') 
-                ->where('status', 'published') 
+    $blogs = Blog::with('user')
+                ->where('status', 'published')
                 ->latest()
                 ->get();
 
