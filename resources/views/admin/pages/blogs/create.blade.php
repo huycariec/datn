@@ -38,6 +38,16 @@
                                         </div>
                                     </div>
 
+                                    <div class="mb-4 row align-items-center">
+                                        <label class="form-label-title col-sm-3 mb-0">Trạng thái</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control" name="status" required>
+                                                <option value="draft">Bản nháp</option>
+                                                <option value="published">Xuất bản</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
                                     <div class="text-center">
                                         <button type="submit" class="btn btn-success">Lưu</button>
                                     </div>

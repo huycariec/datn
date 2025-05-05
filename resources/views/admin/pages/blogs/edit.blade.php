@@ -35,6 +35,14 @@
                     @endif
                 </div>
 
+                <div class="mb-3">
+                    <label class="form-label">Trạng thái</label>
+                    <select name="status" class="form-control" required>
+                        <option value="draft" {{ $blog->status === 'draft' ? 'selected' : '' }}>Bản nháp</option>
+                        <option value="published" {{ $blog->status === 'published' ? 'selected' : '' }}>Xuất bản</option>
+                    </select>
+                </div>
+
                 <div class="text-center">
                     <button type="submit" class="btn btn-success">Cập nhật</button>
                 </div>

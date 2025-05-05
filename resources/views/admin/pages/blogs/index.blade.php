@@ -41,6 +41,7 @@
                                         <th>Tiêu Đề</th>
                                         <th>Nội Dung</th>
                                         <th>Ngày Đăng</th>
+                                        <th>Trạng Thái</th>
                                         <th>Người Đăng</th>
                                         <th>Hành Động</th>
                                     </tr>
@@ -65,6 +66,11 @@
                                             </td>
                                             <td>{{ Str::limit($blog->content, 50) }}</td>
                                             <td>{{ $blog->created_at->format('d/m/Y') }}</td>
+                                            <td>
+                                                <span class="badge {{ $blog->status === 'published' ? 'bg-success' : 'bg-warning' }}">
+                                                    {{ $blog->status === 'published' ? 'Đã xuất bản' : 'Bản nháp' }}
+                                                </span>
+                                            </td>
                                             <td>{{ $blog->user->name ?? 'Admin' }}</td>
                                             <td>
                                                 <ul>
